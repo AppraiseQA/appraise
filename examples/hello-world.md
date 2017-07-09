@@ -1,8 +1,8 @@
+# A trivial example for SVG image testing
+
 ---
 fixture: fixtures/path.js
 ---
-
-# A trivial example for SVG image testing
 
 A fenced code block with an example parameter will set the code for an example:
 
