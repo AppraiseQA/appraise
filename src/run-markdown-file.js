@@ -3,8 +3,9 @@ const path = require('path'),
 	fs = require('./fs-promise'),
 	exampleFile = 'examples/hello-world.md',
 	annotateExample = require('./annotate-example'),
+	annotateImage = require('./annotate-image'),
 	Markdown = require('markdown-it'),
-	md = new Markdown().use(annotateExample),
+	md = new Markdown().use(annotateExample).use(annotateImage),
 	outputDir = 'results';
 
 
