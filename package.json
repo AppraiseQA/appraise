@@ -15,5 +15,13 @@
   "bugs": {
     "url": "https://github.com/gojko/appraise/issues"
   },
-  "homepage": "https://github.com/gojko/appraise#readme"
+  "homepage": "https://github.com/gojko/appraise#readme",
+  "dependencies": {
+    "markdown-it": "^8.3.1"
+  },
+  "devDependencies": {
+    "eslint": "^4.2.0",
+    "eslint-config-crockford": "^1.0.0",
+    "eslint-config-defaults": "^9.0.0"
+  }
 }
