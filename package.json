@@ -1,0 +1,19 @@
+{
+  "name": "appraise",
+  "version": "1.0.0",
+  "description": "Visual approval testing",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gojko/appraise.git"
+  },
+  "author": "Gojko Adzic <gojko@neuri.co.uk>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gojko/appraise/issues"
+  },
+  "homepage": "https://github.com/gojko/appraise#readme"
+}
