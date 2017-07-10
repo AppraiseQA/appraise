@@ -7,6 +7,7 @@ This is a (research) project aimed at prototyping a tool for visual approval tes
 - Speed up visual exploratory testing by making it easier to rebuild visual components from example data/configuration
 - Build living documentation for API consumers/component users that is easy to maintain
 - Publish developer docs with visual examples to github easily (markdown) or as a static site (html)
+- Run visual tests quickly/in parallel using AWS Lambda
 
 ## Status
 
