@@ -5,7 +5,6 @@ module.exports = function setup(md/*, options */) {
 		imageWithAttribs = function (tokens, idx, options, env, self) {
 			const token = tokens[idx],
 				alt = self.renderInlineAsText(token.children, options, env);
-			console.log('image', alt);
 			if (alt) {
 				token.attrPush(['data-example', alt]);
 			}
