@@ -6,6 +6,11 @@ const fs = require('./fs-promise'),
 
 fs.readFileAsync(exampleFile, 'utf8')
 	.then(mdToHtml)
+	.then(c => {
+		console.log(c);
+		return c;
+	})
 	.then(extractExamplesFromHtml)
+	.then(t => JSON.stringify(t, null, 2))
 	.then(console.log);
 
