@@ -15,4 +15,4 @@ A fenced code block with an example parameter will set the code for an example:
 
 An image with a matching description will set the expected output for the example:
 
-![blue line](images/blueline.png){fixture="blue line"}
+![blue line](images/blueline.png)
