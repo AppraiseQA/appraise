@@ -4,15 +4,7 @@ const fs = require('./fs-promise'),
 	mdToHtml = require('./md-to-html'),
 	runExamples = require('./run-examples'),
 	extractExamplesFromHtml = require('./extract-examples-from-html'),
-	log = function (c) {
-		if (typeof c === 'string') {
-			console.log(c);
-		} else {
-			console.log(JSON.stringify(c, null, 2));
-		}
-		console.log('-----------------------------------');
-		return c;
-	};
+	log = require('./debug-log');
 let htmlDoc, examples;
 
 fs.readFileAsync(exampleFile, 'utf8')
