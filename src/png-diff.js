@@ -2,6 +2,8 @@
 'use strict';
 const fs = require('fs'),
 	PNG = require('pngjs').PNG,
+	pngAlphaFilter = require('./png-alpha-filter'),
+	pngRect = require('./png-rect'),
 	pixelmatch = require('pixelmatch'),
 	readPng = function (fpath) {
 		const png = new PNG();
@@ -28,18 +30,28 @@ module.exports = function pngDiff(expectedImagePath, actualImagePath, diffImgPat
 				return writePng(difference, diffImgPath)
 					.then(() => {
 						return {
-							message: numPixels + ' differ',
+							message: numPixels + ' pixels differ',
 							image: diffImgPath
 						};
 					});
 			}
 		} else {
-			return {
-				message: 'Image dimensions do not match. Expected [' +
-				images[0].width + 'x' + images[0].height +
-				'] but was [' +
-				images[1].width + 'x' + images[1].height + ']'
-			};
+			const difference = new PNG({width: Math.max(images[0].width, images[1].width), height: Math.max(images[0].height, images[1].height)});
+
+			pngAlphaFilter(images[0]).bitblt(difference, 0, 0, images[0].width, images[0].height, 0, 0);
+			pngAlphaFilter(images[1]).bitblt(difference, 0, 0, images[1].width, images[1].height, 0, 0);
+			pngRect(difference, 0, 0, images[0].width, images[0].height, 0, 255, 0, 255);
+			pngRect(difference, 0, 0, images[1].width, images[1].height, 255, 0, 0, 255);
+			return writePng(difference, diffImgPath)
+				.then(() => {
+					return {
+						message: 'Image dimensions do not match. Expected [' +
+							images[0].width + 'x' + images[0].height +
+							'] but was [' +
+							images[1].width + 'x' + images[1].height + ']',
+						image: diffImgPath
+					};
+				});
 		}
 
 	});
