@@ -6,8 +6,7 @@ This is a (research) project aimed at prototyping a tool for visual approval tes
 - Start Spec by Example/BDD from a hand-drawn sketch or a wireframe,  easily compare actual outcomes, then just approve the final result to make a regression test
 - Automate acceptance/regression tests for visual look and feel in a visual language, rather than xUnit style code
 - Speed up visual exploratory testing by making it easier to rebuild visual components from example data/configuration
-- Build living documentation for API consumers/component users that is easy to maintain
-- Publish easily verifiable developer docs with visual to Github easily (markdown) or as a static site (html)
+- Publish easily maintainable/verifiable developer docs with visual examples to Github easily (markdown) or as a static site (html)
 - Run visual tests quickly/in parallel using AWS Lambda
 
 ## Status
