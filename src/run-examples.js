@@ -3,6 +3,7 @@
 const path = require('path'),
 	tmppath = require('./tmppath'),
 	fs = require('fs'),
+	pngDiff = require('./png-diff'),
 	ChromeScreenshot = require('./chrome-screenshot'),
 	writeOutput = function (fixtureOutput) {
 		const ext = {
@@ -17,6 +18,14 @@ const path = require('path'),
 		fs.writeFileSync(filePath, buffer, 'base64');
 		return filePath;
 	},
+	mergeResult = function (example, diffResult) {
+		example.outcome = {
+			success: !diffResult,
+			message: diffResult && diffResult.message,
+			image: diffResult && diffResult.image
+		};
+		return example;
+	},
 	runExample = function (example, chromeScreenshot) {
 		// expected, params, input
 		const fixture = require(path.resolve('.', 'examples', example.params.fixture));
@@ -27,6 +36,8 @@ const path = require('path'),
 			.then(fpath => chromeScreenshot.screenshot({url: 'file:' + fpath}))
 			.then(buffer => writeBase64Buffer(buffer, '.png'))
 			.then(fpath => example.output.screenshot = fpath)
+			.then(fpath => pngDiff(path.join('.', 'examples', example.expected), fpath))
+			.then(result => mergeResult(example, result))
 			.then(() => example);
 	};
 module.exports = function runExamples(examples) {
