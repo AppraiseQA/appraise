@@ -12,7 +12,7 @@ module.exports = function pngRect(png, sx, sy, w, h, r, g, b, a) {
 		paint(png, sx, y, r, g, b, a);
 		paint(png, sx + w - 1, y, r, g, b, a);
 	}
-	for (let x = sx + 1; x < sx + w - 2; x++) {
+	for (let x = sx + 1; x < sx + w - 1; x++) {
 		paint(png, x, sy, r, g, b, a);
 		paint(png, x, sy + h - 1, r, g, b, a);
 	}

@@ -40,8 +40,8 @@ module.exports = function pngDiff(expectedImagePath, actualImagePath, diffImgPat
 
 			pngAlphaFilter(images[0]).bitblt(difference, 0, 0, images[0].width, images[0].height, 0, 0);
 			pngAlphaFilter(images[1]).bitblt(difference, 0, 0, images[1].width, images[1].height, 0, 0);
-			pngRect(difference, 0, 0, images[0].width, images[0].height, 0, 255, 0, 255);
-			pngRect(difference, 0, 0, images[1].width, images[1].height, 255, 0, 0, 255);
+			pngRect(difference, 0, 0, images[0].width, images[0].height, 0, 255, 0, 160);
+			pngRect(difference, 0, 0, images[1].width, images[1].height, 255, 0, 0, 160);
 			return writePng(difference, diffImgPath)
 				.then(() => {
 					return {
