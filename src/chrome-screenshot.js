@@ -14,8 +14,8 @@ const CDP = require('chrome-remote-interface'),
 			mobile: false,
 			fitWindow: false
 		})
-		.then(() => cdp.Emulation.setVisibleSize({width: box.width, height: box.height}))
-		.then(() => cdp.Emulation.forceViewport({x: box.x, y: box.y, scale: 1}));
+		.then(() => cdp.Emulation.setVisibleSize({width: box.width, height: box.height}));
+		//.then(() => cdp.Emulation.forceViewport({x: box.x, y: box.y, scale: 1}));
 	};
 
 module.exports = function ChromeScreenshot() {
