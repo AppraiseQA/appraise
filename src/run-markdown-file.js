@@ -17,10 +17,4 @@ fs.readFileAsync(exampleFile, 'utf8')
 	.then(log)
 	.then(runExamples)
 	.then(log);
-/*
-	.then(extractExamplesFromHtml(htmlDoc))
-	.then(c => examples = c)
-	.then(log(examples))
-	.then(runExamples(examples))
-	.then(log);
-*/
+

@@ -12,3 +12,15 @@ This is a (research) project aimed at prototyping a tool for visual approval tes
 ## Status
 
 too early to use (pre-alpha)
+
+
+### Tasks
+
+- [x] Choose a markdown rendering system (https://github.com/markdown-it)
+- [x] Choose a Node DOM manipulation system (https://github.com/cheeriojs/cheerio)
+- [x] Build local screenshots (using Chrome Headless and https://github.com/cyrus-and/chrome-remote-interface)
+- [ ] Choose an image comparison system (investigate https://github.com/mapbox/pixelmatch)
+- [ ] in-browser fixture execution
+- [ ] Retina screen sizing
+- [ ] AWS Lambda screenshots 
+
