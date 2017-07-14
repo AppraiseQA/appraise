@@ -24,9 +24,10 @@ const path = require('path'),
 		};
 		return example;
 	},
-	runExample = function (example, fixtureDir, pathPrefix, chromeScreenshot) {
+	runExample = function (example, fixtureDir, workingDir, exampleIndex, chromeScreenshot) {
 		// expected, params, input
-		const fixture = require(path.resolve(fixtureDir, example.params.fixture));
+		const pathPrefix = path.join(workingDir, String(exampleIndex)),
+			fixture = require(path.resolve(fixtureDir, example.params.fixture));
 		return Promise.resolve()
 			.then(() => fixture(example.input))
 			.then(output => example.output = output)
@@ -34,7 +35,7 @@ const path = require('path'),
 			.then(fpath => chromeScreenshot.screenshot({url: 'file:' + fpath}))
 			.then(buffer => writeBase64Buffer(buffer, pathPrefix + '-actual.png'))
 			.then(fpath => example.output.screenshot = fpath)
-			.then(fpath => pngDiff(path.join('.', 'examples', example.expected), fpath))
+			.then(fpath => pngDiff(path.resolve(workingDir, '..', example.expected), fpath, pathPrefix + '-diff.png'))
 			.then(result => mergeResult(example, result))
 			.then(() => example);
 	};
@@ -42,7 +43,8 @@ module.exports = function runExamples(examples, workingDir, fixtureDir) {
 	const exampleNames = Object.keys(examples),
 		chromeScreenshot = new ChromeScreenshot();
 	return chromeScreenshot.start()
-		.then(() => Promise.all(exampleNames.map((key, index) => runExample(examples[key], fixtureDir, path.join(workingDir, String(index)), chromeScreenshot))))
+		.then(() => Promise.all(exampleNames.map((key, exampleIndex) =>
+			runExample(examples[key], fixtureDir, workingDir, exampleIndex, chromeScreenshot))))
 		.then(chromeScreenshot.stop)
 		.then(() => examples);
 };

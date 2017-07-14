@@ -2,7 +2,6 @@
 'use strict';
 const fs = require('fs'),
 	PNG = require('pngjs').PNG,
-	tmppath = require('./tmppath'),
 	pixelmatch = require('pixelmatch'),
 	readPng = function (fpath) {
 		const png = new PNG();
@@ -17,7 +16,7 @@ const fs = require('fs'),
 
 // returns false if the images are the same
 // otherwise, returns { message: "text", image: "file path" }
-module.exports = function pngDiff(expectedImagePath, actualImagePath) {
+module.exports = function pngDiff(expectedImagePath, actualImagePath, diffImgPath) {
 	const compareOptions = {threshold: 0.1};
 	return Promise.all([readPng(expectedImagePath), readPng(actualImagePath)]).then(images => {
 		if (images[0].width === images[1].width && images[0].height === images[1].height) {
@@ -26,12 +25,11 @@ module.exports = function pngDiff(expectedImagePath, actualImagePath) {
 			if (numPixels === 0) {
 				return false;
 			} else {
-				const resultPath = tmppath();
-				return writePng(difference, resultPath)
+				return writePng(difference, diffImgPath)
 					.then(() => {
 						return {
 							message: numPixels + ' differ',
-							image: resultPath
+							image: diffImgPath
 						};
 					});
 			}
