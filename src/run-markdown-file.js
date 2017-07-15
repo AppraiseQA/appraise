@@ -65,7 +65,7 @@ const fs = require('./fs-promise'),
 		return fsUtil.recursiveList(exampleDir).filter(isMarkdown);
 	};
 
-let templates;
+let templates, results;
 
 
 fsUtil.ensureCleanDir(resultDir);
@@ -77,7 +77,9 @@ compileTemplates(templatesDir)
 		filePath => runMdFile (resultDir, filePath, t)
 	))
 	.then(log)
-	.then(pages => templates.summary({pages: pages}))
+	.then(r => results = r)
+	.then(r => fsPromise.writeFileAsync(path.join(resultDir, 'summary.json'), JSON.stringify(r, null, 2), 'utf8'))
+	.then(() => templates.summary({pages: results}))
 	.then(log)
 	.then(html => fsPromise.writeFileAsync(path.join(resultDir, 'summary.html'), html, 'utf8'));
 
