@@ -5,6 +5,7 @@ const fs = require('./fs-promise'),
 	fsPromise = require('./fs-promise'),
 	path = require('path'),
 	mdToHtml = require('./md-to-html'),
+	compileTemplate = require('./compile-template'),
 	runExamples = require('./run-examples'),
 	mergeResults = require('./merge-results'),
 	saveResultFiles = require('./save-result-files'),
@@ -20,7 +21,7 @@ const fs = require('./fs-promise'),
 	exampleDir = 'examples',
 	fixtureDir = 'examples',
 	templatesDir = 'templates',
-	runMdFile = function (workingDir, filePath) {
+	runMdFile = function (workingDir, filePath, pageTemplate) {
 		let htmlDoc;
 		const mdPath = path.join(workingDir, filePath),
 			resultsPath = stripExtension(mdPath);
@@ -28,7 +29,7 @@ const fs = require('./fs-promise'),
 		return fs.readFileAsync(mdPath, 'utf8')
 			.then(log)
 			.then(mdToHtml)
-			.then(c =>  htmlDoc = c)
+			.then(c =>  htmlDoc = pageTemplate({body: c}))
 			.then(log)
 			.then(extractExamplesFromHtml)
 			.then(log)
@@ -44,10 +45,12 @@ const fs = require('./fs-promise'),
 
 fsUtil.ensureCleanDir(resultDir);
 fsUtil.copy(path.join(exampleDir, '*'), resultDir);
-sequentialPromiseMap(
-	fsUtil.recursiveList(exampleDir).filter(isMarkdown),
-	filePath => runMdFile (resultDir, filePath)
-);
+
+compileTemplate(path.join(templatesDir, 'page.hbs'))
+	.then(pageTemplate => sequentialPromiseMap(
+		fsUtil.recursiveList(exampleDir).filter(isMarkdown),
+		filePath => runMdFile (resultDir, filePath, pageTemplate)
+	));
 /*
 
 */
