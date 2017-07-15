@@ -1,0 +1,34 @@
+<html>
+<head>
+<meta name="generator" value="appraise" />
+</head>
+<body>
+<h1>Appraise results</h1>
+
+{{#each pages}}
+	<div class="page">
+		<h1>{{name}}</h1>
+		{{#each examples}}
+			<div class="example">
+				<a href="{{../name}}.html#{{@key}}">
+					<span class="name">
+						{{@key}}
+					</span>
+				</a>
+				<span class="outcome">
+					{{outcome.status}}
+				</span>
+				<span class="message">
+					{{outcome.message}}
+				</span>
+			</div>
+		{{else}}
+			No tests found in this page
+		{{/each}}
+	</div>
+{{else}}
+  No test pages found in this directory
+{{/each}}
+
+</body>
+</html>

@@ -21,9 +21,11 @@ too early to use (pre-alpha)
 - [x] Build local screenshots (using Chrome Headless and https://github.com/cyrus-and/chrome-remote-interface)
 - [x] Choose an image comparison system (https://github.com/mapbox/pixelmatch)
 - [x] generate a combined image if dimensions do not match, showing both images with alpha
-- [ ] Add a generic layout to HTML when converting from MD (header...)
+- [x] Add a generic layout to HTML when converting from MD 
 - [x] Add a generic template for result files
-- [ ] Create an index with all test results
+- [x] Create an index with all test results
+- [ ] Clean up templates and provide a nice layout
+- [ ] Solve cross-linking (eg replace .md in local links to .html when generating html)
 - [ ] Distinguish between a failure and error
 - [ ] URL fixture execution (eg test the same site in various resolutions)
 - [ ] in-browser fixture execution
@@ -42,7 +44,6 @@ too early to use (pre-alpha)
   - [ ] render markdown from the examples folder 
   - [ ] offer running the spec if the MD contains any examples
   - [ ] approving changes
-- [ ] render HTML files as well as MD
 - [ ] Retina screen sizing
 - [ ] AWS Lambda fixture engine
 - [ ] AWS Lambda screenshots 
@@ -50,4 +51,3 @@ too early to use (pre-alpha)
 - [ ] CLI/NPM task
   - [ ] approving changes
   - [ ] filtering tests
-

@@ -6,6 +6,7 @@ module.exports = function mergeResults(htmlDoc, examples, resultsPath) {
 			const example = examples[exampleName],
 				exampleElements = doc('[data-example="' + exampleName + '"]');
 			exampleElements.attr('data-outcome-status', example.outcome.status);
+			doc('<a>').attr('name', exampleName).insertBefore(exampleElements.first());
 			if (example.outcome.message) {
 				exampleElements.attr('data-outcome-message', example.outcome.message);
 			}
@@ -15,6 +16,7 @@ module.exports = function mergeResults(htmlDoc, examples, resultsPath) {
 			exampleElements.each((index, element) => {
 				doc('<a>').attr('href', resultsPath + '/' + exampleIndex + '-result.html').insertBefore(element).append(element);
 			});
+
 		};
 	Object.keys(examples).forEach(mergeExampleResult);
 	return doc.xml();
