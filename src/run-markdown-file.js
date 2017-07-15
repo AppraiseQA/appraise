@@ -19,6 +19,7 @@ const fs = require('./fs-promise'),
 	resultDir = 'results',
 	exampleDir = 'examples',
 	fixtureDir = 'examples',
+	templatesDir = 'templates',
 	runMdFile = function (workingDir, filePath) {
 		let htmlDoc;
 		const mdPath = path.join(workingDir, filePath),
@@ -33,7 +34,7 @@ const fs = require('./fs-promise'),
 			.then(log)
 			.then(examples => runExamples(examples, resultsPath, fixtureDir))
 			.then(log)
-			.then(examples => saveResultFiles(examples, resultsPath))
+			.then(examples => saveResultFiles(examples, resultsPath, templatesDir))
 			.then(examples => mergeResults(htmlDoc, examples, path.basename(resultsPath)))
 			.then(log)
 			.then(htmlPageResult => fsPromise.writeFileAsync(resultsPath + '.html', htmlPageResult, 'utf8'))

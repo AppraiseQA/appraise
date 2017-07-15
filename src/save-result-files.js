@@ -1,22 +1,21 @@
 'use strict';
 /*global module, require */
 const fsPromise = require('./fs-promise'),
+	compileTemplate = require('./compile-template'),
 	path = require('path');
-module.exports = function saveResultFiles(examples, resultsDir) {
+module.exports = function saveResultFiles(examples, resultsDir, templatesDir) {
 
-	const saveExampleResult = function (exampleName, index) {
-		const example = examples[exampleName],
-			expectedSrc = '../' + example.expected,
-			contents = '<html> <body>'
-				+ `<h1>${exampleName}</h1>
-					Outcome: <b>${example.outcome.status}</b> <br/><i>${example.outcome.message}</i>
-					<h2>Expected</h2><img src="${expectedSrc}"/>
-					<h2>Actual</h2><img src="${example.output.screenshot}" />`
-				+ (example.outcome.image ? `<h2>Diff</h2><img src="${example.outcome.image}" />` : '')
-				+ (example.output.source ?  `<h2>Source</h2><iframe src="${example.output.source}"></iframe>` : '')
-				+ ' </body></html>';
-		return fsPromise.writeFileAsync(path.join(resultsDir, index + '-result.html'), contents, 'utf8');
-	};
+	const exampleNames = Object.keys(examples),
+		saveExampleResult = function (exampleName, index, template) {
+			const example = examples[exampleName],
+				contents = template({
+					exampleName: exampleName,
+					example: example
+				});
+			return fsPromise.writeFileAsync(path.join(resultsDir, index + '-result.html'), contents, 'utf8');
+		};
 
-	return Promise.all(Object.keys(examples).map(saveExampleResult)).then(() => examples);
+	return compileTemplate(path.join(templatesDir, 'result.hbs'))
+		.then(template => Promise.all(exampleNames.map((exampleName, index) => saveExampleResult(exampleName, index, template))))
+		.then(() => examples);
 };

@@ -22,10 +22,10 @@ too early to use (pre-alpha)
 - [x] Choose an image comparison system (https://github.com/mapbox/pixelmatch)
 - [x] generate a combined image if dimensions do not match, showing both images with alpha
 - [ ] Add a generic layout to HTML when converting from MD (header...)
-- [ ] Add a generic template for result files (eg using mustache)
+- [x] Add a generic template for result files
 - [ ] Create an index with all test results
 - [ ] Distinguish between a failure and error
-- [ ] URL fixture execution
+- [ ] URL fixture execution (eg test the same site in various resolutions)
 - [ ] in-browser fixture execution
   - [ ] custom event to signal finished rendering
   - [ ] webpack fixture packaging
@@ -38,8 +38,11 @@ too early to use (pre-alpha)
   - [ ] Configurable HTML attributes (`data-example`)
   - [ ] Configurable HTML classes for success/failure
 - [ ] Server for interactive work
-  - [ ] result/diff inspection 
+  - [ ] render example folder structure + README.md for folders
+  - [ ] render markdown from the examples folder 
+  - [ ] offer running the spec if the MD contains any examples
   - [ ] approving changes
+- [ ] render HTML files as well as MD
 - [ ] Retina screen sizing
 - [ ] AWS Lambda fixture engine
 - [ ] AWS Lambda screenshots 

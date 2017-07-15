@@ -1,0 +1,22 @@
+<html> 
+<head>
+	<meta name="generator" value="appraise" />
+</head>
+	<body>
+		<h1>{{exampleName}}</h1>
+
+		Outcome: <b>{{example.outcome.status}}</b> <br/>
+		<i>{{example.outcome.message}}</i>
+		
+		<h2>Expected</h2><img src="{{expectedSrc}}"/>
+		<h2>Actual</h2><img src="{{example.output.screenshot}}" />
+
+  {{#if example.outcome.image}}
+		<h2>Diff</h2><img src="{{example.outcome.image}}" />
+  {{/if}}
+
+  {{#if example.output.source}}
+	<h2>Source</h2><iframe src="{{example.output.source}}"></iframe>
+  {{/if}}
+</body></html>
+
