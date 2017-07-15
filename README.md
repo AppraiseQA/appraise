@@ -21,6 +21,7 @@ too early to use (pre-alpha)
 - [x] Build local screenshots (using Chrome Headless and https://github.com/cyrus-and/chrome-remote-interface)
 - [x] Choose an image comparison system (https://github.com/mapbox/pixelmatch)
 - [x] generate a combined image if dimensions do not match, showing both images with alpha
+- [ ] URL fixture execution
 - [ ] in-browser fixture execution
   - [ ] custom event to signal finished rendering
   - [ ] webpack fixture packaging
