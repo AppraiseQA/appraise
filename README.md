@@ -21,15 +21,22 @@ too early to use (pre-alpha)
 - [x] Build local screenshots (using Chrome Headless and https://github.com/cyrus-and/chrome-remote-interface)
 - [x] Choose an image comparison system (https://github.com/mapbox/pixelmatch)
 - [x] generate a combined image if dimensions do not match, showing both images with alpha
+- [ ] Add a generic layout to HTML when converting from MD (header...)
+- [ ] Add a generic template for result files (eg using mustache)
+- [ ] Create an index with all test results
+- [ ] Distinguish between a failure and error
 - [ ] URL fixture execution
 - [ ] in-browser fixture execution
   - [ ] custom event to signal finished rendering
   - [ ] webpack fixture packaging
   - [ ] inject css/js
-- [x] Configurable source and work directories (don't just dump stuff to temp)
-- [ ] Configurable clip area for screenshots
-- [ ] Configurable initial size for html windows
-- [ ] Configurable image matching precision and anti-aliasing
+- [ ] Extract configuration/enable overrides
+  - [x] Configurable source and work directories (don't just dump stuff to temp)
+  - [ ] Configurable clip area for screenshots
+  - [ ] Configurable initial size for html windows
+  - [ ] Configurable image matching precision and anti-aliasing
+  - [ ] Configurable HTML attributes (`data-example`)
+  - [ ] Configurable HTML classes for success/failure
 - [ ] Server for interactive work
   - [ ] result/diff inspection 
   - [ ] approving changes

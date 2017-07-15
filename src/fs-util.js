@@ -4,9 +4,9 @@ exports.ensureCleanDir = function (dirPath) {
 	shell.rm('-rf', dirPath);
 	shell.mkdir('-p', dirPath);
 };
-exports.rmDir = function (dirPath) {
+exports.remove = function (path) {
 	'use strict';
-	shell.rm('-rf', dirPath);
+	shell.rm('-rf', path);
 };
 exports.fileExists = function (filePath) {
 	'use strict';

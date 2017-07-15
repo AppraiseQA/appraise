@@ -9,6 +9,7 @@ const path = require('path'),
 				'image/svg': '.svg'
 			},
 			filePath = path.resolve(pathPrefix + ext[fixtureOutput.contentType]);
+		fixtureOutput.source = path.basename(filePath);
 		fs.writeFileSync(filePath, fixtureOutput.content, 'utf8');
 		return filePath;
 	},
@@ -16,27 +17,27 @@ const path = require('path'),
 		fs.writeFileSync(filePath, buffer, 'base64');
 		return filePath;
 	},
-	mergeResult = function (example, diffResult) {
+	saveOutcome = function (example, diffResult) {
 		example.outcome = {
-			success: !diffResult,
+			status: diffResult ? 'failure' : 'success',
 			message: diffResult && diffResult.message,
-			image: diffResult && diffResult.image
+			image: diffResult && diffResult.image && path.basename(diffResult.image)
 		};
 		return example;
 	},
 	runExample = function (example, fixtureDir, workingDir, exampleIndex, chromeScreenshot) {
-		// expected, params, input
 		const pathPrefix = path.join(workingDir, String(exampleIndex)),
 			fixture = require(path.resolve(fixtureDir, example.params.fixture));
+		example.fileLocation = workingDir;
 		return Promise.resolve()
 			.then(() => fixture(example.input))
 			.then(output => example.output = output)
 			.then(output => writeOutput (output, pathPrefix))
 			.then(fpath => chromeScreenshot.screenshot({url: 'file:' + fpath}))
 			.then(buffer => writeBase64Buffer(buffer, pathPrefix + '-actual.png'))
-			.then(fpath => example.output.screenshot = fpath)
-			.then(fpath => pngDiff(path.resolve(workingDir, '..', example.expected), fpath, pathPrefix + '-diff.png'))
-			.then(result => mergeResult(example, result))
+			.then(fpath => example.output.screenshot = path.basename(fpath))
+			.then(screenshotFileName => pngDiff(path.resolve(workingDir, '..', example.expected), path.join(workingDir, screenshotFileName), pathPrefix + '-diff.png'))
+			.then(outcome => saveOutcome(example, outcome))
 			.then(() => example);
 	};
 module.exports = function runExamples(examples, workingDir, fixtureDir) {
