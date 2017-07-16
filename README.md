@@ -68,7 +68,8 @@ too early to use (pre-alpha)
 
 ### Known problems
 
-- [ ] breadcrumbs on results page -> links
+- [ ] breadcrumbs on rendered page -> links
+- [ ] navigation on results page (breadcrumbs and page links)
 - [ ] Retina screen sizing
 - [ ] Solve cross-linking (eg replace .md in local links to .html when generating html)
   
