@@ -49,6 +49,8 @@ too early to use (pre-alpha)
 - [ ] AWS Lambda fixture engine
 - [ ] AWS Lambda screenshots 
 - [ ] CI reporters (junit, tap)
-- [ ] CLI/NPM task
-  - [ ] approving changes
-  - [ ] filtering tests
+- [ ] CLI/NPM tasks
+  - [x] executing tests
+  - [x] approving changes
+  - [ ] filtering tests for approvals
+  - [ ] filtering tests for execution
