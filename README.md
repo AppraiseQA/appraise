@@ -28,6 +28,11 @@ too early to use (pre-alpha)
 - [ ] Clean up templates and provide a nice layout
 - [ ] Solve cross-linking (eg replace .md in local links to .html when generating html)
 - [ ] Distinguish between a failure and error
+- [ ] change sync FS operations to async
+- [ ] test more complex scenarios
+  - [ ] test with multiple examples in a single file
+  - [ ] test with multiple files
+  - [ ] test with files in subfolders
 - [ ] URL fixture execution (eg test the same site in various resolutions)
 - [ ] in-browser fixture execution
   - [ ] custom event to signal finished rendering
@@ -46,8 +51,11 @@ too early to use (pre-alpha)
   - [ ] offer running the spec if the MD contains any examples
   - [ ] approving changes
 - [ ] Retina screen sizing
+- [ ] Start/stop chrome once per run, not once per page
 - [ ] AWS Lambda fixture engine
 - [ ] AWS Lambda screenshots 
+- [ ] Running tests by directly reading specs from github (eg public site, connect to a gitub repo)
+- [ ] Approving by directly committing to github? (eg for specs stored in github repos)
 - [ ] CI reporters (junit, tap)
 - [ ] CLI/NPM tasks
   - [x] executing tests

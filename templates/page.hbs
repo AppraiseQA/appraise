@@ -1,6 +1,82 @@
 <html>
-<meta generator="appraise" />
-<body>
-{{{body}}}
-</body>
+  <head>
+    <meta charset="utf-8"/>
+    <link href="{{rootUrl}}assets/style.css" rel="stylesheet" />
+  </head>
+  <body>
+<header class="navigation">
+	<div class="content">
+		<span class="project-name">Appraise</span>
+		<ul class="menu">
+			<li>
+          <a href="{{rootUrl}}">Home</a>
+        </li>
+		{{#if results}}
+			<li>
+			  <a href="{{rootUrl}}summary.html">Summary</a>
+			</li>
+		{{/if}}
+        <li>
+          <a href="https://github.com/gojko/appraise">Help</a>
+        </li>
+      </ul>
+    </div>
+  </header>
+  <header class="page-header">
+    <div class="content">
+      <ul class="navigation-crumbs">
+		{{#each breadcrumbs}}
+			<li>{{this}}</li>
+		{{/each}}		
+
+      </ul>
+    </div>
+  </header>
+  {{#if results}}
+	  <div class="content page-block summary" data-outcome-status="{{summary.status}}">
+		<div class="header">
+		  <dl class="stats">
+			<dt>Total examples</dt><dd>{{summary.total}}</dd>
+		  
+			  {{#if summary.success}}
+				  <dt>Passed</dt><dd>{{summary.success}}</dd>
+			  {{/if}}
+
+			  {{#if summary.failure}}
+				  <dt>Failed</dt><dd>{{summary.failure}}</dd>
+			  {{/if}}
+
+			  {{#if summary.error}}
+				  <dt>Errors</dt><dd>{{summary.error}}</dd>
+			  {{/if}}
+		  </dl>
+		</div>
+		<table>
+		  <tbody>
+			{{#each results}}
+				<tr data-outcome-status="{{outcome.status}}">
+				  <td><a href="{{../pageName}}/{{index}}-result.html">{{@key}}</a></td><td>{{outcome.message}}</td>
+				</tr>
+			{{/each}}
+		  </tbody>
+		</table>
+	  </div>
+  {{/if}}
+  
+<div class="content page-block">
+	<div class="header">
+		<dl class="stats">
+			<dt>modified</dt><dd>{{modifiedTime}}</dd>
+			{{#if executedTime}}
+				<dt>executed</dt><dd>{{executedTime}}</dd>
+			{{/if}}
+		</dl>
+	</div>
+	<div class="markdown-content">
+
+    {{{body}}}
+
+	</div>
+</div>
+  </body>
 </html>

@@ -4,8 +4,10 @@ const sequentialPromiseMap = require('sequential-promise-map'),
 	fsPromise = require('../util/fs-promise'),
 	path = require('path'),
 	mdToHtml = require('../tasks/md-to-html'),
+	reverseRootPath = require('../util/reverse-root-path'),
 	compileTemplate = require('../tasks/compile-template'),
 	runExamples = require('../tasks/run-examples'),
+	pageSummaryCounts = require('../tasks/page-summary-counts'),
 	mergeResults = require('../tasks/merge-results'),
 	saveResultFiles = require('../tasks/save-result-files'),
 	extractExamplesFromHtml = require('../tasks/extract-examples-from-html'),
@@ -21,14 +23,17 @@ const sequentialPromiseMap = require('sequential-promise-map'),
 		return path.join(path.dirname(filePath), path.basename(filePath, path.extname(filePath)));
 	},
 	runMdFile = function (workingDir, filePath, templates, fixtureDir) {
-		let htmlDoc, examples;
+		let htmlDoc, examples, modifiedTime;
 		const mdPath = path.join(workingDir, filePath),
-			resultsPath = stripExtension(mdPath);
+			resultsPath = stripExtension(mdPath),
+			pageName = path.basename(resultsPath);
 		fsUtil.ensureCleanDir(resultsPath);
-		return fsPromise.readFileAsync(mdPath, 'utf8')
+		return fsPromise.statAsync(mdPath)
+			.then(s => modifiedTime = s.mtime.toString())
+			.then(() => fsPromise.readFileAsync(mdPath, 'utf8'))
 			.then(log)
 			.then(mdToHtml)
-			.then(c =>  htmlDoc = templates.page({body: c}))
+			.then(c =>  htmlDoc = c)
 			.then(log)
 			.then(extractExamplesFromHtml)
 			.then(log)
@@ -36,7 +41,17 @@ const sequentialPromiseMap = require('sequential-promise-map'),
 			.then(e => runExamples(e, resultsPath, fixtureDir))
 			.then(log)
 			.then(e => saveResultFiles(e, resultsPath, templates.result))
-			.then(e => mergeResults(htmlDoc, e, path.basename(resultsPath)))
+			.then(e => templates.page({
+				body: htmlDoc,
+				pageName: pageName,
+				results: e,
+				modifiedTime: modifiedTime,
+				executedTime: new Date().toString(),
+				summary: pageSummaryCounts(e),
+				rootUrl: reverseRootPath(filePath),
+				breadcrumbs: filePath.split(path.sep)
+			}))
+			.then(htmlDoc => mergeResults(htmlDoc, examples, pageName))
 			.then(log)
 			.then(htmlPageResult => fsPromise.writeFileAsync(resultsPath + '.html', htmlPageResult, 'utf8'))
 			.then(() => fsUtil.remove(mdPath))
@@ -74,6 +89,7 @@ module.exports = function run(args) {
 	validateRequiredParams(args, ['examples-dir', 'results-dir', 'templates-dir']);
 	fsUtil.ensureCleanDir(resultDir);
 	fsUtil.copy(path.join(exampleDir, '*'), resultDir);
+	fsUtil.copy(path.join(templatesDir, 'assets'), resultDir);
 	return compileTemplates(templatesDir)
 		.then(t => templates = t)
 		.then(t => sequentialPromiseMap(

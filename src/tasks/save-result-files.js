@@ -5,15 +5,15 @@ const fsPromise = require('../util/fs-promise'),
 module.exports = function saveResultFiles(examples, resultsDir, template) {
 
 	const exampleNames = Object.keys(examples),
-		saveExampleResult = function (exampleName, index, template) {
+		saveExampleResult = function (exampleName) {
 			const example = examples[exampleName],
 				contents = template({
 					exampleName: exampleName,
 					example: example
 				});
-			return fsPromise.writeFileAsync(path.join(resultsDir, index + '-result.html'), contents, 'utf8');
+			return fsPromise.writeFileAsync(path.join(resultsDir, example.index + '-result.html'), contents, 'utf8');
 		};
 
-	return Promise.all(exampleNames.map((exampleName, index) => saveExampleResult(exampleName, index, template)))
+	return Promise.all(exampleNames.map((exampleName) => saveExampleResult(exampleName)))
 		.then(() => examples);
 };

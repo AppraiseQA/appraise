@@ -1,0 +1,297 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700,700i');
+@import url('https://fonts.googleapis.com/css?family=Source+Code+Pro');
+body {
+  font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif;
+  vertical-align: baseline; 
+  margin-top: 4em;
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0;
+  border: 0;
+}
+pre, code {
+  font-family: 'Source Code Pro', monospace;
+}
+a {
+  transition: all 0.2s;
+}
+a, a:visited, a:active {
+  color: #51a1d6;
+  text-decoration: none;
+}
+a:hover {
+  color: #2ba1f0;
+  text-decoration: underline;
+}
+
+header.navigation {
+  background: rgba(55, 61, 73, 0.975);
+  color: #fff;
+  box-shadow: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  height: 3em;
+  white-space: nowrap;
+  font-size: 1.25em;
+}
+header.page-header {
+  background-color: #fafbfc;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e1e4e8;
+  width: 100%;
+}
+.navigation a, .navigation a:visited, .navigation a:active {
+  color: white;
+  text-decoration: none;
+}
+.navigation a:hover {
+  color: rgba(255,255,255,0.75);
+}
+.navigation .menu {
+  float: right;
+  display: inline-block;
+}
+.navigation .menu li {
+  list-style: none;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  display: inline-block;
+}		
+span.project-name {
+  display: inline-block;
+  padding-top: 1em;
+  font-weight: bold;
+}
+
+.content, .page-block .header {
+  max-width: 1012px;
+  margin: auto;
+}
+
+.page-header .navigation-crumbs {
+  font-size: 18px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  font-weight: bolder;
+}
+.page-header .navigation-crumbs li {
+  display: inline-block;
+}
+.page-header .navigation-crumbs li:not(:last-of-type)::after {
+  content: '/';
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+
+.markdown-content {
+  padding: 45px;
+}
+.markdown-content table {
+  border-collapse: collapse;
+  border-spacing: 0px;
+}			
+.markdown-content table th, .markdown-content table td {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+.markdown-content pre {
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f6f8fa;
+}
+
+.markdown-content pre code {
+  color: black;
+  text-decoration: none;
+}
+.markdown-content pre a:hover {
+  text-decoration: none;
+}
+
+
+.page-block .header {
+  border-bottom: 1px solid #e1e4e8;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.page-block .header {
+  background-color: #fafbfc;
+  font-size: 16px;				
+  line-height: 24px;
+}
+.page-block h1 {
+  padding-bottom: 0.3em;
+  font-size: 2em;
+  border-bottom: 1px solid #eaecef;
+}
+.page-block h2 {
+  padding-bottom: 0.3em;
+  font-size: 1.5em;
+  border-bottom: 1px solid #eaecef;
+}
+.page-block h1, .page-block h2, .page-block h3, .page-block h4, .page-block h5, .page-block h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: bold;
+  line-height: 1.25;
+}
+.page-block h3 {
+  font-size: 1.2em;
+}
+.page-block h3 {
+  font-size: 1.1em;
+}
+.page-block h5, .page-block h6 {
+  font-size: 1em;
+}
+.page-block {
+  border: 1px solid #e1e4e8;
+  margin-top: 0.5em;
+  margin-bottom: 1em;
+}
+
+.summary {
+  border: 1px solid #2ba1f0;
+  font-size: 16px;				
+  line-height: 24px;
+}
+.summary .header {
+  background-color: #51a1d6;
+  border-bottom: 1px solid #2ba1f0;
+}
+.summary[data-outcome-status=failure] {
+  border-color: #e63244;
+}
+.summary[data-outcome-status=failure] .header, pre[data-outcome-status=failure] {
+  background-color: #cc5561;
+  border-bottom-color: #e63244;
+}
+.summary tr:not(:last-of-type) {
+  border-bottom: 1px solid #e1e4e8;
+  transition: background-color 0.2s;
+}
+.summary tr:hover {
+  background-color: #f6f8fa;
+}
+
+.summary tr[data-outcome-status=failure] td:first-of-type a::before {
+  content: '\2718';
+  width: 3em;
+  display: inline-block;
+}	
+.summary tr[data-outcome-status=failure] td:first-of-type a {
+  color:  #cc5561;
+}
+
+
+.summary[data-outcome-status=error] {
+  border-color: #e8df32;
+}
+.summary[data-outcome-status=error] .header, pre[data-outcome-status=error] {
+  background-color: #e8df32;
+  border-bottom-color: #cfc956;
+}
+.summary tr[data-outcome-status=error] td:first-of-type a::before {
+  content: '\2622';
+  width: 3em;
+  display: inline-block;
+}
+.summary tr[data-outcome-status=error] td:first-of-type a {
+  color:  #cfc956;
+}
+
+.summary[data-outcome-status=success] {
+  border-color: #46e831;
+}
+.summary[data-outcome-status=success] .header {
+  border-bottom-color: #46e831;
+  background-color: #63cf55;
+}
+.summary tr[data-outcome-status=success] td:first-of-type a::before {
+  content: '\2714';
+  width: 3em;
+  display: inline-block;
+}
+.summary tr[data-outcome-status=success] td:first-of-type a {
+  color:  #63cf55;
+}
+.summary table {
+  width: 100%;
+  border: none;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+.summary td {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+.summary td:first-of-type {
+  width: 20%;
+  max-width: 200px;
+}
+.summary td * {
+  max-width: 100%;
+  white-space: nowrap;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.header dl {
+  display: inline-block;
+  margin: 0;
+}
+.header dt {
+  display: inline-block;
+  margin: 0;
+  font-weight: bolder;
+  margin-right: 1em;
+}
+.header dt::after {
+  content: ':'
+}
+.header dd {
+  display: inline-block;
+  margin: 0;
+  margin-right: 1em;
+}
+
+
+[data-outcome-message] {
+  position: relative;
+}
+[data-outcome-message]:hover::before {
+  position: absolute;
+  bottom: 1em;
+  right: 1em;
+  border-radius: 3px;
+  background-color: #000;
+  color: #fff;
+  content: attr(data-outcome-message);
+  text-align: center;
+  padding: 5px 5px 5px 5px;
+  font-size: 14px;
+  line-height: 1.2;
+  max-width: 80%;
+  white-space: nowrap;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+}
+

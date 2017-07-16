@@ -28,6 +28,7 @@ const path = require('path'),
 	runExample = function (example, fixtureDir, workingDir, exampleIndex, chromeScreenshot) {
 		const pathPrefix = path.join(workingDir, String(exampleIndex)),
 			fixture = require(path.resolve(fixtureDir, example.params.fixture));
+		example.index = exampleIndex;
 		return Promise.resolve()
 			.then(() => fixture(example.input))
 			.then(output => example.output = output)
