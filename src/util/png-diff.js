@@ -1,10 +1,10 @@
 /*global module, require */
 'use strict';
 const fs = require('fs'),
+	pixelmatch = require('pixelmatch'),
 	PNG = require('pngjs').PNG,
 	pngAlphaFilter = require('./png-alpha-filter'),
 	pngRect = require('./png-rect'),
-	pixelmatch = require('pixelmatch'),
 	readPng = function (fpath) {
 		const png = new PNG();
 		return new Promise((resolve, reject) =>  fs.createReadStream(fpath).pipe(png).on('parsed', () => resolve(png)).on('error', reject));

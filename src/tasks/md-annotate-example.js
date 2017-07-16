@@ -1,6 +1,6 @@
 /*global module */
 'use strict';
-module.exports = function setup(md/*, options */) {
+module.exports = function mdAnnotateExample(md/*, options */) {
 	const defaultFence = md.renderer.rules.fence,
 		fenceWithAttribs = function (tokens, idx, options, env, self) {
 			const token = tokens[idx],

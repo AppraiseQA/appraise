@@ -6,6 +6,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "files": [
+    "src",
+    "templates",
+    "logo.png",
+    "*.md",
+    "*.js",
+    "bin",
+    "docs"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gojko/appraise.git"
@@ -24,6 +33,7 @@
     "markdown-it": "^8.3.1",
     "pixelmatch": "^4.0.2",
     "pngjs": "^3.2.0",
+    "sequential-promise-map": "^1.0.1",
     "shelljs": "^0.5.3",
     "uuid": "^3.1.0"
   },

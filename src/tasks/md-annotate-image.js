@@ -1,6 +1,6 @@
 /*global module */
 'use strict';
-module.exports = function setup(md/*, options */) {
+module.exports = function mdAnnotateImage(md/*, options */) {
 	const defaultImage = md.renderer.rules.image,
 		imageWithAttribs = function (tokens, idx, options, env, self) {
 			const token = tokens[idx],

@@ -2,8 +2,8 @@
 'use strict';
 const path = require('path'),
 	fs = require('fs'),
-	pngDiff = require('./png-diff'),
-	ChromeScreenshot = require('./chrome-screenshot'),
+	pngDiff = require('../util/png-diff'),
+	ChromeScreenshot = require('../util/chrome-screenshot'),
 	writeOutput = function (fixtureOutput, pathPrefix) {
 		const ext = {
 				'image/svg': '.svg'

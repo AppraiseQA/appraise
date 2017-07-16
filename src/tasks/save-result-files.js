@@ -1,6 +1,6 @@
 'use strict';
 /*global module, require */
-const fsPromise = require('./fs-promise'),
+const fsPromise = require('../util/fs-promise'),
 	path = require('path');
 module.exports = function saveResultFiles(examples, resultsDir, template) {
 
