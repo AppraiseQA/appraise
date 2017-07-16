@@ -15,6 +15,9 @@
     "bin",
     "docs"
   ],
+  "bin": {
+    "appraise": "./bin/cmd.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gojko/appraise.git"
