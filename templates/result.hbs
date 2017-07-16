@@ -1,22 +1,76 @@
-<html> 
-<head>
-	<meta name="generator" value="appraise" />
-</head>
-	<body>
-		<h1>{{exampleName}}</h1>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <link href="{{rootUrl}}assets/style.css" rel="stylesheet" />
+  </head>
+  <body>
+<header class="navigation">
+	<div class="content">
+		<span class="project-name">Appraise</span>
+		<ul class="menu">
+			<li>
+          <a href="{{rootUrl}}">Home</a>
+        </li>
+		<li>
+		  <a href="{{rootUrl}}summary.html">Summary</a>
+		</li>
+        <li>
+          <a href="https://github.com/gojko/appraise">Help</a>
+        </li>
+      </ul>
+    </div>
+  </header>
+  <header class="page-header">
+    <div class="content">
+      <ul class="navigation-crumbs">
+		{{#each breadcrumbs}}
+			<li>{{this}}</li>
+		{{/each}}		
+		<li>{{exampleName}}</li>
+      </ul>
+    </div>
+  </header>
 
-		Outcome: <b>{{example.outcome.status}}</b> <br/>
-		<i>{{example.outcome.message}}</i>
-		
-		<h2>Expected</h2><img src="../{{example.expected}}"/>
-		<h2>Actual</h2><img src="{{example.output.screenshot}}" />
+  <div class="content page-block summary" data-outcome-status="{{example.outcome.status}}">
+	<div class="header">
+		<dl class="stats">
+		<dt>Outcome</dt>
+		<dd>{{example.outcome.status}}</dd>
+		{{#if example.outcome.message}}
+		<dt>Cause</dt>
+		<dd>{{example.outcome.message}}</dd>
+		{{/if}}
+	</div>
+  </div>
 
-  {{#if example.outcome.image}}
-		<h2>Diff</h2><img src="{{example.outcome.image}}" />
-  {{/if}}
+
+  <div class="content card-container">		
+    <div class="card">
+		<span class="card-title">Expected</span>
+		<div class="card-contents">
+			<img src="../{{example.expected}}"/>
+		</div>
+	</div><div class="card">
+		<span class="card-title">Actual</span>
+		<div class="card-contents" >
+			<img class="card-contents" src="{{example.output.screenshot}}" />
+		</div>
+	</div>
+	{{#if example.outcome.image}}
+	<div class="card">
+		<span class="card-title">Diff</span>
+		<div class="card-contents" >
+		<img src="{{example.outcome.image}}" />
+		</div>
+	</div>
+	 {{/if}}
 
   {{#if example.output.source}}
-	<h2>Source</h2><iframe src="{{example.output.source}}"></iframe>
+	<div class="card">
+		<span class="card-title">Source</span>
+		<iframe class="card-contents" src="{{example.output.source}}"></iframe>
+	</div>
   {{/if}}
+  </div>
 </body></html>
 

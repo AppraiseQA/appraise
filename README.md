@@ -25,7 +25,7 @@ too early to use (pre-alpha)
 - [x] Add a generic template for result files
 - [x] Create an index with all test results
 - [x] Approve changes from the command line
-- [ ] Clean up templates and provide a nice layout
+- [x] Clean up templates and provide a nice layout
 - [ ] Solve cross-linking (eg replace .md in local links to .html when generating html)
 - [ ] Distinguish between a failure and error
 - [ ] change sync FS operations to async

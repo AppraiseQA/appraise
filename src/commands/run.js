@@ -27,21 +27,27 @@ const sequentialPromiseMap = require('sequential-promise-map'),
 		let htmlDoc, examples, modifiedTime;
 		const mdPath = path.join(workingDir, filePath),
 			resultsPath = stripExtension(mdPath),
-			pageName = path.basename(resultsPath);
+			pageName = path.basename(resultsPath),
+			breadCrumbs = filePath.split(path.sep),
+			rootUrl = reverseRootPath(filePath);
 		fsUtil.ensureCleanDir(resultsPath);
 		return fsPromise.statAsync(mdPath)
 			.then(s => modifiedTime = s.mtime.toString())
 			.then(() => fsPromise.readFileAsync(mdPath, 'utf8'))
-			.then(log)
+			//.then(log)
 			.then(mdToHtml)
 			.then(c =>  htmlDoc = c)
-			.then(log)
+			//.then(log)
 			.then(extractExamplesFromHtml)
-			.then(log)
+			//.then(log)
 			.then(e => examples = e)
 			.then(e => runExamples(e, resultsPath, fixtureDir))
-			.then(log)
-			.then(e => saveResultFiles(e, resultsPath, templates.result))
+			//.then(log)
+			.then(e => saveResultFiles(e, resultsPath, templates.result, {
+				pageName: pageName,
+				breadcrumbs: breadCrumbs,
+				rootUrl: rootUrl + '../'
+			}))
 			.then(e => templates.page({
 				body: htmlDoc,
 				pageName: pageName,
@@ -49,11 +55,11 @@ const sequentialPromiseMap = require('sequential-promise-map'),
 				modifiedTime: modifiedTime,
 				executedTime: new Date().toString(),
 				summary: pageSummaryCounts(e),
-				rootUrl: reverseRootPath(filePath),
-				breadcrumbs: filePath.split(path.sep)
+				rootUrl: rootUrl,
+				breadcrumbs: breadCrumbs
 			}))
 			.then(htmlDoc => mergeResults(htmlDoc, examples, pageName))
-			.then(log)
+			//.then(log)
 			.then(htmlPageResult => fsPromise.writeFileAsync(resultsPath + '.html', htmlPageResult, 'utf8'))
 			.then(() => fsUtil.remove(mdPath))
 			.then(() => {
@@ -99,12 +105,12 @@ module.exports = function run(args) {
 			collectSourceFiles(exampleDir),
 			filePath => runMdFile (resultDir, filePath, t, fixtureDir)
 		))
-		.then(log)
+		//.then(log)
 		.then(r => results = {pages: r, summary: aggregateSummary(r), startedAt: startedTime, finishedAt: new Date().toString()})
-		.then(log)
+		//.then(log)
 		.then(r => fsPromise.writeFileAsync(path.join(resultDir, 'summary.json'), JSON.stringify(r, null, 2), 'utf8'))
 		.then(() => templates.summary(results))
-		.then(log)
+		//.then(log)
 		.then(html => fsPromise.writeFileAsync(path.join(resultDir, 'summary.html'), html, 'utf8'));
 };
 

@@ -302,3 +302,27 @@ dl.stats dd {
 
 }
 
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 20px;
+  grid-auto-rows: 300px;
+}
+.card-container .card {
+  box-sizing: border-box;
+  height: 300px;
+  background-color: #fafbfc;
+  border: 1px solid #e1e4e8;
+  padding: 10px;
+  display: flex;
+  flex-direction:column;
+}
+.card-container .card-title {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.card-container .card-contents {
+ flex-grow: 1;
+ overflow: scroll;
+}
