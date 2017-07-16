@@ -1,33 +1,117 @@
 <html>
-<head>
-<meta name="generator" value="appraise" />
-</head>
-<body>
-<h1>Appraise results</h1>
+  <head>
+    <meta charset="utf-8"/>
+    <link href="{{rootUrl}}assets/style.css" rel="stylesheet" />
+  </head>
+  <body>
+<header class="navigation">
+	<div class="content">
+		<span class="project-name">Appraise</span>
+		<ul class="menu">
+			<li>
+          <a href="{{rootUrl}}">Home</a>
+        </li>
+		{{#if results}}
+			<li>
+			  <a href="{{rootUrl}}summary.html">Summary</a>
+			</li>
+		{{/if}}
+        <li>
+          <a href="https://github.com/gojko/appraise">Help</a>
+        </li>
+      </ul>
+    </div>
+  </header>
+  <header class="page-header">
+    <div class="content">
+      <ul class="navigation-crumbs">
+  			<li>Summary</li>
+      </ul>
+    </div>
+  </header>
+
+  <div class="content page-block summary" data-outcome-status="{{summary.status}}">
+    <div class="header">
+      <h2>Summary</h2>
+		  <dl class="stats">
+			<dt>Total pages</dt><dd>{{summary.pages}}</dd>
+			<dt>Total examples</dt><dd>{{summary.total}}</dd>
+			  {{#if summary.success}}
+				  <dt>Passed</dt><dd>{{summary.success}}</dd>
+			  {{/if}}
+			  {{#if summary.failure}}
+				  <dt>Failed</dt><dd>{{summary.failure}}</dd>
+			  {{/if}}
+			  {{#if summary.error}}
+				  <dt>Errors</dt><dd>{{summary.error}}</dd>
+			  {{/if}}
+		  </dl>
+		</div>
+		<table>
+		  <tbody>
+			{{#each pages}}
+				<tr data-outcome-status="{{summary.status}}">
+				  <td><a href="{{pageName}}.html">{{pageName}}</a></td>
+          <td>
+          	<dl class="stats">
+              <dt>Total examples</dt><dd>{{summary.total}}</dd>
+                {{#if summary.success}}
+                  <dt>Passed</dt><dd>{{summary.success}}</dd>
+                {{/if}}
+                {{#if summary.failure}}
+                  <dt>Failed</dt><dd>{{summary.failure}}</dd>
+                {{/if}}
+                {{#if summary.error}}
+                  <dt>Errors</dt><dd>{{summary.error}}</dd>
+                {{/if}}
+            </dl>
+          </td>
+				</tr>
+			{{/each}}
+		  </tbody>
+		</table>
+  </div>
+
+
 
 {{#each pages}}
-	<div class="page">
-		<h1>{{name}}</h1>
-		{{#each examples}}
-			<div class="example">
-				<a href="{{../name}}.html#{{@key}}">
-					<span class="name">
-						{{@key}}
-					</span>
-				</a>
-				<span class="outcome">
-					{{outcome.status}}
-				</span>
-				<span class="message">
-					{{outcome.message}}
-				</span>
-			</div>
-		{{else}}
-			No tests found in this page
-		{{/each}}
-	</div>
+  <div class="content page-block summary" data-outcome-status="{{summary.status}}">
+    <div class="header">
+      <h2><a href="{{pageName}}.html">{{pageName}}</a></h2>
+		  <dl class="stats">
+			<dt>Total examples</dt><dd>{{summary.total}}</dd>
+			  {{#if summary.success}}
+				  <dt>Passed</dt><dd>{{summary.success}}</dd>
+			  {{/if}}
+			  {{#if summary.failure}}
+				  <dt>Failed</dt><dd>{{summary.failure}}</dd>
+			  {{/if}}
+			  {{#if summary.error}}
+				  <dt>Errors</dt><dd>{{summary.error}}</dd>
+			  {{/if}}
+		  </dl>
+		</div>
+		<table>
+		  <tbody>
+			{{#each results}}
+				<tr data-outcome-status="{{outcome.status}}">
+				  <td><a href="{{../pageName}}/{{index}}-result.html">{{@key}}</a></td><td>{{outcome.message}}</td>
+				</tr>
+			{{/each}}
+		  </tbody>
+		</table>
+  </div>
+
+
+
 {{else}}
-  No test pages found in this directory
+
+  <div class="content page-block summary" data-outcome-status="{{summary.status}}">
+    <div class="header">
+      No test pages found in this directory
+		</div>
+  </div>
+
 {{/each}}
 
 </body>

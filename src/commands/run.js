@@ -8,6 +8,7 @@ const sequentialPromiseMap = require('sequential-promise-map'),
 	compileTemplate = require('../tasks/compile-template'),
 	runExamples = require('../tasks/run-examples'),
 	pageSummaryCounts = require('../tasks/page-summary-counts'),
+	aggregateSummary = require('../tasks/aggregate-summary'),
 	mergeResults = require('../tasks/merge-results'),
 	saveResultFiles = require('../tasks/save-result-files'),
 	extractExamplesFromHtml = require('../tasks/extract-examples-from-html'),
@@ -57,8 +58,9 @@ const sequentialPromiseMap = require('sequential-promise-map'),
 			.then(() => fsUtil.remove(mdPath))
 			.then(() => {
 				return {
-					name: path.basename(resultsPath),
-					examples: examples
+					pageName: pageName,
+					results: examples,
+					summary: pageSummaryCounts(examples)
 				};
 			});
 	},
@@ -84,7 +86,8 @@ module.exports = function run(args) {
 	const resultDir = args['results-dir'],
 		exampleDir = args['examples-dir'],
 		fixtureDir = args['fixtures-dir'] || exampleDir,
-		templatesDir = args['templates-dir'];
+		templatesDir = args['templates-dir'],
+		startedTime = new Date().toString();
 
 	validateRequiredParams(args, ['examples-dir', 'results-dir', 'templates-dir']);
 	fsUtil.ensureCleanDir(resultDir);
@@ -97,9 +100,10 @@ module.exports = function run(args) {
 			filePath => runMdFile (resultDir, filePath, t, fixtureDir)
 		))
 		.then(log)
-		.then(r => results = r)
+		.then(r => results = {pages: r, summary: aggregateSummary(r), startedAt: startedTime, finishedAt: new Date().toString()})
+		.then(log)
 		.then(r => fsPromise.writeFileAsync(path.join(resultDir, 'summary.json'), JSON.stringify(r, null, 2), 'utf8'))
-		.then(() => templates.summary({pages: results}))
+		.then(() => templates.summary(results))
 		.then(log)
 		.then(html => fsPromise.writeFileAsync(path.join(resultDir, 'summary.html'), html, 'utf8'));
 };

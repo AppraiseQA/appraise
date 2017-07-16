@@ -8,6 +8,7 @@ body {
   margin-right: 0;
   padding: 0;
   border: 0;
+  color: black;
 }
 pre, code {
   font-family: 'Source Code Pro', monospace;
@@ -22,6 +23,10 @@ a, a:visited, a:active {
 a:hover {
   color: #2ba1f0;
   text-decoration: underline;
+}
+
+h1 a, h1 a:active, h1 a:visited, h1 a:hover, h2 a, h2 a:active, h2 a:visited, h2 a:hover {
+	color: black;
 }
 
 header.navigation {
@@ -118,6 +123,9 @@ span.project-name {
   text-decoration: none;
 }
 
+.markdown-content h1, .markdown-content h2 {
+  border-bottom: 1px solid #eaecef;
+}
 
 .page-block .header {
   border-bottom: 1px solid #e1e4e8;
@@ -134,12 +142,11 @@ span.project-name {
 .page-block h1 {
   padding-bottom: 0.3em;
   font-size: 2em;
-  border-bottom: 1px solid #eaecef;
+
 }
 .page-block h2 {
   padding-bottom: 0.3em;
   font-size: 1.5em;
-  border-bottom: 1px solid #eaecef;
 }
 .page-block h1, .page-block h2, .page-block h3, .page-block h4, .page-block h5, .page-block h6 {
   margin-top: 24px;
@@ -252,20 +259,20 @@ span.project-name {
 }
 
 
-.header dl {
+dl.stats {
   display: inline-block;
   margin: 0;
 }
-.header dt {
+dl.stats dt {
   display: inline-block;
   margin: 0;
   font-weight: bolder;
   margin-right: 1em;
 }
-.header dt::after {
+dl.stats dt::after {
   content: ':'
 }
-.header dd {
+dl.stats dd {
   display: inline-block;
   margin: 0;
   margin-right: 1em;

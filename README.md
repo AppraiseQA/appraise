@@ -29,6 +29,7 @@ too early to use (pre-alpha)
 - [ ] Solve cross-linking (eg replace .md in local links to .html when generating html)
 - [ ] Distinguish between a failure and error
 - [ ] change sync FS operations to async
+- [ ] breadcrumbs on results page -> links
 - [ ] test more complex scenarios
   - [ ] test with multiple examples in a single file
   - [ ] test with multiple files
