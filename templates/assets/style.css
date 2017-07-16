@@ -326,3 +326,7 @@ dl.stats dd {
  flex-grow: 1;
  overflow: scroll;
 }
+.card-container .card-contents img {
+  max-width: 100%;
+  max-height: 100%;
+}

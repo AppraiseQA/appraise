@@ -6,7 +6,6 @@ const CDP = require('chrome-remote-interface'),
 			.then(layout => layout.contentSize);
 	},
 	setSize = function (box, cdp) {
-		console.log('setting size to ', box);
 		return cdp.Emulation.setDeviceMetricsOverride({
 			width: box.width,
 			height: box.height,
@@ -41,7 +40,6 @@ module.exports = function ChromeScreenshot() {
 		options.initialWidth = options.initialWidth || 10;
 		options.initialHeight = options.initialHeight || 10;
 		options.format = options.format || 'png';
-		console.log('setting size to ', options);
 		return cdp.Emulation.setDeviceMetricsOverride({
 			width: options.initialWidth,
 			height: options.initialHeight,

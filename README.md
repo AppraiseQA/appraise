@@ -26,19 +26,15 @@ too early to use (pre-alpha)
 - [x] Create an index with all test results
 - [x] Approve changes from the command line
 - [x] Clean up templates and provide a nice layout
-- [ ] Solve cross-linking (eg replace .md in local links to .html when generating html)
 - [ ] Distinguish between a failure and error
-- [ ] change sync FS operations to async
-- [ ] breadcrumbs on results page -> links
-- [ ] test more complex scenarios
-  - [ ] test with multiple examples in a single file
-  - [ ] test with multiple files
-  - [ ] test with files in subfolders
-- [ ] URL fixture execution (eg test the same site in various resolutions)
-- [ ] in-browser fixture execution
-  - [ ] custom event to signal finished rendering
-  - [ ] webpack fixture packaging
-  - [ ] inject css/js
+- [ ] Fixture execution
+  - [x] inside node
+  - [ ] URL fixture execution (eg test the same site in various resolutions)
+  - [ ] in-browser fixture execution
+    - [ ] custom event to signal finished rendering
+    - [ ] webpack fixture packaging
+    - [ ] inject css/js
+    - [ ] AWS Lambda fixture engine
 - [ ] Extract configuration/enable overrides
   - [x] Configurable source and work directories (don't just dump stuff to temp)
   - [ ] Configurable clip area for screenshots
@@ -51,9 +47,6 @@ too early to use (pre-alpha)
   - [ ] render markdown from the examples folder 
   - [ ] offer running the spec if the MD contains any examples
   - [ ] approving changes
-- [ ] Retina screen sizing
-- [ ] Start/stop chrome once per run, not once per page
-- [ ] AWS Lambda fixture engine
 - [ ] AWS Lambda screenshots 
 - [ ] Running tests by directly reading specs from github (eg public site, connect to a gitub repo)
 - [ ] Approving by directly committing to github? (eg for specs stored in github repos)
@@ -63,3 +56,24 @@ too early to use (pre-alpha)
   - [x] approving changes
   - [ ] filtering tests for approvals
   - [ ] filtering tests for execution
+
+## Before alpha
+
+- [ ] test with multiple examples in a single file
+- [ ] test with multiple files
+- [ ] test with files in subfolders
+- [ ] test with large images
+- [ ] test with complex page and example names
+- [ ] test with exceptions thrown throughout the test process
+
+### Known problems
+
+- [ ] breadcrumbs on results page -> links
+- [ ] Retina screen sizing
+- [ ] Solve cross-linking (eg replace .md in local links to .html when generating html)
+  
+### Performance issues
+
+- [ ] Start/stop chrome once per run, not once per page
+- [ ] change sync FS operations to async
+

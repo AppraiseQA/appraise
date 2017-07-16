@@ -111,7 +111,8 @@ module.exports = function run(args) {
 		.then(r => fsPromise.writeFileAsync(path.join(resultDir, 'summary.json'), JSON.stringify(r, null, 2), 'utf8'))
 		.then(() => templates.summary(results))
 		//.then(log)
-		.then(html => fsPromise.writeFileAsync(path.join(resultDir, 'summary.html'), html, 'utf8'));
+		.then(html => fsPromise.writeFileAsync(path.join(resultDir, 'summary.html'), html, 'utf8'))
+		.then(() => results.summary);
 };
 
 module.exports.doc = {

@@ -15,7 +15,6 @@ module.exports = function saveResultFiles(examples, resultsDir, template, generi
 					},
 					genericTemplateOptions),
 				contents = template(templateOptions);
-			console.log('saving with', templateOptions);
 			return fsPromise.writeFileAsync(path.join(resultsDir, example.index + '-result.html'), contents, 'utf8');
 		};
 
