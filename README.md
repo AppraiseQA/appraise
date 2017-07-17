@@ -26,6 +26,10 @@ too early to use (pre-alpha)
 - [x] Create an index with all test results
 - [x] Approve changes from the command line
 - [x] Clean up templates and provide a nice layout
+- [ ] Make it easier to inspect/approve
+  - [x] CLI Approval instructions on the results page
+  - [ ] CLI Approval instructions on the rendered page (for all examples)
+  - [ ] Overview/Overlay/Inspect on the results page
 - [ ] Distinguish between a failure and error
 - [ ] Fixture execution
   - [x] inside node
@@ -47,9 +51,9 @@ too early to use (pre-alpha)
   - [ ] render markdown from the examples folder 
   - [ ] offer running the spec if the MD contains any examples
   - [ ] approving changes
+  - [ ] Running tests by directly reading specs from github (eg public site, connect to a gitub repo)
+  - [ ] Approving by directly committing to github? (eg for specs stored in github repos)
 - [ ] AWS Lambda screenshots 
-- [ ] Running tests by directly reading specs from github (eg public site, connect to a gitub repo)
-- [ ] Approving by directly committing to github? (eg for specs stored in github repos)
 - [ ] CI reporters (junit, tap)
 - [ ] CLI/NPM tasks
   - [x] executing tests
@@ -72,6 +76,7 @@ too early to use (pre-alpha)
 - [ ] navigation on results page (breadcrumbs and page links)
 - [ ] Retina screen sizing
 - [ ] Solve cross-linking (eg replace .md in local links to .html when generating html)
+- [ ] detect examples with the same name on a page
   
 ### Performance issues
 

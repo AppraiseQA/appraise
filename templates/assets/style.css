@@ -330,3 +330,18 @@ dl.stats dd {
   max-width: 100%;
   max-height: 100%;
 }
+
+.instructions {
+  padding-top: 5px;
+  padding-left: 10px;
+  padding-bottom: 5px;
+  padding-right: 10px;
+}
+
+.instructions code {
+  display: block;
+  padding-left: 2em;
+  white-space: nowrap;
+  overflow: scroll;
+  background-color: #f6f8fa;
+}

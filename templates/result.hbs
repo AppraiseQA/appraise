@@ -41,6 +41,14 @@
 		<dd>{{example.outcome.message}}</dd>
 		{{/if}}
 	</div>
+  {{#if approvalInstructions}}
+    <div class="instructions">
+      Approve this example from your command line using:
+      <code>
+        {{approvalInstructions}}
+      </code>
+    </div>
+  {{/if}}
   </div>
 
 
