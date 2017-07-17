@@ -12,13 +12,13 @@ const path = require('path'),
 		return objectName === expression;
 	},
 	filterExamples = function (pageObj, expression) {
-		const result = {
-			name: pageObj.name
+		const filteredPage = {
+			pageName: pageObj.pageName
 		};
-		result.examples = Object.keys(pageObj.examples)
+		filteredPage.results = Object.keys(pageObj.results)
 			.filter(exampleName => matchingName(exampleName, expression))
-			.map(matchedName => pageObj.examples[matchedName]);
-		return result;
+			.map(matchedName => pageObj.results[matchedName]);
+		return filteredPage;
 	},
 	approveExample = function (pageName, exampleObj, examplesDir, resultsDir) {
 		const expected = path.join(examplesDir, pageName, '..', exampleObj.expected),
@@ -28,12 +28,12 @@ const path = require('path'),
 		return expected;
 	},
 	approvePage = function (pageObj, examplesDir, resultsDir) {
-		if (!pageObj.examples) {
+		if (!pageObj.results) {
 			return false;
 		}
-		const exampleNames = Object.keys(pageObj.examples);
+		const exampleNames = Object.keys(pageObj.results);
 		return Promise.all(exampleNames.map(
-			exampleName => approveExample(pageObj.name, pageObj.examples[exampleName], examplesDir, resultsDir)
+			exampleName => approveExample(pageObj.pageName, pageObj.results[exampleName], examplesDir, resultsDir)
 		));
 	};
 
@@ -41,8 +41,8 @@ module.exports = function approve(params) {
 	validateRequiredParams(params, ['examples-dir', 'results-dir', 'example', 'page']);
 	return fsPromise.readFileAsync(path.join(params['results-dir'], 'summary.json'), 'utf8')
 		.then(JSON.parse)
-		.then(pages =>
-			pages.filter(page => matchingName(page.name, params.page)).map(page => filterExamples(page, params.example))
+		.then(results =>
+			results.pages.filter(page => matchingName(page.pageName, params.page)).map(page => filterExamples(page, params.example))
 		)
 		.then(pages => pages.forEach(page => approvePage(page, params['examples-dir'], params['results-dir'])));
 };
