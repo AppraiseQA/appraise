@@ -4,6 +4,10 @@
     <link href="{{rootUrl}}assets/style.css" rel="stylesheet" />
   </head>
   <body>
+  <input type="radio" checked="checked" data-tab-name="tab1" id="tab1" name="tab"/>	  
+  <input type="radio" data-tab-name="tab2" id="tab2" name="tab"/>	  
+  <input type="radio" data-tab-name="tab3" id="tab3" name="tab"/>	  
+  <input type="radio" data-tab-name="tab4" id="tab4" name="tab"/>
 <header class="navigation">
 	<div class="content">
 		<span class="project-name">Appraise</span>
@@ -29,6 +33,18 @@
 		<li>{{exampleName}}</li>
       </ul>
     </div>
+	<div class="content tab-container">
+		<label for="tab1">Grid</label>
+		{{#if example.output.screenshot}}
+		<label for="tab2">Overlay</label>
+		{{/if}}
+		{{#if example.output.source}}
+		<label for="tab3">Inspect</label>
+		{{/if}}
+		{{#if example.output.logs}}
+		<label for="tab4">Logs</label>
+		{{/if}}
+	</div>	  
   </header>
 
   <div class="content page-block summary" data-outcome-status="{{example.outcome.status}}">
@@ -40,6 +56,7 @@
 		<dt>Cause</dt>
 		<dd>{{example.outcome.message}}</dd>
 		{{/if}}
+		</dl>
 	</div>
   {{#if approvalInstructions}}
     <div class="instructions">
@@ -52,33 +69,68 @@
   </div>
 
 
-  <div class="content card-container">		
+  <div class="content card-container"  data-tab-panel="tab1">		
     <div class="card">
 		<span class="card-title">Expected</span>
 		<div class="card-contents">
 			<img src="../{{example.expected}}"/>
 		</div>
-	</div><div class="card">
-		<span class="card-title">Actual</span>
-		<div class="card-contents" >
-			<img class="card-contents" src="{{example.output.screenshot}}" />
-		</div>
 	</div>
+	{{#if example.output.screenshot}}
+		<div class="card">
+			<span class="card-title">Actual</span>
+			<div class="card-contents" >
+				<img class="card-contents" src="{{example.output.screenshot}}" />
+			</div>
+		</div>
+	 {{/if}}
 	{{#if example.outcome.image}}
-	<div class="card">
-		<span class="card-title">Diff</span>
-		<div class="card-contents" >
-		<img src="{{example.outcome.image}}" />
+		<div class="card">
+			<span class="card-title">Diff</span>
+			<div class="card-contents" >
+			<img src="{{example.outcome.image}}" />
+			</div>
 		</div>
-	</div>
 	 {{/if}}
 
+	 {{#if example.output.source}}
+		<div class="card">
+			<span class="card-title">Source</span>
+			<iframe class="card-contents" src="{{example.output.source}}"></iframe>
+		</div>
+	 {{/if}}
+  </div>
+  
+  <div class="content"  data-tab-panel="tab2">
+	 <div class="box controls">
+		  <span class="box-title"><input type="checkbox" checked="checked"/> Expected</span>
+		  <span class="control"><label>Opacity</label><input type="range" min="0" max="1" step="0.05" value="0.5"></span>
+		  <span class="control"><label>Scale</label><input type="range" min="-5" max="5" step="1" value="0"></span>
+	  </div>
+	 <div class="box controls">
+		  <span class="box-title"><input type="checkbox" checked="checked"/> Actual</span>
+		  <span class="control"><label>Opacity</label><input type="range" min="0" max="1" step="0.05" value="0.5"></span>
+		  <span class="control"><label>Scale</label><input type="range" min="-5" max="5" step="1" value="0"></span>
+	  </div>
+	{{#if example.outcome.image}}
+	 <div class="box controls">
+		  <span class="box-title"><input type="checkbox"/> Diff</span>
+		  <span class="control"><label>Opacity</label><input type="range" min="0" max="1" step="0.05" value="0.5"></span>
+		  <span class="control"><label>Scale</label><input type="range" min="-5" max="5" step="1" value="0"></span>
+	  </div>
+	 {{/if}}
+	  <div class="box controls">
+		  <span class="box-title"><input type="checkbox"/> Grid</span>
+		  <span class="control"><label>Opacity</label><input type="range" min="0" max="1" step="0.05" value="0.5"></span>
+		  <span class="control"><label>Size</label><input type="range" min="5" max="100" step="5" value="20"></span>
+	  </div>
+  </div>
   {{#if example.output.source}}
-	<div class="card">
-		<span class="card-title">Source</span>
-		<iframe class="card-contents" src="{{example.output.source}}"></iframe>
+	<div class="content grow" data-tab-panel="tab3">
+  	<iframe src="{{example.output.source}}"></iframe>
 	</div>
   {{/if}}
-  </div>
+
+
 </body></html>
 

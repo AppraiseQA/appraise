@@ -45,10 +45,11 @@ header.navigation {
 header.page-header {
   background-color: #fafbfc;
   padding-top: 20px;
-  padding-bottom: 20px;
+  padding-bottom: 0px;
   margin-bottom: 20px;
   border-bottom: 1px solid #e1e4e8;
   width: 100%;
+  box-sizing: border-box;
 }
 .navigation a, .navigation a:visited, .navigation a:active {
   color: white;
@@ -82,7 +83,10 @@ span.project-name {
   font-size: 18px;
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 0px;
+  padding-bottom: 20px;
   display: inline-block;
   font-weight: bolder;
 }
@@ -93,6 +97,40 @@ span.project-name {
   content: '/';
   padding-left: 0.5em;
   padding-right: 0.5em;
+}
+input[name="tab"] {
+	display: none;
+}
+#tab1:not(:checked) ~ [data-tab-panel="tab1"],
+#tab2:not(:checked) ~ [data-tab-panel="tab2"],
+#tab3:not(:checked) ~ [data-tab-panel="tab3"],
+#tab4:not(:checked) ~ [data-tab-panel="tab4"] {
+	display: none !important;
+}
+
+.tab-container {
+	display: block;
+	box-sizing: border-box;
+	position: relative;
+	top: 1px;
+	margin-top: 0;
+	margin-bottom: 0;
+	padding: 0;
+}
+.tab-container label {
+	display: inline-block;
+	padding: 0.5em 1em 0.5em 1em;
+	box-sizing: border-box;
+	cursor: pointer;
+}
+#tab1:checked ~ header label[for=tab1],
+#tab2:checked ~ header label[for=tab2],
+#tab3:checked ~ header label[for=tab3],
+#tab4:checked ~ header label[for=tab4]{
+	background-color:white;
+	border: 1px solid #e1e4e8;
+	border-bottom: none;
+	border-radius: 2px 2px 0 0;
 }
 
 .markdown-content {
@@ -165,12 +203,14 @@ span.project-name {
 }
 .page-block {
   border: 1px solid #e1e4e8;
+  border-radius: 3px;
   margin-top: 0.5em;
   margin-bottom: 1em;
 }
 
 .summary {
   border: 1px solid #2ba1f0;
+  border-radius: 3px;
   font-size: 16px;				
   line-height: 24px;
 }
@@ -308,21 +348,31 @@ dl.stats dd {
   grid-gap: 20px;
   grid-auto-rows: 300px;
 }
-.card-container .card {
+.card, .box {
   box-sizing: border-box;
-  height: 300px;
   background-color: #fafbfc;
   border: 1px solid #e1e4e8;
+  border-radius: 3px;
   padding: 10px;
+}
+.card {
+  height: 300px;
   display: flex;
   flex-direction:column;
 }
-.card-container .card-title {
+.box {
+  display: inline-block;
+}
+.box:not(:first-of-type) {
+ margin-left: 20px;
+}
+
+.card .card-title, .box .box-title {
   display: block;
   font-weight: bold;
   margin-bottom: 10px;
 }
-.card-container .card-contents {
+.card .card-contents {
  flex-grow: 1;
  overflow: scroll;
 }
@@ -344,4 +394,26 @@ dl.stats dd {
   white-space: nowrap;
   overflow: scroll;
   background-color: #f6f8fa;
+}
+
+.controls .control {
+  display: block;
+}
+.controls .control label {
+  min-width: 70px;
+  display: inline-block;
+}
+.controls .control label::after {
+  content: ':';
+}
+
+.grow {
+	display: flex;
+    flex-grow: 1;
+    overflow-y: visible;
+    min-height: 50%;
+}
+
+.grow > * {
+	flex-grow: 1;
 }
