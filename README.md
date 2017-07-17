@@ -1,5 +1,7 @@
 # Appraise -- Visual approval testing
 
+![](templates/assets/logo.png)
+
 This is a (research) project aimed at prototyping a tool for visual approval testing. The goals of the project are to build a tool that helps delivery teams with the following tasks:
 
 - Review and approve changes to web pages, visual layouts and browser components quickly through visual inspection 
@@ -30,6 +32,8 @@ too early to use (pre-alpha)
   - [x] CLI Approval instructions on the results page
   - [ ] CLI Approval instructions on the rendered page (for all examples)
   - [ ] Overview/Overlay/Inspect on the results page
+    - [ ] set view/opacity/zoom for actual/expected/diff separately
+    - [ ] turn on grid/ set grid dims
 - [ ] Distinguish between a failure and error
 - [ ] Fixture execution
   - [x] inside node
