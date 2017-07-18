@@ -362,6 +362,7 @@ dl.stats dd {
 }
 .box {
   display: inline-block;
+  margin-bottom: 20px;
 }
 .box:not(:first-of-type) {
  margin-left: 20px;
@@ -416,4 +417,23 @@ dl.stats dd {
 
 .grow > * {
 	flex-grow: 1;
+}
+.overlay-container {
+	position: relative;
+}
+.overlay-container > * {
+	position: absolute;
+	top: 0;
+	left: 0;
+	opacity: 0.5;
+	transition: all 0.2s ease;
+	transform-origin: top left;
+}
+
+.hidden {
+	display: none !important;
+}
+
+.draggable {
+	cursor: move;
 }

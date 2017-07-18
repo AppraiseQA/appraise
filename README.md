@@ -31,9 +31,8 @@ too early to use (pre-alpha)
 - [ ] Make it easier to inspect/approve
   - [x] CLI Approval instructions on the results page
   - [ ] CLI Approval instructions on the rendered page (for all examples)
-  - [ ] Overview/Overlay/Inspect on the results page
-    - [ ] set view/opacity/zoom for actual/expected/diff separately
-    - [ ] turn on grid/ set grid dims
+  - [x] Overview/Overlay/Inspect on the results page
+    - [x] set view/opacity/zoom for actual/expected/diff separately
 - [ ] Distinguish between a failure and error
 - [ ] Fixture execution
   - [x] inside node
