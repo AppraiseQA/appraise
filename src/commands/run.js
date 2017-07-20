@@ -1,120 +1,30 @@
 'use strict';
-const sequentialPromiseMap = require('sequential-promise-map'),
-	fsUtil = require('../util/fs-util'),
-	fsPromise = require('../util/fs-promise'),
-	path = require('path'),
-	mdToHtml = require('../tasks/md-to-html'),
-	reverseRootPath = require('../util/reverse-root-path'),
-	compileTemplate = require('../tasks/compile-template'),
-	runExamples = require('../tasks/run-examples'),
-	pageSummaryCounts = require('../tasks/page-summary-counts'),
-	aggregateSummary = require('../tasks/aggregate-summary'),
-	mergeResults = require('../tasks/merge-results'),
-	saveResultFiles = require('../tasks/save-result-files'),
-	extractExamplesFromHtml = require('../tasks/extract-examples-from-html'),
+const compileTemplates = require('../tasks/compile-templates-from-dir'),
 	validateRequiredParams = require('../util/validate-required-params'),
 	ChromeScreenshot = require('../util/chrome-screenshot'),
-	log = require('../util/debug-log'),
-	isMarkdown = function (filePath) {
-		return path.extname(filePath) === '.md';
-	},
-	isHandlebars = function (filePath) {
-		return path.extname(filePath) === '.hbs';
-	},
-	stripExtension = function (filePath) {
-		return path.join(path.dirname(filePath), path.basename(filePath, path.extname(filePath)));
-	},
-	runMdFile = function (workingDir, filePath, templates, fixtureDir, screenshot) {
-		let htmlDoc, examples, modifiedTime;
-		const mdPath = path.join(workingDir, filePath),
-			resultsPath = stripExtension(mdPath),
-			pageName = path.basename(resultsPath),
-			breadCrumbs = filePath.split(path.sep),
-			rootUrl = reverseRootPath(filePath);
-		fsUtil.ensureCleanDir(resultsPath);
-		return fsPromise.statAsync(mdPath)
-			.then(s => modifiedTime = s.mtime.toString())
-			.then(() => fsPromise.readFileAsync(mdPath, 'utf8'))
-			//.then(log)
-			.then(mdToHtml)
-			.then(c =>  htmlDoc = c)
-			//.then(log)
-			.then(extractExamplesFromHtml)
-			//.then(log)
-			.then(e => examples = e)
-			.then(e => runExamples(e, resultsPath, fixtureDir, screenshot))
-			//.then(log)
-			.then(e => saveResultFiles(e, resultsPath, templates.result, {
-				pageName: pageName,
-				breadcrumbs: breadCrumbs,
-				rootUrl: rootUrl + '../'
-			}))
-			.then(e => templates.page({
-				body: htmlDoc,
-				pageName: pageName,
-				results: e,
-				modifiedTime: modifiedTime,
-				executedTime: new Date().toString(),
-				summary: pageSummaryCounts(e),
-				rootUrl: rootUrl,
-				breadcrumbs: breadCrumbs
-			}))
-			.then(htmlDoc => mergeResults(htmlDoc, examples, pageName))
-			//.then(log)
-			.then(htmlPageResult => fsPromise.writeFileAsync(resultsPath + '.html', htmlPageResult, 'utf8'))
-			.then(() => fsUtil.remove(mdPath))
-			.then(() => {
-				return {
-					pageName: pageName,
-					results: examples,
-					summary: pageSummaryCounts(examples)
-				};
-			});
-	},
-	arrayToObject = function (array, names) {
-		const result = {};
-		names.forEach((name, index) => result[name] = array[index]);
-		return result;
-	},
-	compileTemplates = function (dir) {
-		const templateNames = fsUtil.recursiveList(dir).filter(isHandlebars);
-		return Promise.all(templateNames.map(name => compileTemplate(path.join(dir, name))))
-			.then(array => arrayToObject(array, templateNames.map(stripExtension)));
-	},
-	collectSourceFiles = function (exampleDir) {
-		return fsUtil.recursiveList(exampleDir).filter(isMarkdown);
-	};
+	prepareResultsDir = require('../tasks/prepare-results-dir'),
+	configureFixtureEngines = require('../tasks/configure-fixture-engines'),
+	runMdFilesFromDir = require('../tasks/run-md-files-from-dir');
 
-
+	//log = require('../util/debug-log')
 
 module.exports = function run(args) {
-	let templates, results;
-
+	let results, fixtureEngines;
 	const resultDir = args['results-dir'],
-		exampleDir = args['examples-dir'],
-		fixtureDir = args['fixtures-dir'] || exampleDir,
+		examplesDir = args['examples-dir'],
 		templatesDir = args['templates-dir'],
-		chromeScreenshot = new ChromeScreenshot(),
-		startedTime = new Date().toString();
+		chromeScreenshot = new ChromeScreenshot();
 
 	validateRequiredParams(args, ['examples-dir', 'results-dir', 'templates-dir']);
-	fsUtil.ensureCleanDir(resultDir);
-	fsUtil.copy(path.join(exampleDir, '*'), resultDir);
-	fsUtil.copy(path.join(templatesDir, 'assets'), resultDir);
+
+
 	return chromeScreenshot.start()
+		.then(() => configureFixtureEngines(args))
+		.then(e => fixtureEngines = e)
+		.then(() => prepareResultsDir(resultDir, examplesDir, templatesDir))
 		.then(() => compileTemplates(templatesDir))
-		.then(t => templates = t)
-		.then(t => sequentialPromiseMap(
-			collectSourceFiles(exampleDir),
-			filePath => runMdFile (resultDir, filePath, t, fixtureDir, chromeScreenshot)
-		))
-		//.then(log)
-		.then(r => results = {pages: r, summary: aggregateSummary(r), startedAt: startedTime, finishedAt: new Date().toString()})
-		//.then(log)
-		.then(r => fsPromise.writeFileAsync(path.join(resultDir, 'summary.json'), JSON.stringify(r, null, 2), 'utf8'))
-		.then(() => templates.summary(results))
-		//.then(log)
-		.then(html => fsPromise.writeFileAsync(path.join(resultDir, 'summary.html'), html, 'utf8'))
+		.then(templates => runMdFilesFromDir(examplesDir, resultDir, fixtureEngines, templates, chromeScreenshot))
+		.then(r => results = r)
 		.then(chromeScreenshot.stop)
 		.then(() => results.summary);
 };
