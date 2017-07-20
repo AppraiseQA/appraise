@@ -36,6 +36,7 @@ too early to use (pre-alpha)
 - [ ] Distinguish between a failure and error
 - [ ] Fixture execution
   - [x] inside node
+    - [ ] detect and parse language (eg json or yaml)
   - [ ] URL fixture execution (eg test the same site in various resolutions)
   - [ ] in-browser fixture execution
     - [ ] custom event to signal finished rendering
