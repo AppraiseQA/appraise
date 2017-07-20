@@ -3,7 +3,6 @@
 const path = require('path'),
 	fs = require('fs'),
 	pngDiff = require('../util/png-diff'),
-	ChromeScreenshot = require('../util/chrome-screenshot'),
 	writeOutput = function (fixtureOutput, pathPrefix) {
 		const ext = {
 				'image/svg': '.svg'
@@ -40,12 +39,8 @@ const path = require('path'),
 			.then(outcome => saveOutcome(example, outcome))
 			.then(() => example);
 	};
-module.exports = function runExamples(examples, workingDir, fixtureDir) {
-	const exampleNames = Object.keys(examples),
-		chromeScreenshot = new ChromeScreenshot();
-	return chromeScreenshot.start()
-		.then(() => Promise.all(exampleNames.map((key, exampleIndex) =>
-			runExample(examples[key], fixtureDir, workingDir, exampleIndex, chromeScreenshot))))
-		.then(chromeScreenshot.stop)
+module.exports = function runExamples(examples, workingDir, fixtureDir, screenshot) {
+	const exampleNames = Object.keys(examples);
+	return Promise.all(exampleNames.map((key, exampleIndex) => runExample(examples[key], fixtureDir, workingDir, exampleIndex, screenshot)))
 		.then(() => examples);
 };

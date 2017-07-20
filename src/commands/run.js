@@ -13,6 +13,7 @@ const sequentialPromiseMap = require('sequential-promise-map'),
 	saveResultFiles = require('../tasks/save-result-files'),
 	extractExamplesFromHtml = require('../tasks/extract-examples-from-html'),
 	validateRequiredParams = require('../util/validate-required-params'),
+	ChromeScreenshot = require('../util/chrome-screenshot'),
 	log = require('../util/debug-log'),
 	isMarkdown = function (filePath) {
 		return path.extname(filePath) === '.md';
@@ -23,7 +24,7 @@ const sequentialPromiseMap = require('sequential-promise-map'),
 	stripExtension = function (filePath) {
 		return path.join(path.dirname(filePath), path.basename(filePath, path.extname(filePath)));
 	},
-	runMdFile = function (workingDir, filePath, templates, fixtureDir) {
+	runMdFile = function (workingDir, filePath, templates, fixtureDir, screenshot) {
 		let htmlDoc, examples, modifiedTime;
 		const mdPath = path.join(workingDir, filePath),
 			resultsPath = stripExtension(mdPath),
@@ -41,7 +42,7 @@ const sequentialPromiseMap = require('sequential-promise-map'),
 			.then(extractExamplesFromHtml)
 			//.then(log)
 			.then(e => examples = e)
-			.then(e => runExamples(e, resultsPath, fixtureDir))
+			.then(e => runExamples(e, resultsPath, fixtureDir, screenshot))
 			//.then(log)
 			.then(e => saveResultFiles(e, resultsPath, templates.result, {
 				pageName: pageName,
@@ -93,17 +94,19 @@ module.exports = function run(args) {
 		exampleDir = args['examples-dir'],
 		fixtureDir = args['fixtures-dir'] || exampleDir,
 		templatesDir = args['templates-dir'],
+		chromeScreenshot = new ChromeScreenshot(),
 		startedTime = new Date().toString();
 
 	validateRequiredParams(args, ['examples-dir', 'results-dir', 'templates-dir']);
 	fsUtil.ensureCleanDir(resultDir);
 	fsUtil.copy(path.join(exampleDir, '*'), resultDir);
 	fsUtil.copy(path.join(templatesDir, 'assets'), resultDir);
-	return compileTemplates(templatesDir)
+	return chromeScreenshot.start()
+		.then(() => compileTemplates(templatesDir))
 		.then(t => templates = t)
 		.then(t => sequentialPromiseMap(
 			collectSourceFiles(exampleDir),
-			filePath => runMdFile (resultDir, filePath, t, fixtureDir)
+			filePath => runMdFile (resultDir, filePath, t, fixtureDir, chromeScreenshot)
 		))
 		//.then(log)
 		.then(r => results = {pages: r, summary: aggregateSummary(r), startedAt: startedTime, finishedAt: new Date().toString()})
@@ -112,6 +115,7 @@ module.exports = function run(args) {
 		.then(() => templates.summary(results))
 		//.then(log)
 		.then(html => fsPromise.writeFileAsync(path.join(resultDir, 'summary.html'), html, 'utf8'))
+		.then(chromeScreenshot.stop)
 		.then(() => results.summary);
 };
 

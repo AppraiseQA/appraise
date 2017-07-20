@@ -84,6 +84,6 @@ too early to use (pre-alpha)
   
 ### Performance issues
 
-- [ ] Start/stop chrome once per run, not once per page
+- [x] Start/stop chrome once per run, not once per page
 - [ ] change sync FS operations to async
 
