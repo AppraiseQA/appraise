@@ -4,7 +4,7 @@ const path = require('path'),
 	fsUtil = require('../util/fs-util'),
 	arrayToObject = require('../util/array-to-object'),
 	stripExtension = require('../util/strip-extension'),
-	compileTemplate = require('../tasks/compile-template'),
+	compileTemplate = require('../util/compile-template'),
 	isHandlebars = function (filePath) {
 		return path.extname(filePath) === '.hbs' || path.extname(filePath) === '.html';
 	};

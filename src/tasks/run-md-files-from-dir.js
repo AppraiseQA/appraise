@@ -2,11 +2,10 @@
 'use strict';
 
 const path = require('path'),
-	fsUtil = require('../util/fs-util'),
 	fsPromise = require('../util/fs-promise'),
 	runMdFile = require('../tasks/run-md-file'),
 	sequentialPromiseMap = require('sequential-promise-map'),
-	aggregateSummary = require('../tasks/aggregate-summary'),
+	aggregateSummary = require('../util/aggregate-summary'),
 	collectSourceFiles = require('../tasks/collect-source-files'),
 	writeResultSummary = function (results, resultDir, templates) {
 		return fsPromise.writeFileAsync(path.join(resultDir, 'summary.json'), JSON.stringify(results, null, 2), 'utf8')
