@@ -6,8 +6,8 @@ module.exports = function mdAnnotateExample(md/*, options */) {
 			const token = tokens[idx],
 				info = token.info;
 			if (info) {
-				const match = /example=\"([^\"]+)\"/.exec(info),
-					exampleName = match && match[1];
+				const match = /example=\"([^\"]+)\"|example='([^\']+)'|example=([^'\" ]+)/.exec(info),
+					exampleName = match && (match[1] || match[2] || match[3]);
 				if (exampleName) {
 					token.attrPush(['data-example', exampleName]);
 				}

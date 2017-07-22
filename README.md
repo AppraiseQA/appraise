@@ -33,6 +33,7 @@ too early to use (pre-alpha)
   - [ ] CLI Approval instructions on the rendered page (for all examples)
   - [x] Overview/Overlay/Inspect on the results page
     - [x] set view/opacity/zoom for actual/expected/diff separately
+- [ ] option to generate an initial image for an example (eg `--generate`)
 - [ ] Distinguish between a failure and error
 - [ ] Fixture execution
   - [x] inside node

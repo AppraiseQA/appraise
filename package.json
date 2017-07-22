@@ -4,7 +4,8 @@
   "description": "Visual approval testing",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node spec/support/jasmine-runner.js",
+    "start": "node ./bin/cmd.js"
   },
   "files": [
     "src",
@@ -43,6 +44,8 @@
   "devDependencies": {
     "eslint": "^4.2.0",
     "eslint-config-crockford": "^1.0.0",
-    "eslint-config-defaults": "^9.0.0"
+    "eslint-config-defaults": "^9.0.0",
+    "jasmine": "^2.6.0",
+    "jasmine-spec-reporter": "^4.1.1"
   }
 }
