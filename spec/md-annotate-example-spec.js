@@ -25,6 +25,18 @@ describe('mdAnnotateExample', () => {
 		expect(getCodeElement('~~~example=\'simple example\'\nabcd\n~~~').attr('data-example')).toEqual('simple example');
 		expect(getCodeElement('~~~ example=\'simple example\'\nabcd\n~~~').attr('data-example')).toEqual('simple example');
 	});
+	it('appends the language as an attribute', () => {
+		expect(getCodeElement('~~~json example="simple example"\nabcd\n~~~').attr('data-language')).toEqual('json');
+	});
+	it('appends the language as an attribute if followed by a tab', () => {
+		expect(getCodeElement('~~~json\texample="simple example"\nabcd\n~~~').attr('data-language')).toEqual('json');
+	});
+	it('does not append a key-value pair as a language', () => {
+		expect(getCodeElement('~~~example="simple example"\nabcd\n~~~').attr('data-language')).toBeFalsy();
+	});
+	it('does not append an empty language definition as a language', () => {
+		expect(getCodeElement('~~~ example="simple example"\nabcd\n~~~').attr('data-language')).toBeFalsy();
+	});
 
 });
 
