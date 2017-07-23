@@ -12,4 +12,7 @@ describe('parse', function () {
 	it('returns the original text if the format is provided but not recognised', function () {
 		expect(parse('{"a":1}', 'somethingelse')).toEqual('{"a":1}');
 	});
+	it('returns parsed YAML if the format is YAML', function () {
+		expect(parse('greeting: hello\nname: world', 'yaml')).toEqual({greeting: 'hello', name: 'world'});
+	});
 });
