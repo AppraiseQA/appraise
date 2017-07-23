@@ -9,6 +9,7 @@ const path = require('path'),
 	validateRequiredParams = require('../util/validate-required-params'),
 	arrayToObject = require('../util/array-to-object'),
 	approveExample = require('../tasks/approve-example'),
+	compileTemplate = require('../util/compile-template'),
 	matchingName = function (objectName, expression) {
 		return objectName === expression;
 	},
@@ -22,22 +23,21 @@ const path = require('path'),
 			.forEach(matchedName => filteredPage.results[matchedName] = pageObj.results[matchedName]);
 		return filteredPage;
 	},
-	approvePage = function (pageObj, examplesDir, resultsDir) {
+	approvePage = function (pageObj, examplesDir, resultsDir, generateOutcomeTemplate) {
 		if (!pageObj.results) {
 			return false;
 		}
 		const exampleNames = Object.keys(pageObj.results);
-		console.log('ex names', exampleNames);
 		return Promise.all(
 				exampleNames.map(
-					exampleName => approveExample(pageObj.pageName, pageObj.results[exampleName], examplesDir, resultsDir)
+					exampleName => approveExample(pageObj, exampleName, examplesDir, resultsDir, generateOutcomeTemplate)
 				)
 			).then(() => exampleNames);
 	};
 
 module.exports = function approve(params) {
 	let filteredPages;
-	validateRequiredParams(params, ['examples-dir', 'results-dir', 'example', 'page']);
+	validateRequiredParams(params, ['examples-dir', 'results-dir', 'templates-dir', 'example', 'page']);
 	return fsPromise.readFileAsync(path.join(params['results-dir'], 'summary.json'), 'utf8')
 		.then(JSON.parse)
 		.then(results =>
@@ -46,7 +46,11 @@ module.exports = function approve(params) {
 				.map(page => filterExamples(page, params.example))
 		)
 		.then(pages => filteredPages = pages)
-		.then(pages => Promise.all(pages.map(page => approvePage(page, params['examples-dir'], params['results-dir']))))
+		.then(() => compileTemplate(path.join(params['templates-dir'], 'generate-outcome.hbs')))
+		.then(template => Promise.all(
+				filteredPages.map(page => approvePage(page, params['examples-dir'], params['results-dir'], template))
+			)
+		)
 		.then(results => arrayToObject(results, filteredPages.map(page => page.pageName)));
 };
 
@@ -79,6 +83,14 @@ module.exports.doc = {
 			description: 'The output directory for results. Note - if it is an existing directory, the old contents will be removed.',
 			default: 'results subdirectory in the current working directory',
 			example: '/tmp/output'
+		},
+		{
+			argument: 'templates-dir',
+			optional: true,
+			description: 'The directory containing page templates for the resulting HTML',
+			default: 'embedded templates included with the application',
+			example: 'src/templates'
 		}
+
 	]
 };

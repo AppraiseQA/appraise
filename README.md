@@ -28,7 +28,7 @@ too early to use (pre-alpha)
 - [x] Create an index with all test results
 - [ ] Approve changes from the command line
   - [x] Approve an example with expected outcome and failed outcome
-  - [ ] Approve examples without expected outcomes (append image to source .md)
+  - [x] Approve examples without expected outcomes (append image to source .md)
   - [ ] Approve a whole page
   - [ ] Approve all
 - [x] Clean up templates and provide a nice layout
