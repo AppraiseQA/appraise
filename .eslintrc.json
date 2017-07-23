@@ -16,7 +16,6 @@
     "one-var": "error",
     "prefer-const": "error",
     "no-var": "error",
-    "prefer-arrow-callback": "error",
     "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
     "quotes": ["error", "single", {"avoidEscape": true, "allowTemplateLiterals": true}]
   }

@@ -10,6 +10,7 @@ const path = require('path'),
 	runExamples = require('../tasks/run-examples'),
 	saveResultFiles = require('../tasks/save-result-files'),
 	extractExamplesFromHtml = require('../tasks/extract-examples-from-html'),
+	//log = require('../util/debug-log'),
 	stripExtension = require('../util/strip-extension');
 
 
@@ -20,18 +21,20 @@ module.exports = function runMdFile(pagePath, examplesDir, workingDir, templates
 		resultsPath = stripExtension(path.join(workingDir, pagePath)),
 		pageName = path.basename(resultsPath),
 		breadCrumbs = pagePath.split(path.sep),
-		rootUrl = reverseRootPath(pagePath);
+		rootUrl = reverseRootPath(pagePath),
+		propertyPrefix = 'data-appraise';
 	fsUtil.ensureCleanDir(resultsPath);
 	return fsPromise.statAsync(mdPath)
 		.then(s => modifiedTime = s.mtime.toString())
 		.then(() => fsPromise.readFileAsync(mdPath, 'utf8'))
 	//.then(log)
-		.then(mdToHtml)
+		.then(content => mdToHtml(content, propertyPrefix))
 		.then(c =>  htmlDoc = c)
-	//.then(log)
-		.then(extractExamplesFromHtml)
-	//.then(log)
+		//.then(log)
+		.then(doc => extractExamplesFromHtml(doc, propertyPrefix))
+
 		.then(e => examples = e)
+		//.then(log)
 		.then(e => runExamples(e, resultsPath, fixtureEngines, screenshot))
 	//.then(log)
 		.then(e => saveResultFiles(e, resultsPath, templates.result, {

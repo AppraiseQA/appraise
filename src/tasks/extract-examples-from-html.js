@@ -1,9 +1,12 @@
 'use strict';
-const cheerio = require('cheerio');
-module.exports = function extractExamplesFromHtml(htmlDoc) {
+const cheerio = require('cheerio'),
+	mergeProperties = require('../util/merge-properties'),
+	extractPrefixedProperties = require('../util/extract-prefixed-properties');
+module.exports = function extractExamplesFromHtml(htmlDoc, propertyPrefix) {
 
 	const doc = cheerio.load(htmlDoc),
 		examples = {},
+		matchingAttributeName = propertyPrefix + '-example',
 		commonAttribs = [],
 		initCommonAttribute = function (index, element) {
 			commonAttribs[index] = {
@@ -14,7 +17,7 @@ module.exports = function extractExamplesFromHtml(htmlDoc) {
 			commonAttribs[index].value =  doc(element).text();
 		},
 		exampleName = function (element) {
-			return element.attribs['data-example'];
+			return element.attribs[matchingAttributeName];
 		},
 		initExample = function (index, element) {
 			const result = {
@@ -25,12 +28,15 @@ module.exports = function extractExamplesFromHtml(htmlDoc) {
 			examples[exampleName(element)] = result;
 		},
 		fillInExample = function (index, element) {
-			examples[exampleName(element)].input = doc(element).text();
-		};
-	doc('table[data-role=markdown-preamble] th').each(initCommonAttribute);
-	doc('table[data-role=markdown-preamble] td').each(setCommonAttributeValue);
-	doc('img[data-example]').each(initExample);
-	doc('code[data-example]').each(fillInExample);
+			const example = examples[exampleName(element)];
+			example.input = doc(element).text();
+			mergeProperties(example.params, extractPrefixedProperties(element.attribs, propertyPrefix));
+		},
+		preamble = doc(`table[${propertyPrefix}-role=preamble]`);
+	preamble.find('th').each(initCommonAttribute);
+	preamble.find('td').each(setCommonAttributeValue);
+	doc(`img[${matchingAttributeName}]`).each(initExample);
+	doc(`code[${matchingAttributeName}]`).each(fillInExample);
 	return examples;
 };
 
