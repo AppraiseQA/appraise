@@ -23,7 +23,7 @@ module.exports = function mergeResults(htmlDoc, examples, resultsPath, propertyP
 			exampleElements.filter('img').each((index, element) => {
 				doc('<a>')
 					.attr('href', resultsPath + '/' + example.index + '-result.html')
-					.attr('title', example.outcome.message)
+					.attr('title', example.outcome.message || '')
 					.insertBefore(element).append(element);
 			});
 			if (!example.expected) {
@@ -32,7 +32,7 @@ module.exports = function mergeResults(htmlDoc, examples, resultsPath, propertyP
 						.attr('title', example.outcome.message),
 					image = doc('<img>')
 						.attr('src',  resultsPath + '/' + example.output.screenshot)
-						.attr('title', example.outcome.message)
+						.attr('title', example.outcome.message || '')
 						.attr('alt', example.outcome.message);
 				image.appendTo(link);
 				link.insertAfter(exampleElements.first());

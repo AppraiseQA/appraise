@@ -27,9 +27,13 @@ const path = require('path'),
 	},
 	mergeOutcome = function (example, diffResult) {
 		example.outcome = {
-			status: diffResult ? 'failure' : 'success',
-			message: diffResult && diffResult.message,
-			image: diffResult && diffResult.image && path.basename(diffResult.image)
+			status: diffResult ? 'failure' : 'success'
+		};
+		if (diffResult && diffResult.message) {
+			example.outcome.message = diffResult && diffResult.message;
+		};
+		if (diffResult && diffResult.image) {
+			example.outcome.image = diffResult && diffResult.image && path.basename(diffResult.image);
 		};
 		return example;
 	},

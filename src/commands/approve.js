@@ -6,45 +6,48 @@
 
 const path = require('path'),
 	fsPromise = require('../util/fs-promise'),
-	fsUtil = require('../util/fs-util'),
 	validateRequiredParams = require('../util/validate-required-params'),
+	arrayToObject = require('../util/array-to-object'),
+	approveExample = require('../tasks/approve-example'),
 	matchingName = function (objectName, expression) {
 		return objectName === expression;
 	},
 	filterExamples = function (pageObj, expression) {
 		const filteredPage = {
-			pageName: pageObj.pageName
+			pageName: pageObj.pageName,
+			results: {}
 		};
-		filteredPage.results = Object.keys(pageObj.results)
+		Object.keys(pageObj.results)
 			.filter(exampleName => matchingName(exampleName, expression))
-			.map(matchedName => pageObj.results[matchedName]);
+			.forEach(matchedName => filteredPage.results[matchedName] = pageObj.results[matchedName]);
 		return filteredPage;
-	},
-	approveExample = function (pageName, exampleObj, examplesDir, resultsDir) {
-		const expected = path.join(examplesDir, pageName, '..', exampleObj.expected),
-			actual = path.join(resultsDir, pageName, exampleObj.output.screenshot);
-		fsUtil.copyFile(actual, expected);
-		console.log('approved', expected);
-		return expected;
 	},
 	approvePage = function (pageObj, examplesDir, resultsDir) {
 		if (!pageObj.results) {
 			return false;
 		}
 		const exampleNames = Object.keys(pageObj.results);
-		return Promise.all(exampleNames.map(
-			exampleName => approveExample(pageObj.pageName, pageObj.results[exampleName], examplesDir, resultsDir)
-		));
+		console.log('ex names', exampleNames);
+		return Promise.all(
+				exampleNames.map(
+					exampleName => approveExample(pageObj.pageName, pageObj.results[exampleName], examplesDir, resultsDir)
+				)
+			).then(() => exampleNames);
 	};
 
 module.exports = function approve(params) {
+	let filteredPages;
 	validateRequiredParams(params, ['examples-dir', 'results-dir', 'example', 'page']);
 	return fsPromise.readFileAsync(path.join(params['results-dir'], 'summary.json'), 'utf8')
 		.then(JSON.parse)
 		.then(results =>
-			results.pages.filter(page => matchingName(page.pageName, params.page)).map(page => filterExamples(page, params.example))
+			results.pages
+				.filter(page => matchingName(page.pageName, params.page))
+				.map(page => filterExamples(page, params.example))
 		)
-		.then(pages => pages.forEach(page => approvePage(page, params['examples-dir'], params['results-dir'])));
+		.then(pages => filteredPages = pages)
+		.then(pages => Promise.all(pages.map(page => approvePage(page, params['examples-dir'], params['results-dir']))))
+		.then(results => arrayToObject(results, filteredPages.map(page => page.pageName)));
 };
 
 module.exports.doc = {
