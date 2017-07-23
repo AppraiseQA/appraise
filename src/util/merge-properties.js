@@ -1,7 +1,11 @@
 /*global module */
 'use strict';
-module.exports = function mergeProperties(mergeTo, mergeFrom) {
-	Object.keys(mergeFrom).forEach(k => mergeTo[k] = mergeFrom[k]);
+module.exports = function mergeProperties() {
+	const objects = Array.from(arguments),
+		mergeTo = objects.shift();
+	objects.forEach(function (mergeFrom) {
+		Object.keys(mergeFrom).forEach(k => mergeTo[k] = mergeFrom[k]);
+	});
 	return mergeTo;
 };
 

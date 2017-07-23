@@ -1,6 +1,5 @@
 'use strict';
 module.exports = function (params) {
-	//{\n  \"path\": \"M10,10L20,20\",\n  \"color\": \"blue\"\n}\n
 	const result = {};
 	result.contentType = 'image/svg';
 	result.content = `<?xml version="1.0" encoding="UTF-8"?>

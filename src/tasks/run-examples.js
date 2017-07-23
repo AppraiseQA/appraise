@@ -16,7 +16,16 @@ const path = require('path'),
 		fs.writeFileSync(filePath, buffer, 'base64');
 		return filePath;
 	},
-	saveOutcome = function (example, diffResult) {
+	calculateOutcome = function (example, workingDir, pathPrefix) {
+		if (example.expected) {
+			return pngDiff(path.resolve(workingDir, '..', example.expected), path.join(workingDir, example.output.screenshot), pathPrefix + '-diff.png');
+		} else {
+			return {
+				message: 'no expected result provided'
+			};
+		}
+	},
+	mergeOutcome = function (example, diffResult) {
 		example.outcome = {
 			status: diffResult ? 'failure' : 'success',
 			message: diffResult && diffResult.message,
@@ -32,8 +41,8 @@ const path = require('path'),
 			.then(fpath => chromeScreenshot.screenshot({url: 'file:' + fpath}))
 			.then(buffer => writeBase64Buffer(buffer, pathPrefix + '-actual.png'))
 			.then(fpath => example.output.screenshot = path.basename(fpath))
-			.then(screenshotFileName => pngDiff(path.resolve(workingDir, '..', example.expected), path.join(workingDir, screenshotFileName), pathPrefix + '-diff.png'))
-			.then(outcome => saveOutcome(example, outcome))
+			.then(() => calculateOutcome(example, workingDir, pathPrefix))
+			.then(outcome => mergeOutcome(example, outcome))
 			.then(() => example);
 	};
 module.exports = function runExamples(examples, workingDir, fixtureDir, screenshot) {

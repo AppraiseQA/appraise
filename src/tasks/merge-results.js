@@ -1,6 +1,6 @@
 'use strict';
 const cheerio = require('cheerio');
-module.exports = function mergeResults(htmlDoc, examples, resultsPath) {
+module.exports = function mergeResults(htmlDoc, examples, resultsPath, propertyPrefix) {
 	const doc = cheerio.load(htmlDoc),
 		extractCodeBlocks = function (elements) {
 			const codeBlocks = elements.filter('code'),
@@ -9,7 +9,7 @@ module.exports = function mergeResults(htmlDoc, examples, resultsPath) {
 		},
 		mergeExampleResult = function (exampleName) {
 			const example = examples[exampleName],
-				exampleElements = extractCodeBlocks(doc('[data-example="' + exampleName + '"]'));
+				exampleElements = extractCodeBlocks(doc(`[${propertyPrefix}-example="${exampleName}"]`));
 
 			doc('<a>').attr('name', exampleName).insertBefore(exampleElements.first());
 			exampleElements.attr('data-outcome-status', example.outcome.status);
@@ -26,6 +26,17 @@ module.exports = function mergeResults(htmlDoc, examples, resultsPath) {
 					.attr('title', example.outcome.message)
 					.insertBefore(element).append(element);
 			});
+			if (!example.expected) {
+				const link = doc('<a>')
+						.attr('href', resultsPath + '/' + example.index + '-result.html')
+						.attr('title', example.outcome.message),
+					image = doc('<img>')
+						.attr('src',  resultsPath + '/' + example.output.screenshot)
+						.attr('title', example.outcome.message)
+						.attr('alt', example.outcome.message);
+				image.appendTo(link);
+				link.insertAfter(exampleElements.first());
+			}
 
 		};
 	Object.keys(examples).forEach(mergeExampleResult);

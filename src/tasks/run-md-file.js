@@ -36,7 +36,7 @@ module.exports = function runMdFile(pagePath, examplesDir, workingDir, templates
 		.then(e => examples = e)
 		//.then(log)
 		.then(e => runExamples(e, resultsPath, fixtureEngines, screenshot))
-	//.then(log)
+		//.then(log)
 		.then(e => saveResultFiles(e, resultsPath, templates.result, {
 			pageName: pageName,
 			breadcrumbs: breadCrumbs,
@@ -52,7 +52,7 @@ module.exports = function runMdFile(pagePath, examplesDir, workingDir, templates
 			rootUrl: rootUrl,
 			breadcrumbs: breadCrumbs
 		}))
-		.then(htmlDoc => mergeResults(htmlDoc, examples, pageName))
+		.then(htmlDoc => mergeResults(htmlDoc, examples, pageName, propertyPrefix))
 	//.then(log)
 		.then(htmlPageResult => fsPromise.writeFileAsync(resultsPath + '.html', htmlPageResult, 'utf8'))
 		//.then(() => fsUtil.remove(mdPath))

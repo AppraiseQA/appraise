@@ -13,6 +13,6 @@ A fenced code block with an example parameter will set the code for an example:
 }
 ~~~
 
-An image with a matching description will set the expected output for the example:
+A PNG image with the description matching the fenced code example will set the expected output:
 
 ![blue line](images/blueline.png)

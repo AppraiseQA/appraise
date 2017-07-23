@@ -10,7 +10,7 @@ module.exports = function NodeFixtureEngine(options) {
 		const fixture = require(path.resolve(fixtureDir, example.params.fixture));
 		return Promise.resolve()
 			.then(() => parse(example.input, example.params.format))
-			.then(() => fixture(example.input))
+			.then(fixture)
 			.then(output => example.output = output)
 			.then(() => example);
 	};

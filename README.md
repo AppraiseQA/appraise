@@ -26,14 +26,18 @@ too early to use (pre-alpha)
 - [x] Add a generic layout to HTML when converting from MD 
 - [x] Add a generic template for result files
 - [x] Create an index with all test results
-- [x] Approve changes from the command line
+- [ ] Approve changes from the command line
+  - [x] Approve an example with expected outcome and failed outcome
+  - [ ] Approve examples without expected outcomes (append image to source .md)
+  - [ ] Approve a whole page
+  - [ ] Approve all
 - [x] Clean up templates and provide a nice layout
 - [ ] Make it easier to inspect/approve
   - [x] CLI Approval instructions on the results page
   - [ ] CLI Approval instructions on the rendered page (for all examples)
   - [x] Overview/Overlay/Inspect on the results page
     - [x] set view/opacity/zoom for actual/expected/diff separately
-- [ ] option to generate an initial image for an example (eg `--generate`)
+- [x] Run examples without expected outcomes (fail + show actual)
 - [ ] Distinguish between a failure and error
 - [ ] Fixture execution
   - [x] inside node
@@ -49,7 +53,7 @@ too early to use (pre-alpha)
   - [ ] Configurable clip area for screenshots
   - [ ] Configurable initial size for html windows
   - [ ] Configurable image matching precision and anti-aliasing
-  - [ ] Configurable HTML attributes (`data-example`)
+  - [x] Configurable HTML attributes (`data-example`)
   - [ ] Configurable HTML classes for success/failure
 - [ ] Server for interactive work
   - [ ] render example folder structure + README.md for folders
