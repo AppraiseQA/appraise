@@ -27,10 +27,8 @@ const path = require('path'),
 	runExample = function (example, fixtureEngines, workingDir, exampleIndex, chromeScreenshot) {
 		const pathPrefix = path.join(workingDir, String(exampleIndex));
 		example.index = exampleIndex;
-		return Promise.resolve()
-			.then(() => fixtureEngines.node.execute(example.params.fixture, example.input))
-			.then(output => example.output = output)
-			.then(output => writeOutput (output, pathPrefix))
+		return fixtureEngines.node.execute(example)
+			.then(example => writeOutput (example.output, pathPrefix))
 			.then(fpath => chromeScreenshot.screenshot({url: 'file:' + fpath}))
 			.then(buffer => writeBase64Buffer(buffer, pathPrefix + '-actual.png'))
 			.then(fpath => example.output.screenshot = path.basename(fpath))
