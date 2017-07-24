@@ -18,8 +18,22 @@ const CDP = require('chrome-remote-interface'),
 	};
 
 module.exports = function ChromeScreenshot() {
-	const self = this;
-	let chrome, cdp;
+	let chrome, cdp,
+		currentPageResolve;
+	const self = this,
+		pageLoaded = function () {
+			const oldPageResolve = currentPageResolve;
+			currentPageResolve = undefined;
+			if (oldPageResolve) {
+				oldPageResolve();
+			}
+		},
+		loadPage = function (url) {
+			return new Promise(function (resolve) {
+				currentPageResolve = resolve;
+				cdp.Page.navigate({url: url});
+			});
+		};
 	self.start = function () {
 		return chromeLauncher.launch({
 			chromeFlags: ['--headless']
@@ -27,7 +41,8 @@ module.exports = function ChromeScreenshot() {
 		.then(c => chrome = c)
 		.then(c => CDP({port: c.port})) //eslint-disable-line new-cap
 		.then(c => cdp = c)
-		.then(() => cdp.Page.enable());
+		.then(() => cdp.Page.enable())
+		.then(() => cdp.Page.loadEventFired(pageLoaded));
 	};
 	/* returns a PNG buffer */
 	self.screenshot = function (options) {
@@ -47,8 +62,7 @@ module.exports = function ChromeScreenshot() {
 			mobile: false,
 			fitWindow: false
 		})
-		.then(() => cdp.Page.navigate({url: options.url}))
-		.then(() => cdp.Page.loadEventFired())
+		.then(() => loadPage(options.url))
 		.then(() => contentBox(cdp))
 		.then(box => setSize(box, cdp))
 		.then(() => cdp.Page.captureScreenshot({format: options.format, fromSurface: true}))
@@ -59,3 +73,4 @@ module.exports = function ChromeScreenshot() {
 	};
 
 };
+

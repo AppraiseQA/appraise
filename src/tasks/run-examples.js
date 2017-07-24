@@ -2,6 +2,7 @@
 'use strict';
 const path = require('path'),
 	fs = require('fs'),
+	sequentialPromiseMap = require('sequential-promise-map'),
 	pngDiff = require('../util/png-diff'),
 	writeOutput = function (fixtureOutput, pathPrefix) {
 		const ext = {
@@ -51,6 +52,6 @@ const path = require('path'),
 	};
 module.exports = function runExamples(examples, workingDir, fixtureDir, screenshot) {
 	const exampleNames = Object.keys(examples);
-	return Promise.all(exampleNames.map((key, exampleIndex) => runExample(examples[key], fixtureDir, workingDir, exampleIndex, screenshot)))
+	return sequentialPromiseMap(exampleNames, (key, exampleIndex) => runExample(examples[key], fixtureDir, workingDir, exampleIndex, screenshot))
 		.then(() => examples);
 };
