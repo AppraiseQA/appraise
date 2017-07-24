@@ -1,6 +1,6 @@
 # Appraise -- Visual approval testing
 
-<img src="templates/assets/logo.png" style="float: right" />
+![](templates/assets/logo.png)
 
 This is a (research) project aimed at prototyping a tool for visual approval testing. The goals of the project are to build a tool that helps delivery teams with the following tasks:
 
