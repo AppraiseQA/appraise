@@ -11,6 +11,10 @@ This is a (research) project aimed at prototyping a tool for visual approval tes
 - Publish easily maintainable/verifiable developer docs with visual examples to Github easily (markdown) or as a static site (html)
 - Run visual tests quickly/in parallel using AWS Lambda
 
+## In action
+
+![](screenshot.png)
+
 ## Status
 
 too early to use (pre-alpha)
