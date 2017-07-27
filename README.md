@@ -52,6 +52,10 @@ too early to use (pre-alpha)
     - [ ] webpack fixture packaging
     - [ ] inject css/js
     - [ ] AWS Lambda fixture engine
+- [ ] Extend example properties
+  - [ ] Configurable clip area for screenshots
+  - [ ] Configurable initial size for html windows
+  - [ ] Configurable image matching precision and anti-aliasing
 - [ ] Extract configuration/enable overrides
   - [x] Configurable source and work directories (don't just dump stuff to temp)
   - [ ] Configurable clip area for screenshots
@@ -59,6 +63,9 @@ too early to use (pre-alpha)
   - [ ] Configurable image matching precision and anti-aliasing
   - [x] Configurable HTML attributes (`data-example`)
   - [ ] Configurable HTML classes for success/failure
+  - [ ] Configurable screenshot engine
+  - [ ] Configurable fixture engines (via NPM modules)
+  - [ ] Config file to set all options quickly
 - [ ] Server for interactive work
   - [ ] render example folder structure + README.md for folders
   - [ ] render markdown from the examples folder 
@@ -67,7 +74,14 @@ too early to use (pre-alpha)
   - [ ] Running tests by directly reading specs from github (eg public site, connect to a gitub repo)
   - [ ] Approving by directly committing to github? (eg for specs stored in github repos)
 - [ ] AWS Lambda screenshots 
-- [ ] CI reporters (junit, tap)
+- [ ] Result formatters 
+  - [x] JSON
+  - [ ] junit
+  - [ ] tap
+- [ ] Reporters
+  - [ ] ASCII console
+  - [ ] ANSI color console
+  - [ ] Summary (dot)
 - [ ] CLI/NPM tasks
   - [x] executing tests
   - [x] approving changes
