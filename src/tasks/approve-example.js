@@ -1,33 +1,32 @@
 /*global module, require */
 'use strict';
 const path = require('path'),
-	uuid = require('uuid'),
-	fsUtil = require('../util/fs-util'),
-	fsPromise = require('../util/fs-promise'),
-	approveWithExpected = function (pageName, exampleObj, examplesDir, resultsDir) {
-		const expected = path.join(examplesDir, pageName, '..', exampleObj.expected),
-			actual = path.join(resultsDir, pageName, exampleObj.output.screenshot);
-		fsUtil.copyFile(actual, expected);
+	approveWithExpected = function (pageName, exampleObj, fileRepository) {
+		const expected = fileRepository.examplesPath(pageName, '..', exampleObj.expected),
+			actual = fileRepository.resultsPath(pageName, exampleObj.output.screenshot);
+		return fileRepository.copyFile(actual, expected);
 	},
-	approveWithNew = function (pageObj, exampleName, examplesDir, resultsDir, generateOutcomeTemplate) {
+	approveWithNew = function (pageObj, exampleName, fileRepository, generateOutcomeTemplate) {
 		const pageName = pageObj.pageName,
 			exampleObj = pageObj.results[exampleName],
-			actual = path.join(resultsDir, pageName, exampleObj.output.screenshot),
-			newName = fsUtil.sanitizeFileName(exampleName + '-' + uuid.v4() + '.png'),
-			targetPath = path.join(examplesDir, pageName, '..', newName),
-			pagePath = path.join(examplesDir, pageName + '.md');
-		fsUtil.copyFile(actual, targetPath);
-		return fsPromise.appendFileAsync(pagePath, generateOutcomeTemplate({
-			exampleName: exampleName,
-			imagePath: newName,
-			date: new Date().toLocaleString()
-		}), 'utf8');
+			actual = fileRepository.resultsPath(pageName, exampleObj.output.screenshot),
+			pageDir = path.dirName(pageName),
+			targetDir = fileRepository.examplesPath(pageDir),
+			targetPath = fileRepository.newFilePath(targetDir, exampleName, 'png'),
+			pagePath = fileRepository.examplesPath(pageName + '.md'),
+			additionalText = generateOutcomeTemplate({
+				exampleName: exampleName,
+				imagePath: path.baseName(targetPath),
+				date: new Date().toLocaleString()
+			});
+		return fileRepository.copyFile(actual, targetPath)
+			.then(() => fileRepository.appendText(pagePath, additionalText));
 	};
-module.exports = function approveExample(pageObj, exampleName, examplesDir, resultsDir, generateOutcomeTemplate) {
+module.exports = function approveExample(pageObj, exampleName, fileRepository, generateOutcomeTemplate) {
 	const exampleObj = pageObj.results[exampleName];
 	if (exampleObj.expected) {
-		return approveWithExpected(pageObj.pageName, exampleObj, examplesDir, resultsDir);
+		return approveWithExpected(pageObj.pageName, exampleObj, fileRepository);
 	} else {
-		return approveWithNew(pageObj, exampleName, examplesDir, resultsDir, generateOutcomeTemplate);
+		return approveWithNew(pageObj, exampleName, fileRepository, generateOutcomeTemplate);
 	}
 };

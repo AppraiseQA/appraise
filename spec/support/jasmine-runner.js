@@ -1,6 +1,6 @@
 /*global jasmine, require, process*/
 const Jasmine = require('jasmine'),
-	SpecReporter = require('jasmine-spec-reporter'),
+	SpecReporter = require('jasmine-spec-reporter').SpecReporter,
 	jrunner = new Jasmine(),
 	runJasmine = function () {
 		'use strict';

@@ -5,10 +5,11 @@
 //
 
 const path = require('path'),
-	fsPromise = require('../util/fs-promise'),
 	validateRequiredParams = require('../util/validate-required-params'),
+	LocalFileRepository = require('../util/local-file-repository'),
 	arrayToObject = require('../util/array-to-object'),
 	approveExample = require('../tasks/approve-example'),
+	extractKeysWithSuffix = require('../util/extract-keys-with-suffix'),
 	compileTemplate = require('../util/compile-template'),
 	matchingName = function (objectName, expression) {
 		return objectName === expression;
@@ -23,23 +24,25 @@ const path = require('path'),
 			.forEach(matchedName => filteredPage.results[matchedName] = pageObj.results[matchedName]);
 		return filteredPage;
 	},
-	approvePage = function (pageObj, examplesDir, resultsDir, generateOutcomeTemplate) {
+	approvePage = function (pageObj, fileRepository, generateOutcomeTemplate) {
 		if (!pageObj.results) {
 			return false;
 		}
 		const exampleNames = Object.keys(pageObj.results);
 		return Promise.all(
 				exampleNames.map(
-					exampleName => approveExample(pageObj, exampleName, examplesDir, resultsDir, generateOutcomeTemplate)
+					exampleName => approveExample(pageObj, exampleName, fileRepository, generateOutcomeTemplate)
 				)
 			).then(() => exampleNames);
 	};
 
-module.exports = function approve(params) {
+module.exports = function approve(params, components) {
 	let filteredPages;
+	const fileRepository = components.fileRepository || new LocalFileRepository();
+
 	validateRequiredParams(params, ['examples-dir', 'results-dir', 'templates-dir', 'example', 'page']);
-	return fsPromise.readFileAsync(path.join(params['results-dir'], 'summary.json'), 'utf8')
-		.then(JSON.parse)
+	fileRepository.setReferencePaths(extractKeysWithSuffix(params, '-dir'));
+	return fileRepository.readJSON(fileRepository.resultsPath('summary.json'))
 		.then(results =>
 			results.pages
 				.filter(page => matchingName(page.pageName, params.page))
@@ -48,7 +51,7 @@ module.exports = function approve(params) {
 		.then(pages => filteredPages = pages)
 		.then(() => compileTemplate(path.join(params['templates-dir'], 'generate-outcome.hbs')))
 		.then(template => Promise.all(
-				filteredPages.map(page => approvePage(page, params['examples-dir'], params['results-dir'], template))
+				filteredPages.map(page => approvePage(page, fileRepository, template))
 			)
 		)
 		.then(results => arrayToObject(results, filteredPages.map(page => page.pageName)));
