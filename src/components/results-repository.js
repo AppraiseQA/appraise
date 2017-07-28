@@ -60,6 +60,9 @@ module.exports = function ResultsRepository(config, components) {
 			});
 	};
 	self.getPageNames = function () {
+		if (!results || !results.pages || !Array.isArray(results.pages)) {
+			return [];
+		}
 		return results.pages.map(pageObj => pageObj.pageName);
 	};
 	self.getResultNames = function (pageName) {
