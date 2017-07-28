@@ -6,27 +6,28 @@ const path = require('path'),
 			actual = fileRepository.resultsPath(pageName, exampleObj.output.screenshot);
 		return fileRepository.copyFile(actual, expected);
 	},
-	approveWithNew = function (pageObj, exampleName, fileRepository, generateOutcomeTemplate) {
-		const pageName = pageObj.pageName,
-			exampleObj = pageObj.results[exampleName],
-			actual = fileRepository.resultsPath(pageName, exampleObj.output.screenshot),
-			pageDir = path.dirName(pageName),
+	approveWithNew = function (pageName, exampleName, exampleObj, fileRepository, generateOutcomeTemplate) {
+		const actual = fileRepository.resultsPath(pageName, exampleObj.output.screenshot),
+			pageDir = path.dirname(pageName),
 			targetDir = fileRepository.examplesPath(pageDir),
 			targetPath = fileRepository.newFilePath(targetDir, exampleName, 'png'),
 			pagePath = fileRepository.examplesPath(pageName + '.md'),
 			additionalText = generateOutcomeTemplate({
 				exampleName: exampleName,
-				imagePath: path.baseName(targetPath),
+				imagePath: path.basename(targetPath),
 				date: new Date().toLocaleString()
 			});
-		return fileRepository.copyFile(actual, targetPath)
-			.then(() => fileRepository.appendText(pagePath, additionalText));
+		return Promise.all([
+			fileRepository.copyFile(actual, targetPath),
+			fileRepository.appendText(pagePath, additionalText)
+		]);
 	};
 module.exports = function approveExample(pageObj, exampleName, fileRepository, generateOutcomeTemplate) {
-	const exampleObj = pageObj.results[exampleName];
+	const exampleObj = pageObj.results[exampleName],
+		pageName = pageObj.pageName;
 	if (exampleObj.expected) {
-		return approveWithExpected(pageObj.pageName, exampleObj, fileRepository);
+		return approveWithExpected(pageName, exampleObj, fileRepository);
 	} else {
-		return approveWithNew(pageObj, exampleName, fileRepository, generateOutcomeTemplate);
+		return approveWithNew(pageName, exampleName, exampleObj, fileRepository, generateOutcomeTemplate);
 	}
 };

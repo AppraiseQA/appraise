@@ -36,6 +36,9 @@ module.exports = function LocalFileRepository() {
 	self.readText = function (filePath) {
 		return fsPromise.readFileAsync(filePath, 'utf8');
 	};
+	self.appendText = function (filePath, text) {
+		return fsPromise.appendFileAsync(filePath, text, 'utf8');
+	};
 	self.readJSON = function (filePath) {
 		return self.readText(filePath)
 			.then(JSON.parse);

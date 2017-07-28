@@ -93,7 +93,7 @@ describe('LocalFileRepository', () => {
 				.then(done);
 		});
 	});
-	describe('copyFile', function () {
+	describe('copyFile', () => {
 		it('copies a file using a promised interface', done => {
 			const sourcePath = path.join(workingDir, 'some.txt'),
 				destPath = path.join(workingDir, 'dest.txt');
@@ -116,6 +116,31 @@ describe('LocalFileRepository', () => {
 				destPath = path.join(workingDir, 'subdir', 'dest.txt');
 			fs.writeFileSync(sourcePath, 'content 123', 'utf8');
 			underTest.copyFile(sourcePath, destPath)
+				.then(done.fail)
+				.catch(e => expect(e.message).toMatch(/ENOENT: no such file or directory/))
+				.then(done);
+		});
+	});
+	describe('appendText', () => {
+		it('appends to a file using a promised interface', done => {
+			const sourcePath = path.join(workingDir, 'some.txt');
+			fs.writeFileSync(sourcePath, 'content 123', 'utf8');
+			underTest.appendText(sourcePath, ', added123')
+				.then(() => fs.readFileSync(sourcePath, 'utf8'))
+				.then(r => expect(r).toEqual('content 123, added123'))
+				.then(done, done.fail);
+		});
+		it('creates a file if it does not exist', done => {
+			const sourcePath = path.join(workingDir, 'some.txt');
+			underTest.appendText(sourcePath, 'added123')
+				.then(() => fs.readFileSync(sourcePath, 'utf8'))
+				.then(r => expect(r).toEqual('added123'))
+				.then(done, done.fail);
+
+		});
+		it('fails if the source file cannot be appended to', done => {
+			const sourcePath = path.join(workingDir, 'subdir/some.txt');
+			underTest.appendText(sourcePath, ', added123')
 				.then(done.fail)
 				.catch(e => expect(e.message).toMatch(/ENOENT: no such file or directory/))
 				.then(done);
