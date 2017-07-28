@@ -1,9 +1,9 @@
 /*global module, spyOn */
 'use strict';
-const LocalFileRepository = require('../../src/util/local-file-repository'),
+const LocalFileRepository = require('../../src/components/local-file-repository'),
 	buildPromiseSpy = require('./build-promise-spy');
-module.exports = function mockFileRepository() {
-	const template = new LocalFileRepository(),
+module.exports = function mockFileRepository(config) {
+	const template = new LocalFileRepository(config),
 		functionNames = Object.keys(template).filter(t => typeof template[t] === 'function'),
 		promiseMethods = functionNames.filter(t =>/^read|^copy|^append/.test(t));
 	template.promises = {};

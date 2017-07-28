@@ -1,48 +1,38 @@
 /*global describe, it, expect, require, beforeEach, afterEach */
 'use strict';
-const LocalFileRepository = require('../src/util/local-file-repository'),
-	arrayToObject = require('../src/util/array-to-object'),
-	os = require('os'),
+const os = require('os'),
 	fs = require('fs'),
 	path = require('path'),
-	fsUtil = require('../src/util/fs-util'),
-	uuid = require('uuid');
+	uuid = require('uuid'),
+	LocalFileRepository = require('../../src/components/local-file-repository'),
+	fsUtil = require('../../src/util/fs-util');
+
 describe('LocalFileRepository', () => {
 	let underTest, workingDir;
 	beforeEach(function () {
-		underTest = new LocalFileRepository();
+		underTest = new LocalFileRepository({'nondir': 'abc', 'first-dir': 'ref/dir', 'second-dir': './ref/dir'});
 		workingDir = path.join(os.tmpdir(), uuid.v4());
 		fsUtil.ensureCleanDir(workingDir);
 	});
 	afterEach(function () {
 		fsUtil.remove(workingDir);
 	});
-	describe('setReferencePaths', () => {
-		it ('explodes when set with an invalid value', () => {
-			expect(() => underTest.setReferencePaths()).toThrowError(/paths must be provided/);
-			expect(() => underTest.setReferencePaths([1, 2, 3])).toThrowError(/paths must be provided/);
-			expect(() => underTest.setReferencePaths({})).toThrowError(/paths must be provided/);
-		});
-	});
-	['results', 'examples'].forEach(pathType => {
-		const method = `${pathType}Path`;
-		describe(method, () => {
-			it('explodes if the reference path is not set', () => {
-				expect(() => underTest[method]('abc')).toThrowError(`${pathType} path not set`);
-			});
-			it('returns the reference path joined with a single component', () => {
-				underTest.setReferencePaths(arrayToObject(['ref/dir/'], [pathType]));
-				expect(underTest[method]('abc')).toEqual('ref/dir/abc');
-			});
-			it('returns the reference path joined with multiple components', () => {
-				underTest.setReferencePaths(arrayToObject(['ref/dir/'], [pathType]));
-				expect(underTest[method]('abc', 'def')).toEqual('ref/dir/abc/def');
-			});
-			it('handles .. and .', () => {
-				underTest.setReferencePaths(arrayToObject(['./ref/dir/'], [pathType]));
-				expect(underTest[method]('abc/xyz', '..', 'def')).toEqual('ref/dir/abc/def');
-			});
 
+	describe('referencePath', () => {
+		it('explodes if the reference path is not set', () => {
+			expect(() => underTest.referencePath('non', 'abc')).toThrowError('non path not set');
+		});
+		it('explodes if the path components are not set', () => {
+			expect(() => underTest.referencePath('first')).toThrowError('path components not set');
+		});
+		it('returns the reference path joined with a single component', () => {
+			expect(underTest.referencePath('first', 'abc')).toEqual('ref/dir/abc');
+		});
+		it('returns the reference path joined with multiple components', () => {
+			expect(underTest.referencePath('first', 'abc', 'def')).toEqual('ref/dir/abc/def');
+		});
+		it('handles .. and .', () => {
+			expect(underTest.referencePath('second', 'abc/xyz', '..', 'def')).toEqual('ref/dir/abc/def');
 		});
 	});
 	describe('newFilePath', function () {

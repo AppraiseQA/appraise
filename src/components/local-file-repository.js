@@ -1,37 +1,40 @@
 /*global module */
 'use strict';
-const uuid = require('uuid'),
+const fs = require('fs'),
+	path = require('path'),
 	sanitize = require('sanitize-filename'),
-	fs = require('fs'),
-	fsPromise = require('./fs-promise'),
-	path = require('path');
-module.exports = function LocalFileRepository() {
-	let referencePaths;
+	extractKeysWithSuffix = require('../util/extract-keys-with-suffix'),
+	uuid = require('uuid'),
+	fsPromise = require('../util/fs-promise');
+
+module.exports = function LocalFileRepository(config/*, components*/) {
+	let referencePaths = {};
 	const self = this,
 		sanitizeFileName = function (unsafeName) {
 			return sanitize(unsafeName).replace(/\s/g, '');
 		},
-		joinPath = function (dirKey, arrayLikeComponents) {
-			if (!referencePaths || !referencePaths[dirKey]) {
-				throw new Error(`${dirKey} path not set`);
+		init = function () {
+			if (!config || Array.isArray(config) || typeof config !== 'object' || Object.keys(config).length === 0) {
+				throw new Error('config must be provided');
 			}
-			return path.join.apply(path, [referencePaths[dirKey]].concat(Array.from(arrayLikeComponents)));
+			referencePaths = extractKeysWithSuffix(config, '-dir');
 		};
-	self.setReferencePaths = function (dirPaths) {
-		if (!dirPaths || Array.isArray(dirPaths) || typeof dirPaths !== 'object' || Object.keys(dirPaths).length === 0) {
-			throw new Error('paths must be provided');
+	self.referencePath = function () {
+		const pathComponents = Array.from(arguments),
+			reference = pathComponents[0],
+			refPath = referencePaths[pathComponents[0]];
+		if (pathComponents.length < 2) {
+			throw new Error('path components not set');
 		}
-		referencePaths = dirPaths;
+		if (!refPath) {
+			throw new Error(`${reference} path not set`);
+		}
+		pathComponents[0] = refPath;
+		return path.join.apply(path, pathComponents);
 	};
 	self.newFilePath = function (dirPath, prefix, extension) {
 		//todo - check if a file exists, increment counter instead of uuid
 		return path.join(dirPath, sanitizeFileName(prefix + '-' + uuid.v4() + '.' + extension));
-	};
-	self.resultsPath = function () {
-		return joinPath('results', arguments);
-	};
-	self.examplesPath = function () {
-		return joinPath('examples', arguments);
 	};
 	self.readText = function (filePath) {
 		return fsPromise.readFileAsync(filePath, 'utf8');
@@ -53,4 +56,5 @@ module.exports = function LocalFileRepository() {
 				.pipe(destination);
 		});
 	};
+	init();
 };

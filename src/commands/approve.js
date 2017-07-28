@@ -4,57 +4,23 @@
 // approve --all
 //
 
-const path = require('path'),
-	validateRequiredParams = require('../util/validate-required-params'),
-	LocalFileRepository = require('../util/local-file-repository'),
-	arrayToObject = require('../util/array-to-object'),
-	approveExample = require('../tasks/approve-example'),
-	extractKeysWithSuffix = require('../util/extract-keys-with-suffix'),
-	compileTemplate = require('../util/compile-template'),
+const validateRequiredParams = require('../util/validate-required-params'),
+	sequentialPromiseMap = require('sequential-promise-map'),
 	matchingName = function (objectName, expression) {
 		return objectName === expression;
-	},
-	filterExamples = function (pageObj, expression) {
-		const filteredPage = {
-			pageName: pageObj.pageName,
-			results: {}
-		};
-		Object.keys(pageObj.results)
-			.filter(exampleName => matchingName(exampleName, expression))
-			.forEach(matchedName => filteredPage.results[matchedName] = pageObj.results[matchedName]);
-		return filteredPage;
-	},
-	approvePage = function (pageObj, fileRepository, generateOutcomeTemplate) {
-		if (!pageObj.results) {
-			return false;
-		}
-		const exampleNames = Object.keys(pageObj.results);
-		return Promise.all(
-				exampleNames.map(
-					exampleName => approveExample(pageObj, exampleName, fileRepository, generateOutcomeTemplate)
-				)
-			).then(() => exampleNames);
 	};
 
-module.exports = function approve(params, components) {
-	let filteredPages;
-	const fileRepository = components.fileRepository || new LocalFileRepository();
+module.exports = function approve(config, components) {
+	validateRequiredParams(config, module.exports.doc.args.filter(a => !a.optional).map(a => a.argument));
 
-	validateRequiredParams(params, ['examples-dir', 'results-dir', 'templates-dir', 'example', 'page']);
-	fileRepository.setReferencePaths(extractKeysWithSuffix(params, '-dir'));
-	return fileRepository.readJSON(fileRepository.resultsPath('summary.json'))
-		.then(results =>
-			results.pages
-				.filter(page => matchingName(page.pageName, params.page))
-				.map(page => filterExamples(page, params.example))
-		)
-		.then(pages => filteredPages = pages)
-		.then(() => compileTemplate(path.join(params['templates-dir'], 'generate-outcome.hbs')))
-		.then(template => Promise.all(
-				filteredPages.map(page => approvePage(page, fileRepository, template))
-			)
-		)
-		.then(results => arrayToObject(results, filteredPages.map(page => page.pageName)));
+	const resultsRepository = components.get('resultsRepository'),
+		approvePage = function (pageName, resultsFilter) {
+			const exampleNames = resultsRepository.getResultNames(pageName).filter(exampleName => matchingName(exampleName, resultsFilter));
+			return Promise.all(exampleNames.map(exampleName => resultsRepository.approveResult(pageName, exampleName)));
+		};
+	return resultsRepository.loadFromResultsDir()
+		.then(() => resultsRepository.getPageNames().filter(pageName => matchingName(pageName, config.page)))
+		.then(pageNames => sequentialPromiseMap(pageNames.map(approvePage)));
 };
 
 module.exports.doc = {
