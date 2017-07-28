@@ -11,7 +11,7 @@ module.exports = function HandlebarsTemplateRepository(config, components) {
 		if (templates[name]) {
 			return Promise.resolve(templates[name]);
 		} else {
-			return fileRepository.readText(fileRepository.templatesPath(name + '.hbs'))
+			return fileRepository.readText(fileRepository.referencePath('templates', name + '.hbs'))
 				.then(Handlebars.compile)
 				.then(t => templates[name] = t);
 		}
