@@ -1,6 +1,6 @@
 /*global describe, it, expect, require*/
 'use strict';
-const arrayToObject = require('../src/util/array-to-object');
+const arrayToObject = require('../../src/util/array-to-object');
 describe('arrayToObject', () => {
 	it('fills in an object by joining an array of properties with the names of the properties', () => {
 		expect(arrayToObject(['a', 'b', 'c'], ['na', 'nb', 'nc'])).toEqual({na: 'a', nb: 'b', nc: 'c'});

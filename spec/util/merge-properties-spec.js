@@ -1,6 +1,6 @@
 /*global describe, it, expect, require */
 'use strict';
-const mergeProperties = require('../src/util/merge-properties');
+const mergeProperties = require('../../src/util/merge-properties');
 describe('mergeProperties', () => {
 	it('overrides target properties', () => {
 		expect(mergeProperties({}, {a: 1})).toEqual({a: 1});

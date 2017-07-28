@@ -1,6 +1,6 @@
 /*global describe, it, expect, require, jasmine, beforeEach */
 'use strict';
-const mockFileRepository = require('../utils/mock-file-repository'),
+const mockFileRepository = require('../support/mock-file-repository'),
 	ResultsRepository = require('../../src/components/results-repository');
 describe('ResultsRepository', () => {
 	describe('approveResult', () => {

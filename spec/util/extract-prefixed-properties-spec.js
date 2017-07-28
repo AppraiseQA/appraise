@@ -1,6 +1,6 @@
 /*global describe, it, expect, require*/
 'use strict';
-const extractPrefixedProperties = require('../src/util/extract-prefixed-properties');
+const extractPrefixedProperties = require('../../src/util/extract-prefixed-properties');
 describe('extractPrefixedProperties', () => {
 	it('just returns the an empty object if the argument is not an object', () => {
 		expect(extractPrefixedProperties(false, 'prefix')).toEqual({});

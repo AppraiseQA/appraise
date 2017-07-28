@@ -1,6 +1,6 @@
 /*global require, describe, it, expect*/
 'use strict';
-const parse = require('../src/util/parse');
+const parse = require('../../src/util/parse');
 describe('parse', function () {
 	it('returns the same text if the format is not provided', function () {
 		expect(parse('abc')).toEqual('abc');

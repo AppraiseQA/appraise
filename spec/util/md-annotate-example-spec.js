@@ -1,7 +1,7 @@
 /*global require, describe, expect, it, beforeEach */
 'use strict';
 const Markdown = require('markdown-it'),
-	mdAnnotateExample = require('../src/util/md-annotate-example'),
+	mdAnnotateExample = require('../../src/util/md-annotate-example'),
 	cheerio = require('cheerio');
 describe('mdAnnotateExample', () => {
 	let md;
