@@ -34,8 +34,14 @@ module.exports = function ResultsRepository(config, components) {
 
 
 	self.resetResultsDir = function () {
+		return fileRepository.cleanDir(fileRepository.referencePath('results'))
+			.then(() => fileRepository.copyDirContents(fileRepository.referencePath('examples'), fileRepository.referencePath('results'), t => !fileRepository.isSourcePage(t)))
+			.then(() => fileRepository.copyDirContents(fileRepository.referencePath('templates', 'assets'), fileRepository.referencePath('results', 'assets')));
 
+		//collectSourceFiles(resultDir).map(partial => path.join(resultDir, partial)).forEach(p => fsUtil.remove(p));
 	};
+
+
 	self.loadFromResultsDir = function () {
 		return fileRepository.readJSON(fileRepository.referencePath('results', 'summary.json'))
 			.then(r => results = r);

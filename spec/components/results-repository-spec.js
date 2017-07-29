@@ -8,7 +8,8 @@ describe('ResultsRepository', () => {
 		const components = {};
 		fileRepository = mockFileRepository({
 			'results-dir': 'resultDir',
-			'examples-dir': 'exampleDir'
+			'examples-dir': 'exampleDir',
+			'templates-dir': 'templatesDir'
 		});
 		templateRepository = jasmine.createSpyObj('templateRepository', ['get']);
 		components.fileRepository = fileRepository;
@@ -172,6 +173,67 @@ describe('ResultsRepository', () => {
 				fileRepository.promises.appendText.resolve();
 
 			});
+		});
+	});
+	describe('resetResultsDir', () => {
+		let pendingPromise;
+		beforeEach(() => {
+			pendingPromise = new Promise(() => true);
+		});
+		it('cleans the result dir before any copying', done => {
+			fileRepository.cleanDir.and.callFake(path => {
+				expect(path).toEqual('resultDir');
+				expect(fileRepository.copyDirContents).not.toHaveBeenCalled();
+				done();
+				return pendingPromise;
+			});
+			underTest.resetResultsDir()
+				.then(done.fail, done.fail);
+		});
+		it('rejects if cleaning the directory rejects', done => {
+			fileRepository.cleanDir.and.returnValue(Promise.reject('bomb!'));
+			underTest.resetResultsDir()
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('bomb!'))
+				.then(done);
+		});
+		it('copies the example dir into results without markdown paths', done => {
+			fileRepository.isSourcePage.and.callFake(t => /src/.test(t));
+			fileRepository.copyDirContents.and.callFake((from, to, pred) => {
+				expect(from).toEqual('exampleDir');
+				expect(to).toEqual('resultDir');
+				expect(pred('some non-source')).toBeTruthy();
+				expect(pred('src-file')).toBeFalsy();
+				done();
+				return pendingPromise;
+			});
+			fileRepository.cleanDir.and.returnValue(Promise.resolve());
+			underTest.resetResultsDir()
+				.then(done.fail, done.fail);
+		});
+		it('rejects if the first copy rejects', done => {
+			fileRepository.copyDirContents.and.returnValue(Promise.reject('bomb!'));
+			fileRepository.cleanDir.and.returnValue(Promise.resolve());
+			underTest.resetResultsDir()
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('bomb!'))
+				.then(done);
+		});
+		it('copies the template assets when the examples dir copy succeeds', done => {
+			fileRepository.isSourcePage.and.callFake(t => /src/.test(t));
+			fileRepository.copyDirContents.and.callFake((from, to, pred) => {
+				if (fileRepository.copyDirContents.calls.count() === 1) {
+					return Promise.resolve();
+				}
+				expect(from).toEqual('templatesDir/assets');
+				expect(to).toEqual('resultDir/assets');
+				expect(pred).toBeUndefined();
+				done();
+				return pendingPromise;
+			});
+			fileRepository.cleanDir.and.returnValue(Promise.resolve());
+			underTest.resetResultsDir()
+				.then(done.fail, done.fail);
 		});
 	});
 });

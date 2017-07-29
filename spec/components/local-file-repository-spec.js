@@ -1,4 +1,4 @@
-/*global describe, it, expect, require, beforeEach, afterEach */
+/*global describe, it, expect, require, beforeEach, afterEach, jasmine */
 'use strict';
 const os = require('os'),
 	fs = require('fs'),
@@ -13,17 +13,21 @@ describe('LocalFileRepository', () => {
 		underTest = new LocalFileRepository({'nondir': 'abc', 'first-dir': 'ref/dir', 'second-dir': './ref/dir'});
 		workingDir = path.join(os.tmpdir(), uuid.v4());
 		fsUtil.ensureCleanDir(workingDir);
+		jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 	});
 	afterEach(function () {
 		fsUtil.remove(workingDir);
 	});
 
 	describe('referencePath', () => {
+		it('explodes if the path components are not set', () => {
+			expect(() => underTest.referencePath()).toThrowError('path components not set');
+		});
 		it('explodes if the reference path is not set', () => {
 			expect(() => underTest.referencePath('non', 'abc')).toThrowError('non path not set');
 		});
-		it('explodes if the path components are not set', () => {
-			expect(() => underTest.referencePath('first')).toThrowError('path components not set');
+		it('returns the reference path if that is the only argument', () => {
+			expect(underTest.referencePath('first')).toEqual('ref/dir');
 		});
 		it('returns the reference path joined with a single component', () => {
 			expect(underTest.referencePath('first', 'abc')).toEqual('ref/dir/abc');
@@ -93,6 +97,15 @@ describe('LocalFileRepository', () => {
 				.then(r => expect(r).toEqual('content 123'))
 				.then(done, done.fail);
 		});
+		it('creates the destination folder if not existing', done => {
+			const sourcePath = path.join(workingDir, 'some.txt'),
+				destPath = path.join(workingDir, 'subdir', 'subdir2');
+			fs.writeFileSync(sourcePath, 'content 123', 'utf8');
+			underTest.copyFile(sourcePath, destPath)
+				.then(() => fs.readFileSync(destPath, 'utf8'))
+				.then(r => expect(r).toEqual('content 123'))
+				.then(done, done.fail);
+		});
 		it('fails if the source file cannot be read', done => {
 			const sourcePath = path.join(workingDir, 'some.txt'),
 				destPath = path.join(workingDir, 'dest.txt');
@@ -103,11 +116,11 @@ describe('LocalFileRepository', () => {
 		});
 		it('fails if the dest file cannot be written', done => {
 			const sourcePath = path.join(workingDir, 'some.txt'),
-				destPath = path.join(workingDir, 'subdir', 'dest.txt');
+				destPath = '/no-permissions.txt';
 			fs.writeFileSync(sourcePath, 'content 123', 'utf8');
 			underTest.copyFile(sourcePath, destPath)
 				.then(done.fail)
-				.catch(e => expect(e.message).toMatch(/ENOENT: no such file or directory/))
+				.catch(e => expect(e.message).toMatch(/EACCES: permission denied/))
 				.then(done);
 		});
 	});
@@ -134,6 +147,87 @@ describe('LocalFileRepository', () => {
 				.then(done.fail)
 				.catch(e => expect(e.message).toMatch(/ENOENT: no such file or directory/))
 				.then(done);
+		});
+	});
+	describe('cleanDir', () => {
+		it('creates a directory if nothing existed at that path before', done => {
+			const targetPath = path.join(workingDir, 'subdir/yetmore');
+			underTest.cleanDir(targetPath)
+				.then(() => expect(fsUtil.isDir(targetPath)).toBeTruthy())
+				.then(() => expect(fsUtil.recursiveList(targetPath)).toEqual([]))
+				.then(done, done.fail);
+		});
+		it('cleans up a dir with existing files and folders', done => {
+			const targetPath = path.join(workingDir, 'subdir');
+			fs.mkdirSync(targetPath);
+			fs.mkdirSync(path.join(targetPath, 'yetmore'));
+			fs.writeFileSync(path.join(targetPath, 'yetmore', 'file.txt'), 'some content', 'utf8');
+
+			underTest.cleanDir(targetPath)
+				.then(() => expect(fsUtil.isDir(targetPath)).toBeTruthy())
+				.then(() => expect(fsUtil.recursiveList(targetPath)).toEqual([]))
+				.then(done, done.fail);
+		});
+	});
+	describe('copyDirContents', () => {
+		it('copies files from one directory to another', done => {
+			const targetPath = path.join(workingDir, 'target'),
+				sourcePath = path.join(workingDir, 'source');
+			fs.mkdirSync(targetPath);
+			fs.mkdirSync(sourcePath);
+			fs.writeFileSync(path.join(sourcePath, 'file1.txt'), 'some content', 'utf8');
+			fs.writeFileSync(path.join(sourcePath, 'file2.txt'), 'some other content', 'utf8');
+
+			underTest.copyDirContents(sourcePath, targetPath)
+				.then(() => expect(fsUtil.isDir(targetPath)).toBeTruthy())
+				.then(() => expect(fsUtil.recursiveList(targetPath)).toEqual(['file1.txt', 'file2.txt']))
+				.then(() => expect(fs.readFileSync(path.join(sourcePath, 'file1.txt'), 'utf8')).toEqual('some content'))
+				.then(() => expect(fs.readFileSync(path.join(sourcePath, 'file2.txt'), 'utf8')).toEqual('some other content'))
+				.then(done, done.fail);
+		});
+		it('copies files from one subdirectory structures', done => {
+			const targetPath = path.join(workingDir, 'target'),
+				sourcePath = path.join(workingDir, 'source');
+			fs.mkdirSync(targetPath);
+			fs.mkdirSync(sourcePath);
+			fs.mkdirSync(path.join(sourcePath, 'subdir'));
+			fs.writeFileSync(path.join(sourcePath, 'file1.txt'), 'some content', 'utf8');
+			fs.writeFileSync(path.join(sourcePath, 'subdir', 'file2.txt'), 'some other content', 'utf8');
+
+			underTest.copyDirContents(sourcePath, targetPath)
+				.then(() => expect(fsUtil.isDir(targetPath)).toBeTruthy())
+				.then(() => expect(fsUtil.recursiveList(targetPath)).toEqual(['file1.txt', 'subdir', 'subdir/file2.txt']))
+				.then(() => expect(fs.readFileSync(path.join(sourcePath, 'file1.txt'), 'utf8')).toEqual('some content'))
+				.then(() => expect(fs.readFileSync(path.join(sourcePath, 'subdir', 'file2.txt'), 'utf8')).toEqual('some other content'))
+				.then(done, done.fail);
+		});
+		it('filters paths through a predicate before copying', done => {
+			const targetPath = path.join(workingDir, 'target'),
+				sourcePath = path.join(workingDir, 'source');
+			fs.mkdirSync(targetPath);
+			fs.mkdirSync(sourcePath);
+			fs.mkdirSync(path.join(sourcePath, 'subdir'));
+			fs.writeFileSync(path.join(sourcePath, 'file1.txt'), 'some content', 'utf8');
+			fs.writeFileSync(path.join(sourcePath, 'subdir', 'file2.txt'), 'some other content', 'utf8');
+
+			underTest.copyDirContents(sourcePath, targetPath, path => /^file/.test(path))
+				.then(() => expect(fsUtil.isDir(targetPath)).toBeTruthy())
+				.then(() => expect(fsUtil.recursiveList(targetPath)).toEqual(['file1.txt']))
+				.then(() => expect(fs.readFileSync(path.join(sourcePath, 'file1.txt'), 'utf8')).toEqual('some content'))
+				.then(done, done.fail);
+
+		});
+
+	});
+	describe('isSourcePage', () => {
+		it('returns true for markdown files', () => {
+			expect(underTest.isSourcePage('max.md')).toBeTruthy();
+			expect(underTest.isSourcePage('a/b/c/page.md')).toBeTruthy();
+		});
+		it('returns false for non-markdown files', () => {
+			expect(underTest.isSourcePage('max.png')).toBeFalsy();
+			expect(underTest.isSourcePage('a/b/c/max.png')).toBeFalsy();
+			expect(underTest.isSourcePage('max.md.png')).toBeFalsy();
 		});
 	});
 });

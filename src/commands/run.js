@@ -1,31 +1,30 @@
 'use strict';
 const compileTemplates = require('../tasks/compile-templates-from-dir'),
 	validateRequiredParams = require('../util/validate-required-params'),
-	ChromeScreenshot = require('../util/chrome-screenshot'),
 	prepareResultsDir = require('../tasks/prepare-results-dir'),
 	configureFixtureEngines = require('../tasks/configure-fixture-engines'),
 	runMdFilesFromDir = require('../tasks/run-md-files-from-dir');
 
 	//log = require('../util/debug-log')
 
-module.exports = function run(args) {
+module.exports = function run(args, components) {
 	let results, fixtureEngines;
 	const resultDir = args['results-dir'],
 		examplesDir = args['examples-dir'],
 		templatesDir = args['templates-dir'],
-		chromeScreenshot = new ChromeScreenshot();
+		screenshotEngine = components.get('screenshotEngine');
 
 	validateRequiredParams(args, ['examples-dir', 'results-dir', 'templates-dir']);
 
 
-	return chromeScreenshot.start()
+	return screenshotEngine.start()
 		.then(() => configureFixtureEngines(args))
 		.then(e => fixtureEngines = e)
 		.then(() => prepareResultsDir(resultDir, examplesDir, templatesDir))
 		.then(() => compileTemplates(templatesDir))
-		.then(templates => runMdFilesFromDir(examplesDir, resultDir, fixtureEngines, templates, chromeScreenshot))
+		.then(templates => runMdFilesFromDir(examplesDir, resultDir, fixtureEngines, templates, screenshotEngine))
 		.then(r => results = r)
-		.then(chromeScreenshot.stop)
+		.then(screenshotEngine.stop)
 		.then(() => results.summary);
 };
 

@@ -1,8 +1,10 @@
 'use strict';
-const shell = require('shelljs'),
-	sanitize = require('sanitize-filename');
+const shell = require('shelljs');
 exports.ensureCleanDir = function (dirPath) {
 	shell.rm('-rf', dirPath);
+	shell.mkdir('-p', dirPath);
+};
+exports.mkdirp = function (dirPath) {
 	shell.mkdir('-p', dirPath);
 };
 exports.remove = function (path) {
@@ -26,7 +28,3 @@ exports.copyFile = function (from, to) {
 exports.recursiveList = function (dirPath) {
 	return shell.ls('-R', dirPath);
 };
-exports.sanitizeFileName = function (unsafeName) {
-	return sanitize(unsafeName).replace(/\s/g, '_');
-};
-

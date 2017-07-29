@@ -17,7 +17,7 @@ const CDP = require('chrome-remote-interface'),
 		//.then(() => cdp.Emulation.forceViewport({x: box.x, y: box.y, scale: 1}));
 	};
 
-module.exports = function ChromeScreenshot() {
+module.exports = function HeadlessChromeScreenshotService(/*config, components*/) {
 	let chrome, cdp,
 		currentPageResolve;
 	const self = this,
