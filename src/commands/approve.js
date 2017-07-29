@@ -12,7 +12,7 @@ const validateRequiredParams = require('../util/validate-required-params'),
 module.exports = function approve(config, components) {
 	validateRequiredParams(config, ['examples-dir', 'results-dir', 'templates-dir', 'page', 'example']);
 
-	const resultsRepository = components.get('resultsRepository'),
+	const resultsRepository = components.resultsRepository,
 		approvePage = function (pageName) {
 			const exampleNames = resultsRepository.getResultNames(pageName).filter(exampleName => matchingName(exampleName, config.example));
 			if (exampleNames.length) {

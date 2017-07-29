@@ -4,8 +4,8 @@ const path = require('path');
 module.exports = function ResultsRepository(config, components) {
 
 	let results;
-	const fileRepository = components.get('fileRepository'),
-		templateRepository = components.get('templateRepository'),
+	const fileRepository = components.fileRepository,
+		templateRepository = components.templateRepository,
 		self = this,
 		findPage = function (pageName) {
 			return results && results.pages && results.pages.find(p => p.pageName === pageName);

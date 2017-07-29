@@ -11,8 +11,8 @@ module.exports = function run(args, components) {
 	const resultDir = args['results-dir'],
 		examplesDir = args['examples-dir'],
 		templatesDir = args['templates-dir'],
-		screenshotEngine = components.get('screenshotEngine'),
-		resultsRepository = components.get('resultsRepository');
+		screenshotEngine = components.screenshotEngine,
+		resultsRepository = components.resultsRepository;
 
 	validateRequiredParams(args, ['examples-dir', 'results-dir', 'templates-dir']);
 

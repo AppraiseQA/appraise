@@ -24,20 +24,22 @@ describe('ComponentBuilder', () => {
 		`, 'utf8');
 		jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 		underTest = new ComponentBuilder(config, {
-			configured: modPath
+			configured: modPath,
+			misconfigured: path.join(workingDir, 'non-existing')
 		});
 	});
 	afterEach(function () {
 		fsUtil.remove(workingDir);
 	});
-	it('can instantiate and load a configured module', () => {
-		const result = underTest.get('configured');
+	it('blows up for a misconfigured module', () => {
+		expect(() => underTest.misconfigured).toThrowError(/Cannot find module/);
+	});
+	it('can get a configured component as a property', () => {
+		const result = underTest.configured;
 		expect(result.type).toEqual('dynamic mod');
 		expect(result.config).toEqual(config);
 		expect(result.components).toBe(underTest);
-	});
-	it('blows up if loading an unconfigured module', () => {
-		expect(() => underTest.get('unconfigured')).toThrowError('component unconfigured not configured');
+
 	});
 
 

@@ -14,9 +14,7 @@ describe('ResultsRepository', () => {
 		templateRepository = jasmine.createSpyObj('templateRepository', ['get']);
 		components.fileRepository = fileRepository;
 		components.templateRepository = templateRepository;
-		underTest = new ResultsRepository({}, {
-			get: (t) => components[t]
-		});
+		underTest = new ResultsRepository({}, components);
 	});
 	describe('loadFromResultsDir', () => {
 		it('uses the file repository to fetch the JSON contents of the summary', done => {

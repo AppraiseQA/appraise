@@ -13,11 +13,7 @@ describe('approve', () => {
 		};
 		resultsRepository = jasmine.createSpyObj('resultsRepository', ['loadFromResultsDir', 'getPageNames', 'getResultNames', 'approveResult']);
 		components = {
-			get: t => {
-				if (t === 'resultsRepository') {
-					return resultsRepository;
-				}
-			}
+			resultsRepository: resultsRepository
 		};
 	});
 	describe('param validation', () => {
