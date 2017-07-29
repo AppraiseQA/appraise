@@ -1,7 +1,6 @@
 'use strict';
 const compileTemplates = require('../tasks/compile-templates-from-dir'),
 	validateRequiredParams = require('../util/validate-required-params'),
-	prepareResultsDir = require('../tasks/prepare-results-dir'),
 	configureFixtureEngines = require('../tasks/configure-fixture-engines'),
 	runMdFilesFromDir = require('../tasks/run-md-files-from-dir');
 
@@ -12,7 +11,8 @@ module.exports = function run(args, components) {
 	const resultDir = args['results-dir'],
 		examplesDir = args['examples-dir'],
 		templatesDir = args['templates-dir'],
-		screenshotEngine = components.get('screenshotEngine');
+		screenshotEngine = components.get('screenshotEngine'),
+		resultsRepository = components.get('resultsRepository');
 
 	validateRequiredParams(args, ['examples-dir', 'results-dir', 'templates-dir']);
 
@@ -20,7 +20,7 @@ module.exports = function run(args, components) {
 	return screenshotEngine.start()
 		.then(() => configureFixtureEngines(args))
 		.then(e => fixtureEngines = e)
-		.then(() => prepareResultsDir(resultDir, examplesDir, templatesDir))
+		.then(() => resultsRepository.resetResultsDir())
 		.then(() => compileTemplates(templatesDir))
 		.then(templates => runMdFilesFromDir(examplesDir, resultDir, fixtureEngines, templates, screenshotEngine))
 		.then(r => results = r)
