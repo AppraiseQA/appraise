@@ -3,7 +3,6 @@
 // approve --example="blue line" --page="hello-world"
 // approve --all
 //
-
 const validateRequiredParams = require('../util/validate-required-params'),
 	sequentialPromiseMap = require('sequential-promise-map'),
 	matchingName = function (objectName, expression) {
@@ -11,16 +10,26 @@ const validateRequiredParams = require('../util/validate-required-params'),
 	};
 
 module.exports = function approve(config, components) {
-	validateRequiredParams(config, module.exports.doc.args.filter(a => !a.optional).map(a => a.argument));
+	validateRequiredParams(config, ['examples-dir', 'results-dir', 'templates-dir', 'page', 'example']);
 
 	const resultsRepository = components.get('resultsRepository'),
-		approvePage = function (pageName, resultsFilter) {
-			const exampleNames = resultsRepository.getResultNames(pageName).filter(exampleName => matchingName(exampleName, resultsFilter));
-			return Promise.all(exampleNames.map(exampleName => resultsRepository.approveResult(pageName, exampleName)));
+		approvePage = function (pageName) {
+			const exampleNames = resultsRepository.getResultNames(pageName).filter(exampleName => matchingName(exampleName, config.example));
+			if (exampleNames.length) {
+				return sequentialPromiseMap(exampleNames, exampleName => resultsRepository.approveResult(pageName, exampleName));
+			} else {
+				throw `example ${config.example} not found in page ${config.page} results`;
+			}
+
 		};
 	return resultsRepository.loadFromResultsDir()
 		.then(() => resultsRepository.getPageNames().filter(pageName => matchingName(pageName, config.page)))
-		.then(pageNames => sequentialPromiseMap(pageNames.map(approvePage)));
+		.then(pageNames => {
+			if (pageNames.length) {
+				return sequentialPromiseMap(pageNames, approvePage);
+			}
+			throw `page ${config.page} not found in results`;
+		});
 };
 
 module.exports.doc = {

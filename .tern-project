@@ -1,0 +1,8 @@
+{
+    "libs": ["ecmascript"],
+    "plugins": {
+        "node": {},
+        "jasmine": {},
+        "es_modules": {}
+    }
+}
