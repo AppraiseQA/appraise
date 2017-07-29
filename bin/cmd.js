@@ -4,7 +4,14 @@ const minimist = require('minimist'),
 	process = require('process'),
 	path = require('path'),
 	readCommands = require('../src/util/read-commands'),
+	ComponentBuilder = require('../src/components/builder'),
 	docTxt = require('../src/util/doc-txt'),
+	defaultComponents = {
+		fileRepository: './local-file-repository',
+		screenshotService: './headless-chrome-screenshot-service',
+		resultsRepository: './results-repository',
+		templateRepository: './handlebars-template-repository'
+	},
 	readArgs = function () {
 		return minimist(process.argv.slice(2), {
 			alias: { h: 'help', v: 'version' },
@@ -44,8 +51,9 @@ const minimist = require('minimist'),
 			process.exit(1);
 			return;
 		}
+
 		Promise.resolve()
-			.then(() => commands[command](args))
+			.then(() => commands[command](args, new ComponentBuilder(args, defaultComponents)))
 			.then(result => {
 				if (result) {
 					console.log(JSON.stringify(result, null, 2));
