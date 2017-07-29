@@ -5,13 +5,11 @@ const mockFileRepository = require('../support/mock-file-repository'),
 describe('HandlebarsTemplateRepository', () => {
 	let fileRepository, underTest;
 	beforeEach(() => {
-		const components = {};
 		fileRepository = mockFileRepository({
 			'templates-dir': 'templateDir'
 		});
-		components.fileRepository = fileRepository;
 		underTest = new HandlebarsTemplateRepository({}, {
-			get: (t) => components[t]
+			fileRepository: fileRepository
 		});
 	});
 	describe('get', () => {

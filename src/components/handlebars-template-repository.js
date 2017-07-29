@@ -3,7 +3,7 @@
 
 const Handlebars = require('handlebars');
 module.exports = function HandlebarsTemplateRepository(config, components) {
-	const fileRepository = components.get('fileRepository'),
+	const fileRepository = components.fileRepository,
 		self = this,
 		templates = {};
 
