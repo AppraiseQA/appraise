@@ -5,14 +5,19 @@ const path = require('path'),
 
 module.exports = function NodeFixtureEngine(options) {
 	const self = this,
-		fixtureDir = options['fixtures-dir'] || options['examples-dir'];
+		loadFixture = function (example) {
+			const fixtureDir = options['fixtures-dir'] || options['examples-dir'];
+			return new Promise(resolve => {
+				const module = require(path.resolve(fixtureDir, example.params.fixture));
+				resolve(module);
+			});
+		};
+
 	self.execute = function (example) {
-		const fixture = require(path.resolve(fixtureDir, example.params.fixture));
-		return Promise.resolve()
-			.then(() => parse(example.input, example.params.format))
-			.then(fixture)
+		return loadFixture(example)
+			.then(fixture => fixture(parse(example.input, example.params.format)))
 			.then(output => example.output = output)
-			.then(() => example);
+			.catch(err => example.error = err);
 	};
 
 };
