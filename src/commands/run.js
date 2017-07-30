@@ -1,31 +1,24 @@
 'use strict';
-const compileTemplates = require('../tasks/compile-templates-from-dir'),
-	validateRequiredParams = require('../util/validate-required-params'),
-	configureFixtureEngines = require('../tasks/configure-fixture-engines'),
-	runMdFilesFromDir = require('../tasks/run-md-files-from-dir');
+const validateRequiredParams = require('../util/validate-required-params'),
+	sequentialPromiseMap = require('sequential-promise-map');
 
 	//log = require('../util/debug-log')
 
 module.exports = function run(args, components) {
-	let results, fixtureEngines;
-	const resultDir = args['results-dir'],
-		examplesDir = args['examples-dir'],
-		templatesDir = args['templates-dir'],
-		screenshotEngine = components.screenshotEngine,
+	const executionService = components.executionService,
+		examplesRepository = components.examplesRepository,
 		resultsRepository = components.resultsRepository;
 
 	validateRequiredParams(args, ['examples-dir', 'results-dir', 'templates-dir']);
 
-
-	return screenshotEngine.start()
-		.then(() => configureFixtureEngines(args))
-		.then(e => fixtureEngines = e)
-		.then(() => resultsRepository.resetResultsDir())
-		.then(() => compileTemplates(templatesDir))
-		.then(templates => runMdFilesFromDir(examplesDir, resultDir, fixtureEngines, templates, screenshotEngine))
-		.then(r => results = r)
-		.then(screenshotEngine.stop)
-		.then(() => results.summary);
+	return executionService.start()
+		.then(resultsRepository.resetResultsDir)
+		.then(resultsRepository.createNewRun)
+		.then(examplesRepository.getPageNames)
+		.then(pageNames => sequentialPromiseMap(pageNames, executionService.executePage))
+		.then(resultsRepository.closeRun)
+		.then(resultsRepository.writeSummary)
+		.then(executionService.stop);
 };
 
 module.exports.doc = {

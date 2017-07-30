@@ -10,7 +10,8 @@ const minimist = require('minimist'),
 		fileRepository: './local-file-repository',
 		screenshotService: './headless-chrome-screenshot-service',
 		resultsRepository: './results-repository',
-		templateRepository: './handlebars-template-repository'
+		templateRepository: './handlebars-template-repository',
+		'fixture-engine-node': '../fixture-engines/node-fixture-engine'
 	},
 	readArgs = function () {
 		return minimist(process.argv.slice(2), {

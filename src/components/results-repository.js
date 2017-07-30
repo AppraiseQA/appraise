@@ -1,12 +1,16 @@
 /*global module, require*/
 'use strict';
-const path = require('path');
+const path = require('path'),
+	aggregateSummary = require('../util/aggregate-summary');
 module.exports = function ResultsRepository(config, components) {
 
 	let results;
 	const fileRepository = components.fileRepository,
 		templateRepository = components.templateRepository,
 		self = this,
+		timeStamp = function () {
+			return new Date().getTime();
+		},
 		findPage = function (pageName) {
 			return results && results.pages && results.pages.find(p => p.pageName === pageName);
 		},
@@ -76,4 +80,23 @@ module.exports = function ResultsRepository(config, components) {
 			resultNames = page && page.results && Object.keys(page.results);
 		return resultNames || [];
 	};
+	/**********/
+	self.createNewRun = function () {
+		results = {
+			startedAt: timeStamp(),
+			pages: []
+		};
+	};
+	self.closeRun = function () {
+		results.summary = aggregateSummary(results.pages);
+		results.finishedAt = timeStamp();
+	};
+	self.writeSummary = function () {
+		return fileRepository.writeJSON(fileRepository.referencePath('results', 'summary.json'), results)
+			.then(() => templateRepository.get('summary'))
+			.then(template => template(results))
+			.then(html => fileRepository.writeText(fileRepository.referencePath(results, 'summary.html'), html));
+		//then -> additional formatters
+	};
+
 };
