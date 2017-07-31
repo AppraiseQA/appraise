@@ -1,15 +1,18 @@
 /*global describe, it, expect, beforeEach */
 'use strict';
-const mockFileRepository = require('../support/mock-file-repository'),
+const promiseSpyObject = require('../support/promise-spy-object'),
+	mockFileRepository = require('../support/mock-file-repository'),
 	ExamplesRepository = require('../../src/components/examples-repository');
 describe('ExamplesRepository', () => {
-	let fileRepository, underTest;
+	let fileRepository, underTest, pageFormatter;
 	beforeEach(() => {
 		fileRepository = mockFileRepository({
 			'examples-dir': 'examplesDir'
 		});
+		pageFormatter = promiseSpyObject('pageFormatter', ['format']);
 		underTest = new ExamplesRepository({}, {
-			fileRepository: fileRepository
+			fileRepository: fileRepository,
+			pageFormatter: pageFormatter
 		});
 	});
 	describe('getPageNames', () => {
@@ -38,14 +41,16 @@ describe('ExamplesRepository', () => {
 	});
 	describe('getPageDetails', () => {
 		it('returns a summary of file information for a page', done => {
-			fileRepository.promises.readText.resolve('# Title');
 			fileRepository.promises.readModificationTs.resolve(5000);
+			pageFormatter.promises.format.resolve('<h1>Title</h1>');
 			underTest.getPageDetails('some/page')
 				.then(result => expect(result).toEqual({
 					sourcePath: 'examplesDir/some/page.md',
 					unixTsModified: 5000,
-					body: '<h1>Title</h1>\n'
+					html: '<h1>Title</h1>'
 				}))
+				.then(() => expect(pageFormatter.format).toHaveBeenCalledWith('examplesDir/some/page.md'))
+				.then(() => expect(fileRepository.readModificationTs).toHaveBeenCalledWith('examplesDir/some/page.md'))
 				.then(done, done.fail);
 		});
 	});

@@ -1,9 +1,8 @@
 'use strict';
-const stripExtension = require('../util/strip-extension'),
-	mdToHtml = require('../tasks/md-to-html');
+const stripExtension = require('../util/strip-extension');
 module.exports = function ExamplesRepository(config, components) {
 	const fileRepository = components.fileRepository,
-		propertyPrefix = config['html-attribute-prefix'],
+		pageFormatter = components.pageFormatter,
 		self = this;
 	self.getPageNames = function () {
 		return fileRepository.readDirContents(
@@ -19,9 +18,8 @@ module.exports = function ExamplesRepository(config, components) {
 			};
 		return fileRepository.readModificationTs(filePath)
 			.then(modTime => result.unixTsModified = modTime)
-			.then(() => fileRepository.readText(filePath))
-			.then(mdSource =>  mdToHtml(mdSource, propertyPrefix))
-			.then(html => result.body = html)
+			.then(() => pageFormatter.format(filePath))
+			.then(html => result.html = html)
 			.then(() => result);
 	};
 };

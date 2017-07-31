@@ -6,12 +6,15 @@ const minimist = require('minimist'),
 	readCommands = require('../src/util/read-commands'),
 	ComponentBuilder = require('../src/components/builder'),
 	docTxt = require('../src/util/doc-txt'),
+	defaultComponentPath = name => path.join(__dirname, '..', 'src', 'components', name),
 	defaultComponents = {
-		fileRepository: './local-file-repository',
-		screenshotService: './headless-chrome-screenshot-service',
-		resultsRepository: './results-repository',
-		templateRepository: './handlebars-template-repository',
-		'fixture-engine-node': '../fixture-engines/node-fixture-engine'
+		fileRepository: defaultComponentPath('local-file-repository'),
+		screenshotService: defaultComponentPath('headless-chrome-screenshot-service'),
+		resultsRepository: defaultComponentPath('results-repository'),
+		templateRepository: defaultComponentPath('handlebars-template-repository'),
+		'fixture-engine-node': defaultComponentPath('fixture-engines/node-fixture-engine'),
+		examplesRepository: defaultComponentPath('examples-repository'),
+		pageFormatter: defaultComponentPath('markdown-it-page-formatter')
 	},
 	readArgs = function () {
 		return minimist(process.argv.slice(2), {
