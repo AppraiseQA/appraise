@@ -22,7 +22,8 @@ const minimist = require('minimist'),
 				'examples-dir': path.join(process.cwd(), 'examples'),
 				'results-dir': path.join(process.cwd(), 'results'),
 				'templates-dir': path.join(__dirname, '..', 'templates'),
-				'fixtures-dir': path.join(process.cwd(), 'examples')
+				'fixtures-dir': path.join(process.cwd(), 'examples'),
+				'html-attribute-prefix': 'data-appraise'
 			}
 		});
 	},

@@ -315,4 +315,44 @@ describe('LocalFileRepository', () => {
 				.then(done);
 		});
 	});
+	describe('readModificationTs', () => {
+		let start, later, after;
+		const unixTs = () => Math.floor(new Date().getTime() / 1000),
+			pause = () => new Promise(resolve => setTimeout(resolve, 1000));
+		it('gets the modification timestamp for a newly created file', done => {
+			const sourcePath = path.join(workingDir, 't.txt');
+			start = unixTs();
+			fs.writeFileSync(sourcePath, 't', 'utf8');
+			underTest.readModificationTs(sourcePath)
+				.then(ts => {
+					after = unixTs();
+					expect(ts).toBeGreaterThanOrEqual(start);
+					expect(ts).toBeLessThanOrEqual(after);
+				})
+				.then(done, done.fail);
+		});
+		it('gets the modification Unix timestamp  for an updated file', done => {
+			const sourcePath = path.join(workingDir, 't.txt');
+			start = unixTs();
+
+			fs.writeFileSync(sourcePath, 't', 'utf8');
+			pause()
+				.then(() => later = unixTs())
+				.then(() => fs.appendFileSync(sourcePath, 'a', 'utf8'))
+				.then(() => underTest.readModificationTs(sourcePath))
+				.then(ts => {
+					after = unixTs();
+					expect(ts).toBeGreaterThan(start);
+					expect(ts).toBeGreaterThanOrEqual(later);
+					expect(ts).toBeLessThanOrEqual(after);
+				})
+				.then(done, done.fail);
+		});
+		it('breaks if the file cannot be read', done => {
+			underTest.readModificationTs(path.join(workingDir, 'non-existing'))
+				.then(done.fail)
+				.catch(e => expect(e.message).toMatch('ENOENT: no such file or directory'))
+				.then(done);
+		});
+	});
 });

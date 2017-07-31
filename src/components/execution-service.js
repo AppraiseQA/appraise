@@ -1,15 +1,26 @@
 'use strict';
+const sequentialPromiseMap = require('sequential-promise-map');
 module.exports = function ExecutionService(config, components) {
 	const self = this,
-		screenshotService = components.screenshotService,
+		fixtureService = components.fixtureService,
+		resultsRepository = components.resultsRepository,
 		examplesRepository = components.examplesRepository;
 	self.start = function () {
-		return screenshotService.start();
+		return fixtureService.start();
 	};
 	self.stop = function () {
-		return screenshotService.stop();
+		return fixtureService.stop();
 	};
 	self.executePage = function (pageName) {
-
+		const runSingleExample = function (example) {
+			resultsRepository.openExampleRun(pageName, example.exampleName)
+				.then(workingDir => fixtureService.executeExample(example, workingDir))
+				.then(executionResult => resultsRepository.closeExampleRun(pageName, example.exampleName, executionResult));
+		};
+		return examplesRepository.getPageDetails()
+			.then(details => resultsRepository.openPageRun(pageName, details))
+			.then(() => examplesRepository.getPageExamples(pageName))
+			.then(examples => sequentialPromiseMap(examples, runSingleExample))
+			.then(() => resultsRepository.closePageRun(pageName));
 	};
 };

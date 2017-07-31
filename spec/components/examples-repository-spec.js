@@ -2,7 +2,7 @@
 'use strict';
 const mockFileRepository = require('../support/mock-file-repository'),
 	ExamplesRepository = require('../../src/components/examples-repository');
-describe('examplesRepository', () => {
+describe('ExamplesRepository', () => {
 	let fileRepository, underTest;
 	beforeEach(() => {
 		fileRepository = mockFileRepository({
@@ -34,6 +34,19 @@ describe('examplesRepository', () => {
 				.catch(e => expect(e).toEqual('boom!'))
 				.then(done);
 			fileRepository.promises.readDirContents.reject('boom!');
+		});
+	});
+	describe('getPageDetails', () => {
+		it('returns a summary of file information for a page', done => {
+			fileRepository.promises.readText.resolve('# Title');
+			fileRepository.promises.readModificationTs.resolve(5000);
+			underTest.getPageDetails('some/page')
+				.then(result => expect(result).toEqual({
+					sourcePath: 'examplesDir/some/page.md',
+					unixTsModified: 5000,
+					body: '<h1>Title</h1>\n'
+				}))
+				.then(done, done.fail);
 		});
 	});
 

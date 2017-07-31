@@ -98,12 +98,16 @@ module.exports = function LocalFileRepository(config/*, components*/) {
 
 			resolve(fsUtil.recursiveList(dirPath).filter(t => fsUtil.isFile(path.join(dirPath, t))));
 		})
-		.then(sourceFiles => {
-			if (predicate) {
-				return sourceFiles.filter(predicate);
-			}
-			return sourceFiles;
-		});
+			.then(sourceFiles => {
+				if (predicate) {
+					return sourceFiles.filter(predicate);
+				}
+				return sourceFiles;
+			});
+	};
+	self.readModificationTs = function (filePath) {
+		return fsPromise.statAsync(filePath)
+			.then(s => Math.floor(s.mtime.getTime() / 1000));
 	};
 	init();
 };
