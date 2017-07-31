@@ -75,22 +75,29 @@ module.exports = function LocalFileRepository(config/*, components*/) {
 		});
 	};
 	self.copyDirContents = function (sourceDir, targetDir, predicate) {
+		if (fsUtil.isFile(targetDir)) {
+			return Promise.reject(`${targetDir} is an existing file. Cannot copy a directory into it.`);
+		};
+		return self.readDirContents(sourceDir, predicate)
+			.then(sourceFiles => sequentialPromiseMap(sourceFiles, f => self.copyFile(path.join(sourceDir, f), path.join(targetDir, f))));
+	};
+	self.isSourcePage = function (filePath) {
+		return path.extname(filePath) === '.md';
+	};
+	self.readDirContents = function (dirPath, predicate) {
 		return new Promise((resolve, reject) => {
-			if (fsUtil.isFile(targetDir)) {
-				return reject(`${targetDir} is an existing file. Cannot copy a directory into it.`);
-			}
-			resolve(fsUtil.recursiveList(sourceDir).filter(t => fsUtil.isFile(path.join(sourceDir, t))));
+			if (!fsUtil.isDir(dirPath)) {
+				return reject(`${dirPath} is not a directory path`);
+			};
+
+			resolve(fsUtil.recursiveList(dirPath).filter(t => fsUtil.isFile(path.join(dirPath, t))));
 		})
 		.then(sourceFiles => {
 			if (predicate) {
 				return sourceFiles.filter(predicate);
 			}
 			return sourceFiles;
-		})
-		.then(sourceFiles => sequentialPromiseMap(sourceFiles, f => self.copyFile(path.join(sourceDir, f), path.join(targetDir, f))));
-	};
-	self.isSourcePage = function (filePath) {
-		return path.extname(filePath) === '.md';
+		});
 	};
 	init();
 };

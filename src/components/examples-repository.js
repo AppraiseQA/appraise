@@ -4,9 +4,10 @@ module.exports = function ExamplesRepository(config, components) {
 	const fileRepository = components.fileRepository,
 		self = this;
 	self.getPageNames = function () {
-		return fileRepository.getDirContents(
+		return fileRepository.readDirContents(
 			fileRepository.referencePath('examples'),
 			fileRepository.isSourcePage
-		).map(stripExtension);
+		)
+		.then(r => r.map(stripExtension));
 	};
 };

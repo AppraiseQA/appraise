@@ -230,4 +230,39 @@ describe('LocalFileRepository', () => {
 			expect(underTest.isSourcePage('max.md.png')).toBeFalsy();
 		});
 	});
+	describe('readDirContents', () => {
+		let sourcePath;
+		beforeEach(() => {
+			sourcePath = path.join(workingDir, 'source');
+			fs.mkdirSync(sourcePath);
+		});
+		it('returns a list of files from a directory, recursively', done => {
+			fs.writeFileSync(path.join(sourcePath, 'file1.txt'), 'some content', 'utf8');
+			fs.writeFileSync(path.join(sourcePath, 'file2.txt'), 'some other content', 'utf8');
+			underTest.readDirContents(sourcePath)
+				.then(r => expect(r).toEqual(['file1.txt', 'file2.txt']))
+				.then(done, done.fail);
+		});
+		it('ignores directories', done => {
+			fs.mkdirSync(path.join(sourcePath, 'subdir'));
+			fs.writeFileSync(path.join(sourcePath, 'file1.txt'), 'some content', 'utf8');
+			fs.writeFileSync(path.join(sourcePath, 'subdir', 'file2.txt'), 'some other content', 'utf8');
+			underTest.readDirContents(sourcePath)
+				.then(r => expect(r).toEqual(['file1.txt', 'subdir/file2.txt']))
+				.then(done, done.fail);
+		});
+		it('can apply a predicate to filter files', done => {
+			fs.writeFileSync(path.join(sourcePath, 'file1.txt'), 'some content', 'utf8');
+			fs.writeFileSync(path.join(sourcePath, 'file2.txt'), 'some other content', 'utf8');
+			underTest.readDirContents(sourcePath, t => /2/.test(t))
+				.then(r => expect(r).toEqual(['file2.txt']))
+				.then(done, done.fail);
+		});
+		it('rejects if reading the dir rejects', done => {
+			underTest.readDirContents(path.join(sourcePath, 'subdir1'))
+				.then(done.fail)
+				.catch(e => expect(e).toMatch(/subdir1 is not a directory path/))
+				.then(done);
+		});
+	});
 });
