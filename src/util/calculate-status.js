@@ -1,6 +1,9 @@
 /*global module*/
 'use strict';
 module.exports = function calculateStatus(counts) {
+	if (!counts) {
+		return 'skipped';
+	}
 	if (counts.error) {
 		return 'error';
 	} else if (counts.failure) {

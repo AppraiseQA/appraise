@@ -1,9 +1,9 @@
-/*global describe, it, expect, require, jasmine, beforeEach */
+/*global describe, it, expect, require, jasmine, beforeEach, afterEach */
 'use strict';
 const mockFileRepository = require('../support/mock-file-repository'),
 	ResultsRepository = require('../../src/components/results-repository');
 describe('ResultsRepository', () => {
-	let fileRepository, underTest, templateRepository;
+	let fileRepository, underTest, templateRepository, pendingPromise;
 	beforeEach(() => {
 		const components = {};
 		fileRepository = mockFileRepository({
@@ -15,6 +15,7 @@ describe('ResultsRepository', () => {
 		components.fileRepository = fileRepository;
 		components.templateRepository = templateRepository;
 		underTest = new ResultsRepository({}, components);
+		pendingPromise = new Promise(() => true);
 	});
 	describe('loadFromResultsDir', () => {
 		it('uses the file repository to fetch the JSON contents of the summary', done => {
@@ -232,6 +233,164 @@ describe('ResultsRepository', () => {
 			fileRepository.cleanDir.and.returnValue(Promise.resolve());
 			underTest.resetResultsDir()
 				.then(done.fail, done.fail);
+		});
+	});
+	describe('getRunStatus', () => {
+		it ('returns an empty status if no results loaded', () => {
+			expect(underTest.getRunStatus()).toEqual({pages: 0, total: 0, status: 'skipped'});
+		});
+		it ('returns the summary aggregate counts', done => {
+			underTest.loadFromResultsDir()
+				.then(() => expect(underTest.getRunStatus()).toEqual({pages: 2, total: 25, success: 20, failure: 5, status: 'failure'}))
+				.then(done, done.fail);
+			fileRepository.promises.readJSON.resolve(
+				{
+					pages: [
+						{pageName: 'first', summary: {success: 10, total: 10}},
+						{pageName: 'second', summary: {success: 10, failure: 5, total: 15}}
+					]
+				}
+			);
+		});
+	});
+	describe('createNewRun', () => {
+		it('empties out any previously loaded results', done => {
+
+			underTest.loadFromResultsDir()
+				.then(() => underTest.createNewRun())
+				.then(() => expect(underTest.getRunStatus()).toEqual({pages: 0, total: 0, status: 'skipped'}))
+				.then(done, done.fail);
+			fileRepository.promises.readJSON.resolve(
+				{
+					pages: [
+						{pageName: 'first', summary: {success: 10, total: 10}},
+						{pageName: 'second', summary: {success: 10, failure: 5, total: 15}}
+					]
+				}
+			);
+		});
+		it('has no effect if nothing loaded', () => {
+			underTest.createNewRun();
+			expect(underTest.getRunStatus()).toEqual({pages: 0, total: 0, status: 'skipped'});
+		});
+	});
+	describe('writeSummary', () => {
+		beforeEach(() => {
+			jasmine.clock().install();
+			jasmine.clock().mockDate(new Date(1000));
+			underTest.createNewRun();
+			jasmine.clock().tick(1000);
+			underTest.closeRun();
+		});
+		afterEach(() => {
+			jasmine.clock().uninstall();
+		});
+		it('stores the current result summary in the results dir', done => {
+
+
+			fileRepository.writeJSON.and.callFake((filePath, data) => {
+				expect(filePath).toEqual('resultDir/summary.json');
+				expect(data).toEqual({
+					startedAt: 1000,
+					finishedAt: 2000,
+					pages: [],
+					summary: {total: 0, pages: 0, status: 'skipped'}
+				});
+				done();
+				return pendingPromise;
+			});
+			underTest.writeSummary()
+				.then(done.fail, done.fail);
+		});
+		it('rejects if the summary write rejects', done => {
+			fileRepository.promises.writeJSON.reject('bomb!');
+			underTest.writeSummary()
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('bomb!'))
+				.then(done);
+		});
+		it('formats the summary using the summary template and writes to summary.html', done => {
+			const formatter = jasmine.createSpy('formatter').and.returnValue('from formatter');
+			templateRepository.get.and.returnValue(formatter);
+			underTest.writeSummary()
+				.then(() => expect(templateRepository.get).toHaveBeenCalledWith('summary'))
+				.then(() => expect(formatter).toHaveBeenCalledWith({
+					startedAt: 1000,
+					finishedAt: 2000,
+					pages: [],
+					summary: {total: 0, pages: 0, status: 'skipped'}
+				}))
+				.then(() => expect(fileRepository.writeText).toHaveBeenCalledWith('resultDir/summary.html', 'from formatter'))
+				.then(done, done.fail);
+			fileRepository.promises.writeJSON.resolve();
+			fileRepository.promises.writeText.resolve();
+		});
+		it('rejects if there is no summary template', done => {
+			templateRepository.get.and.throwError('no template');
+			underTest.writeSummary()
+				.then(done.fail)
+				.catch(e => expect(e.message).toEqual('no template'))
+				.then(() => expect(fileRepository.writeText).not.toHaveBeenCalled())
+				.then(done);
+			fileRepository.promises.writeJSON.resolve();
+		});
+		it('rejects if the formatter fails', done => {
+			const formatter = jasmine.createSpy('formatter').and.throwError('formatter failed');
+			templateRepository.get.and.returnValue(formatter);
+			underTest.writeSummary()
+				.then(done.fail)
+				.catch(e => expect(e.message).toEqual('formatter failed'))
+				.then(() => expect(fileRepository.writeText).not.toHaveBeenCalled())
+				.then(done);
+			fileRepository.promises.writeJSON.resolve();
+		});
+		it('rejects if the html output write fails', done => {
+			const formatter = jasmine.createSpy('formatter').and.returnValue('from formatter');
+			templateRepository.get.and.returnValue(formatter);
+			underTest.writeSummary()
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('boom!'))
+				.then(done);
+			fileRepository.promises.writeJSON.resolve();
+			fileRepository.promises.writeText.reject('boom!');
+		});
+	});
+	describe('close run', () => {
+		beforeEach(() => {
+			jasmine.clock().install();
+		});
+		afterEach(() => {
+			jasmine.clock().uninstall();
+		});
+
+		it('appends a summary and a timestamp to the current run results', done => {
+			fileRepository.writeJSON.and.callFake((filePath, contents) => {
+				expect(contents.finishedAt).toEqual(5000);
+				expect(contents.summary).toEqual({
+					pages: 2,
+					total: 25,
+					success: 20,
+					failure: 5,
+					status: 'failure'
+				});
+				done();
+				return pendingPromise;
+			});
+			jasmine.clock().mockDate(new Date(5000));
+			underTest.loadFromResultsDir()
+				.then(underTest.closeRun)
+				.then(underTest.writeSummary)
+				.then(done.fail, done.fail);
+
+			fileRepository.promises.readJSON.resolve(
+				{
+					pages: [
+						{pageName: 'first', summary: {success: 10, total: 10}},
+						{pageName: 'second', summary: {success: 10, failure: 5, total: 15}}
+					]
+				}
+			);
+
 		});
 	});
 });

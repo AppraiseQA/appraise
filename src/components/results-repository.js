@@ -80,7 +80,9 @@ module.exports = function ResultsRepository(config, components) {
 			resultNames = page && page.results && Object.keys(page.results);
 		return resultNames || [];
 	};
-	/**********/
+	self.getRunStatus = function () {
+		return aggregateSummary(results && results.pages);
+	};
 	self.createNewRun = function () {
 		results = {
 			startedAt: timeStamp(),
@@ -95,7 +97,7 @@ module.exports = function ResultsRepository(config, components) {
 		return fileRepository.writeJSON(fileRepository.referencePath('results', 'summary.json'), results)
 			.then(() => templateRepository.get('summary'))
 			.then(template => template(results))
-			.then(html => fileRepository.writeText(fileRepository.referencePath(results, 'summary.html'), html));
+			.then(html => fileRepository.writeText(fileRepository.referencePath('results', 'summary.html'), html));
 		//then -> additional formatters
 	};
 
