@@ -90,6 +90,7 @@ too early to use (pre-alpha)
 
 ## Before alpha
 
+- [ ] record timestamp when a page started executing, use in the result template
 - [ ] use pageObj.sourcePath when approving with new result instead of hard-coding the path
 - [ ] put example name into the example object/results object for easier templating
 - [ ] use timestamps for executed and started in result template

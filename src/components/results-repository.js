@@ -116,23 +116,26 @@ module.exports = function ResultsRepository(config, components) {
 	};
 	/****************************************************/
 	self.openPageRun = function (pageName, pageDetails) {
-		fileRepository.cleanDir(fileRepository.referencePath('results', pageName));
-		results.pages.push(mergeProperties ({
-			pageName: pageName,
-			results: {}
-		}, pageDetails));
+		if (!results || !results.pages) {
+			return Promise.reject('there is no active run');
+		}
+		if (findPage(pageName)) {
+			return Promise.reject(`page ${pageName} already exists in results`);
+		}
+		const emptyPage = {pageName: pageName, results: {}};
+		return fileRepository.cleanDir(fileRepository.referencePath('results', pageName))
+			.then(() => results.pages.push(mergeProperties (emptyPage, pageDetails)));
+
 	};
 	self.closePageRun = function (pageName) {
-		const pageObj = findPage(pageName),
-			html = pageObj && pageObj.html;
+		const pageObj = findPage(pageName);
 		if (!pageObj) {
 			return Promise.reject(`page ${pageName} not found in results`);
 		};
 		pageObj.summary = pageSummaryCounts(pageObj.results);
-		delete pageObj.html;
 		pageObj.unixTsExecuted = timeStamp();
 		return templateRepository.get('page')
-			.then(template => template({
+			.then(template => template(pageObj /*{
 				body: html,
 				pageName: pageName,
 				results: pageObj.results,
@@ -141,13 +144,13 @@ module.exports = function ResultsRepository(config, components) {
 				summary: pageObj.summary,
 				rootUrl: reverseRootPath(pageName),
 				breadcrumbs: pageName.split(path.sep)
-			}))
+			}*/))
 			.then(htmlDoc => mergeResults(htmlDoc, pageObj.results, pageName, propertyPrefix))
 			.then(htmlPageResult => fileRepository.writeText(
 				fileRepository.referencePath('results', pageName + '.html'),
 				htmlPageResult
-			));
-
+			))
+			.then(() => delete pageObj.html);
 	};
 	self.openExampleRun = function (pageName, exampleName, exampleDetails) {
 		const pageObj = findPage(pageName);

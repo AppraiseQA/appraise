@@ -291,8 +291,8 @@ describe('ResultsRepository', () => {
 			fileRepository.writeJSON.and.callFake((filePath, data) => {
 				expect(filePath).toEqual('resultDir/summary.json');
 				expect(data).toEqual({
-					startedAt: 1000,
-					finishedAt: 2000,
+					startedAt: 1,
+					finishedAt: 2,
 					pages: [],
 					summary: {total: 0, pages: 0, status: 'skipped'}
 				});
@@ -315,8 +315,8 @@ describe('ResultsRepository', () => {
 			underTest.writeSummary()
 				.then(() => expect(templateRepository.get).toHaveBeenCalledWith('summary'))
 				.then(() => expect(formatter).toHaveBeenCalledWith({
-					startedAt: 1000,
-					finishedAt: 2000,
+					startedAt: 1,
+					finishedAt: 2,
 					pages: [],
 					summary: {total: 0, pages: 0, status: 'skipped'}
 				}))
@@ -365,7 +365,7 @@ describe('ResultsRepository', () => {
 
 		it('appends a summary and a timestamp to the current run results', done => {
 			fileRepository.writeJSON.and.callFake((filePath, contents) => {
-				expect(contents.finishedAt).toEqual(5000);
+				expect(contents.finishedAt).toEqual(5);
 				expect(contents.summary).toEqual({
 					pages: 2,
 					total: 25,
@@ -392,5 +392,54 @@ describe('ResultsRepository', () => {
 			);
 
 		});
+	});
+	describe('openPageRun', () => {
+		it('cleans the results directory and initialises the page object in results', done => {
+			underTest.createNewRun();
+			underTest.openPageRun('pages/page1', {})
+				.then(() => expect(fileRepository.cleanDir).toHaveBeenCalledWith('resultDir/pages/page1'))
+				.then(() => expect(underTest.getPageNames()).toEqual(['pages/page1']))
+				.then(done, done.fail);
+			fileRepository.promises.cleanDir.resolve();
+		});
+		it('leaves any pre-existing pages untouched', done => {
+			underTest.loadFromResultsDir()
+				.then(() => underTest.openPageRun('pages/page1', {}))
+				.then(() => expect(fileRepository.cleanDir).toHaveBeenCalledWith('resultDir/pages/page1'))
+				.then(() => expect(fileRepository.cleanDir.calls.count()).toEqual(1))
+				.then(() => expect(underTest.getPageNames()).toEqual(['first', 'pages/page1']))
+				.then(done, done.fail);
+			fileRepository.promises.cleanDir.resolve();
+			fileRepository.promises.readJSON.resolve({pages: [{pageName: 'first'}]});
+		});
+		it('rejects if there is no active run', done => {
+			underTest.openPageRun('pages/page1', {})
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('there is no active run'))
+				.then(() => expect(fileRepository.cleanDir).not.toHaveBeenCalled())
+				.then(done);
+		});
+		it('rejects if the page already exists without cleaning the old resources', done => {
+			underTest.createNewRun();
+			fileRepository.promises.cleanDir.resolve();
+			underTest.openPageRun('pages/page1', {})
+				.then(() => fileRepository.cleanDir.calls.reset())
+				.then(() => underTest.openPageRun('pages/page1', {}))
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('page pages/page1 already exists in results'))
+				.then(() => expect(fileRepository.cleanDir).not.toHaveBeenCalled())
+				.then(done);
+		});
+		it('rejects if the results directory cannot be cleared', done => {
+			underTest.createNewRun();
+			fileRepository.promises.cleanDir.reject('bomb!');
+			underTest.openPageRun('pages/page1', {})
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('bomb!'))
+				.then(done, done.fail);
+		});
+	});
+	describe('closePageRun', () => {
+
 	});
 });
