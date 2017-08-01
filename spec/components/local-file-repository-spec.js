@@ -136,6 +136,36 @@ describe('LocalFileRepository', () => {
 				.then(done);
 		});
 	});
+	describe('writeBuffer', () => {
+		let actualContent, base64Content;
+		beforeEach(() => {
+			actualContent = 'this is something!';
+			base64Content = new Buffer(actualContent).toString('base64');
+		});
+		it('writes to a file using a promised interface', done => {
+			const sourcePath = path.join(workingDir, 'some.txt');
+			fs.writeFileSync(sourcePath, 'content 123', 'utf8');
+			underTest.writeBuffer(sourcePath, base64Content, 'base64')
+				.then(() => fs.readFileSync(sourcePath, 'utf8'))
+				.then(r => expect(r).toEqual(actualContent))
+				.then(done, done.fail);
+		});
+		it('creates a file if it does not exist', done => {
+			const sourcePath = path.join(workingDir, 'some.txt');
+			underTest.writeBuffer(sourcePath, base64Content, 'base64')
+				.then(() => fs.readFileSync(sourcePath, 'utf8'))
+				.then(r => expect(r).toEqual(actualContent))
+				.then(done, done.fail);
+
+		});
+		it('fails if the source file cannot be writeed to', done => {
+			const sourcePath = path.join(workingDir, 'subdir/some.txt');
+			underTest.writeBuffer(sourcePath, base64Content, 'base64')
+				.then(done.fail)
+				.catch(e => expect(e.message).toMatch(/ENOENT: no such file or directory/))
+				.then(done);
+		});
+	});
 
 	describe('copyFile', () => {
 		it('copies a file using a promised interface', done => {

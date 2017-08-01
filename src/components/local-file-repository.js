@@ -63,6 +63,9 @@ module.exports = function LocalFileRepository(config/*, components*/) {
 	self.writeText = function (filePath, text) {
 		return fsPromise.writeFileAsync(filePath, text, 'utf8');
 	};
+	self.writeBuffer = function (filePath, buffer, encoding) {
+		return fsPromise.writeFileAsync(filePath, buffer, encoding);
+	};
 	self.copyFile = function (fromPath, toPath) {
 		return new Promise((resolve, reject) => {
 			ensureParentDirExists(toPath);
