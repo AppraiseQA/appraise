@@ -1,15 +1,29 @@
 /*global module, require*/
 'use strict';
 const path = require('path'),
-	aggregateSummary = require('../util/aggregate-summary');
+	deepCopy = require('../util/deep-copy'),
+	commandName = require('../../package.json').name,
+	aggregateSummary = require('../util/aggregate-summary'),
+	pageSummaryCounts = require('../util/page-summary-counts'),
+	reverseRootPath = require('../util/reverse-root-path'),
+	mergeResults = require('../tasks/merge-results'),
+	mergeProperties = require('../util/merge-properties');
 module.exports = function ResultsRepository(config, components) {
-
 	let results;
-	const fileRepository = components.fileRepository,
+	const self = this,
+		propertyPrefix = config['html-attribute-prefix'],
+		fileRepository = components.fileRepository,
 		templateRepository = components.templateRepository,
-		self = this,
+		getExampleApprovalInstructions = function (example, exampleName, pageName) {
+			if (example.outcome && example.outcome.status === 'failure') {
+				return `${commandName} approve --page "${pageName}" --example "${exampleName}"`;
+			}
+		},
 		timeStamp = function () {
-			return new Date().getTime();
+			return Math.floor(new Date().getTime() / 1000);
+		},
+		timeStampString = function (ts) {
+			return new Date(ts * 1000).toString();
 		},
 		findPage = function (pageName) {
 			return results && results.pages && results.pages.find(p => p.pageName === pageName);
@@ -99,6 +113,79 @@ module.exports = function ResultsRepository(config, components) {
 			.then(template => template(results))
 			.then(html => fileRepository.writeText(fileRepository.referencePath('results', 'summary.html'), html));
 		//then -> additional formatters
+	};
+	/****************************************************/
+	self.openPageRun = function (pageName, pageDetails) {
+		fileRepository.cleanDir(fileRepository.referencePath('results', pageName));
+		results.pages.push(mergeProperties ({
+			pageName: pageName,
+			results: {}
+		}, pageDetails));
+	};
+	self.closePageRun = function (pageName) {
+		const pageObj = findPage(pageName),
+			html = pageObj && pageObj.html;
+		if (!pageObj) {
+			return Promise.reject(`page ${pageName} not found in results`);
+		};
+		pageObj.summary = pageSummaryCounts(pageObj.results);
+		delete pageObj.html;
+		pageObj.unixTsExecuted = timeStamp();
+		return templateRepository.get('page')
+			.then(template => template({
+				body: html,
+				pageName: pageName,
+				results: pageObj.results,
+				modifiedTime: timeStampString(pageObj.unixTsModified),
+				executedTime: timeStampString(pageObj.unixTsExecuted),
+				summary: pageObj.summary,
+				rootUrl: reverseRootPath(pageName),
+				breadcrumbs: pageName.split(path.sep)
+			}))
+			.then(htmlDoc => mergeResults(htmlDoc, pageObj.results, pageName, propertyPrefix))
+			.then(htmlPageResult => fileRepository.writeText(
+				fileRepository.referencePath('results', pageName + '.html'),
+				htmlPageResult
+			));
+
+	};
+	self.openExampleRun = function (pageName, exampleName, exampleDetails) {
+		const pageObj = findPage(pageName);
+		if (!pageObj) {
+			return Promise.reject(`page ${pageName} not found`);
+		}
+		if (pageObj.results[exampleName]) {
+			return Promise.reject(`example ${exampleName} already open in ${pageName}`);
+		}
+		pageObj.results[exampleName] = deepCopy(exampleDetails);
+		pageObj.results[exampleName].unixTsStarted = timeStamp();
+		pageObj.results[exampleName].resultPathPrefix = fileRepository.referencePath('results', pageName, Object.keys(pageObj.results).length);
+		return pageObj.results[exampleName].resultPathPrefix;
+	};
+	self.closeExampleRun = function (pageName, exampleName, executionResults) {
+		const pageObj = findPage(pageName),
+			exampleObj = pageObj && pageObj.results[exampleName];
+		if (!pageObj) {
+			return Promise.reject(`page ${pageName} not found`);
+		}
+		if (!exampleObj) {
+			return Promise.reject(`example ${exampleName} not found in ${pageName}`);
+		}
+		mergeProperties(exampleObj, executionResults);
+		exampleObj.unixTsExecuted = timeStamp();
+
+		return templateRepository.get('result')
+			.then(template => template({
+				exampleName: exampleName,
+				example: exampleObj,
+				approvalInstructions: getExampleApprovalInstructions(exampleObj, exampleName, pageName),
+				pageName: pageName,
+				rootUrl: reverseRootPath(pageName) + '../',
+				breadcrumbs: pageName.split(path.sep),
+				startedTime: timeStampString(exampleObj.unixTsStarted),
+				executedTime: timeStampString(exampleObj.unixTsExecuted)
+			}))
+			.then(html => fileRepository.writeText(exampleObj.resultPathPrefix + '-result.html', html));
 	};
 
 };

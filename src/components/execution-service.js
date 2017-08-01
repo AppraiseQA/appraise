@@ -13,8 +13,8 @@ module.exports = function ExecutionService(config, components) {
 	};
 	self.executePage = function (pageName) {
 		const runSingleExample = function (example) {
-			resultsRepository.openExampleRun(pageName, example.exampleName)
-				.then(workingDir => fixtureService.executeExample(example, workingDir))
+			resultsRepository.openExampleRun(pageName, example.exampleName, example)
+				.then(resultPathPrefix => fixtureService.executeExample(example, resultPathPrefix))
 				.then(executionResult => resultsRepository.closeExampleRun(pageName, example.exampleName, executionResult));
 		};
 		return examplesRepository.getPageDetails()

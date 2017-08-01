@@ -90,6 +90,9 @@ too early to use (pre-alpha)
 
 ## Before alpha
 
+- [ ] use pageObj.sourcePath when approving with new result instead of hard-coding the path
+- [ ] put example name into the example object/results object for easier templating
+- [ ] use timestamps for executed and started in result template
 - [ ] test with multiple examples in a single file
 - [ ] test with multiple files
 - [ ] test with files in subfolders

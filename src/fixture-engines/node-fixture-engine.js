@@ -15,9 +15,7 @@ module.exports = function NodeFixtureEngine(options) {
 
 	self.execute = function (example) {
 		return loadFixture(example)
-			.then(fixture => fixture(parse(example.input, example.params.format)))
-			.then(output => example.output = output)
-			.catch(err => example.error = err);
+			.then(fixture => fixture(parse(example.input, example.params.format)));
 	};
 
 };
