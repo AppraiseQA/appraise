@@ -396,7 +396,7 @@ describe('ResultsRepository', () => {
 	describe('openPageRun', () => {
 		it('cleans the results directory and initialises the page object in results', done => {
 			underTest.createNewRun();
-			underTest.openPageRun('pages/page1', {})
+			underTest.openPageRun({pageName: 'pages/page1'})
 				.then(() => expect(fileRepository.cleanDir).toHaveBeenCalledWith('resultDir/pages/page1'))
 				.then(() => expect(underTest.getPageNames()).toEqual(['pages/page1']))
 				.then(done, done.fail);
@@ -404,7 +404,7 @@ describe('ResultsRepository', () => {
 		});
 		it('leaves any pre-existing pages untouched', done => {
 			underTest.loadFromResultsDir()
-				.then(() => underTest.openPageRun('pages/page1', {}))
+				.then(() => underTest.openPageRun({pageName: 'pages/page1'}))
 				.then(() => expect(fileRepository.cleanDir).toHaveBeenCalledWith('resultDir/pages/page1'))
 				.then(() => expect(fileRepository.cleanDir.calls.count()).toEqual(1))
 				.then(() => expect(underTest.getPageNames()).toEqual(['first', 'pages/page1']))
@@ -413,7 +413,7 @@ describe('ResultsRepository', () => {
 			fileRepository.promises.readJSON.resolve({pages: [{pageName: 'first'}]});
 		});
 		it('rejects if there is no active run', done => {
-			underTest.openPageRun('pages/page1', {})
+			underTest.openPageRun({pageName: 'pages/page1'})
 				.then(done.fail)
 				.catch(e => expect(e).toEqual('there is no active run'))
 				.then(() => expect(fileRepository.cleanDir).not.toHaveBeenCalled())
@@ -422,9 +422,9 @@ describe('ResultsRepository', () => {
 		it('rejects if the page already exists without cleaning the old resources', done => {
 			underTest.createNewRun();
 			fileRepository.promises.cleanDir.resolve();
-			underTest.openPageRun('pages/page1', {})
+			underTest.openPageRun({pageName: 'pages/page1'})
 				.then(() => fileRepository.cleanDir.calls.reset())
-				.then(() => underTest.openPageRun('pages/page1', {}))
+				.then(() => underTest.openPageRun({pageName: 'pages/page1'}))
 				.then(done.fail)
 				.catch(e => expect(e).toEqual('page pages/page1 already exists in results'))
 				.then(() => expect(fileRepository.cleanDir).not.toHaveBeenCalled())
@@ -433,11 +433,29 @@ describe('ResultsRepository', () => {
 		it('rejects if the results directory cannot be cleared', done => {
 			underTest.createNewRun();
 			fileRepository.promises.cleanDir.reject('bomb!');
-			underTest.openPageRun('pages/page1', {})
+			underTest.openPageRun({pageName: 'pages/page1'})
 				.then(done.fail)
 				.catch(e => expect(e).toEqual('bomb!'))
 				.then(done, done.fail);
 		});
+		it('rejects if the page has no name', done => {
+			underTest.createNewRun();
+			underTest.openPageRun({notAName: 'pages/page1'})
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('page must have a name'))
+				.then(() => expect(fileRepository.cleanDir).not.toHaveBeenCalled())
+				.then(done, done.fail);
+		});
+		it('rejects if the page is not provided', done => {
+			underTest.createNewRun();
+			underTest.openPageRun()
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('page must have a name'))
+				.then(() => expect(fileRepository.cleanDir).not.toHaveBeenCalled())
+				.then(done, done.fail);
+		});
+
+
 	});
 	describe('closePageRun', () => {
 

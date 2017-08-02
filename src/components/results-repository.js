@@ -115,16 +115,20 @@ module.exports = function ResultsRepository(config, components) {
 		//then -> additional formatters
 	};
 	/****************************************************/
-	self.openPageRun = function (pageName, pageDetails) {
+	self.openPageRun = function (pageDetails) {
 		if (!results || !results.pages) {
 			return Promise.reject('there is no active run');
 		}
-		if (findPage(pageName)) {
-			return Promise.reject(`page ${pageName} already exists in results`);
+		if (!pageDetails || !pageDetails.pageName) {
+			return Promise.reject('page must have a name');
 		}
-		const emptyPage = {pageName: pageName, results: {}};
-		return fileRepository.cleanDir(fileRepository.referencePath('results', pageName))
-			.then(() => results.pages.push(mergeProperties (emptyPage, pageDetails)));
+		if (findPage(pageDetails.pageName)) {
+			return Promise.reject(`page ${pageDetails.pageName} already exists in results`);
+		}
+		const emptyPage = deepCopy(pageDetails);
+		emptyPage.results = {};
+		return fileRepository.cleanDir(fileRepository.referencePath('results', pageDetails.pageName))
+			.then(() => results.pages.push(emptyPage));
 
 	};
 	self.closePageRun = function (pageName) {
