@@ -55,8 +55,7 @@ describe('NodeFixtureEngine', () => {
 				}
 			};
 			underTest.execute(example)
-			.then(() => expect(example.output).toEqual({name: 'examples mod', input: 'my input'}))
-			.then(() => expect(example.error).toBeUndefined())
+			.then(result => expect(result).toEqual({name: 'examples mod', input: 'my input'}))
 			.then(done, done.fail);
 		});
 		it('executes a fixture from the fixtures dir if it is set', done => {
@@ -67,8 +66,7 @@ describe('NodeFixtureEngine', () => {
 				}
 			};
 			underTest.execute(example)
-			.then(() => expect(example.output).toEqual({name: 'fixtures mod', input: 'my input'}))
-			.then(() => expect(example.error).toBeUndefined())
+			.then(result => expect(result).toEqual({name: 'fixtures mod', input: 'my input'}))
 			.then(done, done.fail);
 		});
 		it('supports promises in fixture execution', done => {
@@ -79,8 +77,7 @@ describe('NodeFixtureEngine', () => {
 				}
 			};
 			underTest.execute(example)
-			.then(() => expect(example.output).toEqual('promise modmy input'))
-			.then(() => expect(example.error).toBeUndefined())
+			.then(result => expect(result).toEqual('promise modmy input'))
 			.then(done, done.fail);
 		});
 		it('parses the input if the format is provided', done => {
@@ -92,8 +89,7 @@ describe('NodeFixtureEngine', () => {
 				}
 			};
 			underTest.execute(example)
-			.then(() => expect(example.output).toEqual({name: 'fixtures mod', input: {a: 1}}))
-			.then(() => expect(example.error).toBeUndefined())
+			.then(result => expect(result).toEqual({name: 'fixtures mod', input: {a: 1}}))
 			.then(done, done.fail);
 		});
 		it('records an error if parsing fails', done => {
@@ -105,9 +101,12 @@ describe('NodeFixtureEngine', () => {
 				}
 			};
 			underTest.execute(example)
-			.then(() => expect(example.error.message).toEqual('Unexpected token a in JSON at position 0'))
-			.then(() => expect(example.error.name).toEqual('SyntaxError'))
-			.then(done, done.fail);
+				.then(done.fail)
+				.catch(e => {
+					expect(e.message).toEqual('Unexpected token a in JSON at position 0');
+					expect(e.name).toEqual('SyntaxError');
+				})
+				.then(done, done.fail);
 		});
 
 		it('records an error if the fixture loading rejects', done => {
@@ -118,9 +117,11 @@ describe('NodeFixtureEngine', () => {
 				}
 			};
 			underTest.execute(example)
-				.then(() => expect(example.output).toBeUndefined())
-				.then(() => expect(example.error.message).toEqual('Unexpected token {'))
-				.then(() => expect(example.error.name).toEqual('SyntaxError'))
+				.then(done.fail)
+				.catch(e => {
+					expect(e.message).toEqual('Unexpected token {');
+					expect(e.name).toEqual('SyntaxError');
+				})
 				.then(done, done.fail);
 		});
 		it('records an error if the fixture execution fails', done => {
@@ -131,8 +132,8 @@ describe('NodeFixtureEngine', () => {
 				}
 			};
 			underTest.execute(example)
-				.then(() => expect(example.output).toBeUndefined())
-				.then(() => expect(example.error).toEqual('broken modinp1'))
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('broken modinp1'))
 				.then(done, done.fail);
 		});
 	});

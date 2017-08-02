@@ -11,15 +11,16 @@ module.exports = function ExamplesRepository(config, components) {
 		)
 		.then(r => r.map(stripExtension));
 	};
-	self.getPageDetails = function (pageName) {
+	self.getPage = function (pageName) {
 		const filePath = fileRepository.referencePath('examples', pageName + '.md'),
 			result = {
+				pageName: pageName,
 				sourcePath: filePath
 			};
 		return fileRepository.readModificationTs(filePath)
 			.then(modTime => result.unixTsModified = modTime)
 			.then(() => pageFormatter.format(filePath))
-			.then(html => result.html = html)
+			.then(html => result.body = html)
 			.then(() => result);
 	};
 };

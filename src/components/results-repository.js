@@ -150,7 +150,7 @@ module.exports = function ResultsRepository(config, components) {
 				fileRepository.referencePath('results', pageName + '.html'),
 				htmlPageResult
 			))
-			.then(() => delete pageObj.html);
+			.then(() => delete pageObj.body);
 	};
 	self.openExampleRun = function (pageName, exampleName, exampleDetails) {
 		const pageObj = findPage(pageName);
