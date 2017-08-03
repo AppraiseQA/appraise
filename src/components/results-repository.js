@@ -50,7 +50,9 @@ module.exports = function ResultsRepository(config, components) {
 			]);
 		};
 
-
+	if (!propertyPrefix) {
+		throw 'property prefix must be set';
+	}
 	self.resetResultsDir = function () {
 		return fileRepository.cleanDir(fileRepository.referencePath('results'))
 			.then(() => fileRepository.copyDirContents(fileRepository.referencePath('examples'), fileRepository.referencePath('results'), t => !fileRepository.isSourcePage(t)))
@@ -152,6 +154,9 @@ module.exports = function ResultsRepository(config, components) {
 		if (!pageObj) {
 			return Promise.reject(`page ${pageName} not found in results`);
 		};
+		if (!pageBody) {
+			return Promise.reject('page body cannot be empty');
+		}
 		return templateRepository.get('page')
 			.then(template => template(mergeProperties({body: pageBody}, pageObj)))
 			/*{

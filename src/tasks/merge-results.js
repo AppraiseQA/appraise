@@ -10,7 +10,6 @@ module.exports = function mergeResults(htmlDoc, examples, resultsPath, propertyP
 		mergeExampleResult = function (exampleName) {
 			const example = examples[exampleName],
 				exampleElements = extractCodeBlocks(doc(`[${propertyPrefix}-example="${exampleName}"]`));
-
 			doc('<a>').attr('name', exampleName).insertBefore(exampleElements.first());
 			exampleElements.attr('data-outcome-status', example.outcome.status);
 			if (example.outcome.message) {

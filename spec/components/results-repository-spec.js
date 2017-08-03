@@ -14,7 +14,9 @@ describe('ResultsRepository', () => {
 		templateRepository = jasmine.createSpyObj('templateRepository', ['get']);
 		components.fileRepository = fileRepository;
 		components.templateRepository = templateRepository;
-		underTest = new ResultsRepository({}, components);
+		underTest = new ResultsRepository({
+			'html-attribute-prefix': 'data-prefix'
+		}, components);
 		pendingPromise = new Promise(() => true);
 	});
 	describe('loadFromResultsDir', () => {
@@ -520,8 +522,7 @@ describe('ResultsRepository', () => {
 								somethingNice: {outcome: {status: 'success' } },
 								somethingBad: {outcome: {status: 'failure' } },
 								somethingWrong: {outcome: {status: 'error' } }
-							},
-							body: 'oldBody'
+							}
 						}
 					]
 				}
@@ -557,16 +558,10 @@ describe('ResultsRepository', () => {
 				.then(page => expect(page.summary).toEqual({status: 'error', success: 1, failure: 1, total: 3, error: 1}))
 				.then(done, done.fail);
 		});
-		it('does not modify the page body', done => {
-			underTest.closePageRun('pages/page1')
-				.then(() => underTest.getPageRun('pages/page1'))
-				.then(page => expect(page.body).toEqual('oldBody'))
-				.then(done, done.fail);
-		});
 	});
-	describe('writePageRun', () => {
+	describe('writePageBody', () => {
 		let pageTemplate;
-		beforeEach(() => {
+		beforeEach(done => {
 			pageTemplate = jasmine.createSpy('pageTemplate');
 			templateRepository.get.and.callFake(name => {
 				if (name === 'page') {
@@ -575,7 +570,100 @@ describe('ResultsRepository', () => {
 					return () => '';
 				}
 			});
+			underTest.loadFromResultsDir()
+				.then(done, done.fail);
+
+			fileRepository.promises.readJSON.resolve(
+				{
+					pages: [
+						{
+							pageName: 'pages/page1',
+							results: {
+								simple: {
+									index: 1,
+									expected: 'images/somepic.png',
+									outcome: {
+										status: 'failure',
+										message: 'borked!',
+										image: '1-diff.png'
+									},
+									output: {screenshot: '1-actual.png'}
+								}
+							},
+							summary: {
+								total: 1,
+								failure: 1,
+								status: 'failure'
+							}
+						}
+					]
+				}
+			);
 		});
+		it('rejects if the body is not provided', done => {
+			underTest.writePageBody('pages/page1', '')
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('page body cannot be empty'))
+				.then(done, done.fail);
+		});
+		it('rejects if the page does not exist', done => {
+			underTest.writePageBody('pages/xba', '')
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('page pages/xba not found in results'))
+				.then(done, done.fail);
+		});
+		it('executes the page template with the body merged into the page object', done => {
+			pageTemplate.and.callFake(props => {
+				expect(props.body).toEqual('body');
+				expect(props.pageName).toEqual('pages/page1');
+				expect(props.summary).toEqual({
+					total: 1,
+					failure: 1,
+					status: 'failure'
+				});
+				done();
+				return pendingPromise;
+			});
+			underTest.writePageBody('pages/page1', 'body')
+				.then(done.fail, done.fail);
+		});
+		it('merges the execution results into the HTML template output', done => {
+			const htmlPage = `
+				<table class="preamble" data-prefix-role="preamble">
+					<thead><tr><th>fixture</th></tr></thead>
+					<tbody><tr><td>somefix</td></tr></tbody>
+				</table>
+				<pre>
+					<code data-prefix-example="simple" data-prefix-format="json" class="language-json">abcd</code>
+				</pre>
+				<p>
+					<img src="images/somepic.png" alt="test123" data-prefix-example="simple">
+				</p>
+			`.replace(/\n|\t/g, '').replace(/\s+/g, ' ');
+			pageTemplate.and.returnValue(htmlPage);
+			underTest.writePageBody('pages/page1', 'body')
+				.then(() => expect(fileRepository.writeText).toHaveBeenCalledWith(
+					'resultDir/pages/page1.html',
+					'<html><head></head><body>' +
+					'<table class="preamble" data-prefix-role="preamble">' +
+					'<thead><tr><th>fixture</th></tr></thead>' +
+					'<tbody><tr><td>somefix</td></tr></tbody>' +
+					'</table>' +
+					'<a name="simple"></a>' +
+					'<pre data-outcome-status="failure" data-outcome-message="borked!">' +
+					'<code data-prefix-example="simple" data-prefix-format="json" class="language-json">abcd</code>' +
+					'</pre>' +
+					'<p>' +
+					'<a href="pages/page1/1-result.html" title="borked!">' +
+						'<img src="pages/page1/1-diff.png" alt="borked!" data-prefix-example="simple" data-outcome-status="failure" data-outcome-message="borked!" title="borked!">' +
+					'</a>' +
+					'</p>' +
+					'</body></html>'
+				))
+				.then(done, done.fail);
+			fileRepository.promises.writeText.resolve();
+		});
+
 /*		it('adds the result summary and the execution timestamp to a page', done => {
 			pageTemplate.and.callFake(page => {
 
