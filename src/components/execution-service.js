@@ -1,10 +1,12 @@
 'use strict';
-const sequentialPromiseMap = require('sequential-promise-map');
+const sequentialPromiseMap = require('sequential-promise-map'),
+	validateRequiredComponents = require('../util/validate-required-components');
 module.exports = function ExecutionService(config, components) {
 	const self = this,
 		fixtureService = components.fixtureService,
 		resultsRepository = components.resultsRepository,
 		examplesRepository = components.examplesRepository;
+	validateRequiredComponents(components, ['fixtureService', 'resultsRepository', 'examplesRepository']);
 	self.start = function () {
 		return fixtureService.start();
 	};

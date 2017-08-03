@@ -1,5 +1,6 @@
 'use strict';
 const validateRequiredParams = require('../util/validate-required-params'),
+	validateRequiredComponents = require('../util/validate-required-components'),
 	sequentialPromiseMap = require('sequential-promise-map');
 
 module.exports = function run(args, components) {
@@ -7,6 +8,7 @@ module.exports = function run(args, components) {
 		examplesRepository = components.examplesRepository,
 		resultsRepository = components.resultsRepository;
 
+	validateRequiredComponents(components, ['executionService', 'examplesRepository', 'resultsRepository']);
 	validateRequiredParams(args, ['examples-dir', 'results-dir', 'templates-dir']);
 
 	return executionService.start()

@@ -1,6 +1,7 @@
 'use strict';
 const path = require('path'),
 	getErrorMessage = require('../util/get-error-message'),
+	validateRequiredComponents = require('../util/validate-required-components'),
 	pngDiff = require('../util/png-diff');
 module.exports = function FixtureService(config, components) {
 	const self = this,
@@ -18,10 +19,10 @@ module.exports = function FixtureService(config, components) {
 			return fileRepository.writeBuffer(filePath, buffer, 'base64')
 				.then(() => filePath);
 		},
-		calculateOutcome = function (example, workingDir, pathPrefix) {
+		calculateOutcome = function (example, pathPrefix) {
 			if (example.expected) {
 				return pngDiff(
-					path.resolve(workingDir, '..', example.expected),
+					path.resolve(pathPrefix, '..', '..', example.expected),
 					pathPrefix + '-actual.png',
 					pathPrefix + '-diff.png'
 				);
@@ -42,7 +43,9 @@ module.exports = function FixtureService(config, components) {
 				result.outcome.image = diffResult && diffResult.image && path.basename(diffResult.image);
 			};
 			return result;
-		},
+		};
+
+	validateRequiredComponents(components, ['screenshotService', 'fileRepository']);
 
 	self.start = function () {
 		return screenshotService.start();
@@ -64,12 +67,12 @@ module.exports = function FixtureService(config, components) {
 		}
 		return fixtureEngine.execute(example)
 			.then(output => result.output = output)
-			.then(example => writeOutput (result.output, resultPathPrefix))
+			.then(() => writeOutput (result.output, resultPathPrefix))
 			.then(fpath => result.output.source = path.basename(fpath))
 			.then(fpath => screenshotService.screenshot({url: 'file:' + fpath}))
 			.then(buffer => writeBase64Buffer(buffer, resultPathPrefix + '-actual.png'))
 			.then(fpath => result.output.screenshot = path.basename(fpath))
-			.then(() => calculateOutcome(example, workingDir, resultPathPrefix))
+			.then(() => calculateOutcome(example, resultPathPrefix))
 			.then(outcome => mergeOutcome(result, outcome))
 			.catch(err => {
 				result.error = err;

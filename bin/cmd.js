@@ -14,7 +14,9 @@ const minimist = require('minimist'),
 		templateRepository: defaultComponentPath('handlebars-template-repository'),
 		'fixture-engine-node': defaultComponentPath('fixture-engines/node-fixture-engine'),
 		examplesRepository: defaultComponentPath('examples-repository'),
-		pageFormatter: defaultComponentPath('markdown-it-page-formatter')
+		pageFormatter: defaultComponentPath('markdown-it-page-formatter'),
+		executionService: defaultComponentPath('execution-service'),
+		fixtureService: defaultComponentPath('fixture-service')
 	},
 	readArgs = function () {
 		return minimist(process.argv.slice(2), {

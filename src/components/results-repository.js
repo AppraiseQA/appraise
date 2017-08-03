@@ -148,7 +148,6 @@ module.exports = function ResultsRepository(config, components) {
 		pageObj.unixTsExecuted = timeStamp();
 		return Promise.resolve();
 	};
-	/****************************************************/
 	self.writePageBody = function (pageName, pageBody) {
 		const pageObj = findPage(pageName);
 		if (!pageObj) {
@@ -175,6 +174,7 @@ module.exports = function ResultsRepository(config, components) {
 				htmlPageResult
 			));
 	};
+	/****************************************************/
 	self.openExampleRun = function (pageName, exampleName, exampleDetails) {
 		const pageObj = findPage(pageName);
 		if (!pageObj) {
