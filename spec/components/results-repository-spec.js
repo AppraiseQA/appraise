@@ -56,6 +56,31 @@ describe('ResultsRepository', () => {
 
 		});
 	});
+	describe('getPageRun', () => {
+		beforeEach(done => {
+			fileRepository.promises.readJSON.resolve({pages: [
+				{pageName: 'first', results: {a: 1, b: 2}},
+				{pageName: 'second', results: {c: 1, d: 2}}
+			]});
+			underTest.loadFromResultsDir()
+				.then(done, done.fail);
+		});
+		it('returns the page run results by name if the page exists', () => {
+			expect(underTest.getPageRun('first')).toEqual(
+				{pageName: 'first', results: {a: 1, b: 2}}
+			);
+		});
+		it('returns false if the page does not exist', () => {
+			expect(underTest.getPageRun('third')).toBeFalsy();
+		});
+		it('returns a detached object that cannot be used to modify the original page', () => {
+			const result = underTest.getPageRun('first');
+			result.results.a = 3;
+			expect(underTest.getPageRun('first')).toEqual(
+				{pageName: 'first', results: {a: 1, b: 2}}
+			);
+		});
+	});
 	describe('getResultNames', () => {
 		it('returns an empty array if no result loaded', () => {
 			expect(underTest.getResultNames('abc')).toEqual([]);
@@ -259,6 +284,8 @@ describe('ResultsRepository', () => {
 			underTest.loadFromResultsDir()
 				.then(() => underTest.createNewRun())
 				.then(() => expect(underTest.getRunStatus()).toEqual({pages: 0, total: 0, status: 'skipped'}))
+				.then(() => expect(underTest.getPageNames()).toEqual([]))
+				.then(() => expect(underTest.getPageRun('first')).toBeFalsy())
 				.then(done, done.fail);
 			fileRepository.promises.readJSON.resolve(
 				{
@@ -394,11 +421,31 @@ describe('ResultsRepository', () => {
 		});
 	});
 	describe('openPageRun', () => {
+		beforeEach(() => {
+			jasmine.clock().install();
+		});
+		afterEach(() => {
+			jasmine.clock().uninstall();
+		});
 		it('cleans the results directory and initialises the page object in results', done => {
 			underTest.createNewRun();
 			underTest.openPageRun({pageName: 'pages/page1'})
 				.then(() => expect(fileRepository.cleanDir).toHaveBeenCalledWith('resultDir/pages/page1'))
 				.then(() => expect(underTest.getPageNames()).toEqual(['pages/page1']))
+				.then(done, done.fail);
+			fileRepository.promises.cleanDir.resolve();
+		});
+		it('merges the page details into the results run', done => {
+			underTest.createNewRun();
+			jasmine.clock().mockDate(new Date(10000));
+			underTest.openPageRun({pageName: 'pages/page1', tsMod: 1000, body: 'xxx'})
+				.then(() => expect(underTest.getPageRun('pages/page1')).toEqual({
+					pageName: 'pages/page1',
+					tsMod: 1000,
+					body: 'xxx',
+					results: {},
+					unixTsStarted: 10
+				}))
 				.then(done, done.fail);
 			fileRepository.promises.cleanDir.resolve();
 		});
@@ -458,6 +505,82 @@ describe('ResultsRepository', () => {
 
 	});
 	describe('closePageRun', () => {
+		beforeEach(done => {
+			jasmine.clock().install();
+			jasmine.clock().mockDate(new Date(10000));
+			underTest.loadFromResultsDir()
+				.then(done, done.fail);
 
+			fileRepository.promises.readJSON.resolve(
+				{
+					pages: [
+						{
+							pageName: 'pages/page1',
+							results: {
+								somethingNice: {outcome: {status: 'success' } },
+								somethingBad: {outcome: {status: 'failure' } },
+								somethingWrong: {outcome: {status: 'error' } }
+							},
+							body: 'oldBody'
+						}
+					]
+				}
+			);
+
+
+		});
+		afterEach(() => {
+			jasmine.clock().uninstall();
+		});
+		it('rejects if the page does not exist', done => {
+			underTest.closePageRun('page3')
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('page page3 not found in results'))
+				.then(done, done.fail);
+		});
+		it('rejects if the page is already closed', done => {
+			underTest.closePageRun('pages/page1')
+				.then(() => underTest.closePageRun('pages/page1'))
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('page run pages/page1 already closed'))
+				.then(done, done.fail);
+		});
+		it('appends the timestamp for completed execution', done => {
+			underTest.closePageRun('pages/page1')
+				.then(() => underTest.getPageRun('pages/page1'))
+				.then(page => expect(page.unixTsExecuted).toEqual(10))
+				.then(done, done.fail);
+		});
+		it('appends the page summary based on result counts', done => {
+			underTest.closePageRun('pages/page1')
+				.then(() => underTest.getPageRun('pages/page1'))
+				.then(page => expect(page.summary).toEqual({status: 'error', success: 1, failure: 1, total: 3, error: 1}))
+				.then(done, done.fail);
+		});
+		it('does not modify the page body', done => {
+			underTest.closePageRun('pages/page1')
+				.then(() => underTest.getPageRun('pages/page1'))
+				.then(page => expect(page.body).toEqual('oldBody'))
+				.then(done, done.fail);
+		});
+	});
+	describe('writePageRun', () => {
+		let pageTemplate;
+		beforeEach(() => {
+			pageTemplate = jasmine.createSpy('pageTemplate');
+			templateRepository.get.and.callFake(name => {
+				if (name === 'page') {
+					return Promise.resolve(pageTemplate);
+				} else {
+					return () => '';
+				}
+			});
+		});
+/*		it('adds the result summary and the execution timestamp to a page', done => {
+			pageTemplate.and.callFake(page => {
+
+			});
+		});
+*/
 	});
 });

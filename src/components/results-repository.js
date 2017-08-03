@@ -64,6 +64,9 @@ module.exports = function ResultsRepository(config, components) {
 		return fileRepository.readJSON(fileRepository.referencePath('results', 'summary.json'))
 			.then(r => results = r);
 	};
+	self.getPageRun = function (pageName) {
+		return deepCopy(findPage(pageName));
+	};
 	self.approveResult = function (pageName, resultName) {
 		const pageObj = findPage(pageName),
 			resultObj = pageObj && pageObj.results && pageObj.results[resultName];
@@ -114,7 +117,7 @@ module.exports = function ResultsRepository(config, components) {
 			.then(html => fileRepository.writeText(fileRepository.referencePath('results', 'summary.html'), html));
 		//then -> additional formatters
 	};
-	/****************************************************/
+
 	self.openPageRun = function (pageDetails) {
 		if (!results || !results.pages) {
 			return Promise.reject('there is no active run');
@@ -127,19 +130,31 @@ module.exports = function ResultsRepository(config, components) {
 		}
 		const emptyPage = deepCopy(pageDetails);
 		emptyPage.results = {};
+		emptyPage.unixTsStarted = timeStamp();
 		return fileRepository.cleanDir(fileRepository.referencePath('results', pageDetails.pageName))
 			.then(() => results.pages.push(emptyPage));
-
 	};
 	self.closePageRun = function (pageName) {
 		const pageObj = findPage(pageName);
 		if (!pageObj) {
 			return Promise.reject(`page ${pageName} not found in results`);
 		};
+		if (pageObj.summary) {
+			return Promise.reject(`page run ${pageName} already closed`);
+		}
 		pageObj.summary = pageSummaryCounts(pageObj.results);
 		pageObj.unixTsExecuted = timeStamp();
+		return Promise.resolve();
+	};
+	/****************************************************/
+	self.writePageBody = function (pageName, pageBody) {
+		const pageObj = findPage(pageName);
+		if (!pageObj) {
+			return Promise.reject(`page ${pageName} not found in results`);
+		};
 		return templateRepository.get('page')
-			.then(template => template(pageObj /*{
+			.then(template => template(mergeProperties({body: pageBody}, pageObj)))
+			/*{
 				body: html,
 				pageName: pageName,
 				results: pageObj.results,
@@ -148,13 +163,12 @@ module.exports = function ResultsRepository(config, components) {
 				summary: pageObj.summary,
 				rootUrl: reverseRootPath(pageName),
 				breadcrumbs: pageName.split(path.sep)
-			}*/))
+			})) */
 			.then(htmlDoc => mergeResults(htmlDoc, pageObj.results, pageName, propertyPrefix))
 			.then(htmlPageResult => fileRepository.writeText(
 				fileRepository.referencePath('results', pageName + '.html'),
 				htmlPageResult
-			))
-			.then(() => delete pageObj.body);
+			));
 	};
 	self.openExampleRun = function (pageName, exampleName, exampleDetails) {
 		const pageObj = findPage(pageName);
@@ -167,7 +181,7 @@ module.exports = function ResultsRepository(config, components) {
 		pageObj.results[exampleName] = deepCopy(exampleDetails);
 		pageObj.results[exampleName].unixTsStarted = timeStamp();
 		pageObj.results[exampleName].resultPathPrefix = fileRepository.referencePath('results', pageName, Object.keys(pageObj.results).length);
-		return pageObj.results[exampleName].resultPathPrefix;
+		return Promise.resolve(pageObj.results[exampleName].resultPathPrefix);
 	};
 	self.closeExampleRun = function (pageName, exampleName, executionResults) {
 		const pageObj = findPage(pageName),

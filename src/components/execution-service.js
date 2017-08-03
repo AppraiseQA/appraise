@@ -11,6 +11,7 @@ module.exports = function ExecutionService(config, components) {
 	self.stop = function () {
 		return fixtureService.stop();
 	};
+	/****************************************************/
 	self.executePage = function (pageName) {
 		const runSingleExample = function (example) {
 			resultsRepository.openExampleRun(pageName, example.exampleName, example)
@@ -21,6 +22,8 @@ module.exports = function ExecutionService(config, components) {
 			.then(page => resultsRepository.openPageRun(page))
 			.then(() => examplesRepository.getPageExamples(pageName))
 			.then(examples => sequentialPromiseMap(examples, runSingleExample))
-			.then(() => resultsRepository.closePageRun(pageName));
+			.then(() => resultsRepository.closePageRun(pageName))
+			.then(() => examplesRepository.getPageBody(pageName))
+			.then(pageBody => resultsRepository.writePageBody(pageName, pageBody));
 	};
 };

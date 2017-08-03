@@ -10,10 +10,14 @@ describe('ExamplesRepository', () => {
 			'examples-dir': 'examplesDir'
 		});
 		pageFormatter = promiseSpyObject('pageFormatter', ['format']);
-		underTest = new ExamplesRepository({}, {
-			fileRepository: fileRepository,
-			pageFormatter: pageFormatter
-		});
+		underTest = new ExamplesRepository(
+			{
+				'html-attribute-prefix': 'data-prefix'
+			},
+			{
+				fileRepository: fileRepository,
+				pageFormatter: pageFormatter
+			});
 	});
 	describe('getPageNames', () => {
 		it('returns a list of all source pages from the file system repo, removing extensions', done => {
@@ -47,13 +51,51 @@ describe('ExamplesRepository', () => {
 				.then(result => expect(result).toEqual({
 					pageName: 'some/page',
 					sourcePath: 'examplesDir/some/page.md',
-					unixTsModified: 5000,
-					body: '<h1>Title</h1>'
+					unixTsModified: 5000
 				}))
-				.then(() => expect(pageFormatter.format).toHaveBeenCalledWith('examplesDir/some/page.md'))
 				.then(() => expect(fileRepository.readModificationTs).toHaveBeenCalledWith('examplesDir/some/page.md'))
 				.then(done, done.fail);
 		});
+	});
+	describe('getPageBody', () => {
+		it('returns the formatted page body', done => {
+			underTest.getPageBody('some/page')
+				.then(result => expect(result).toEqual('<h1>Title</h1>'))
+				.then(() => expect(fileRepository.readText).toHaveBeenCalledWith('examplesDir/some/page.md'))
+				.then(() => expect(pageFormatter.format).toHaveBeenCalledWith('#source'))
+				.then(done, done.fail);
+			fileRepository.promises.readText.resolve('#source');
+			pageFormatter.promises.format.resolve('<h1>Title</h1>');
+		});
+	});
+	describe('getPageExamples', () => {
+		it('collects images and code blocks marked as examples', done => {
+			underTest.getPageExamples('some/page')
+				.then(result => expect(result).toEqual({
+					simple: {
+						input: 'abcd',
+						params: {
+							fixture: 'somefix',
+							format: 'json'
+						},
+						expected: 'images/somepic.png'
+					}
+				}))
+				.then(done, done.fail);
+			fileRepository.promises.readText.resolve();
+			pageFormatter.promises.format.resolve(`
+				<table class="preamble" data-prefix-role="preamble">
+				<thead><tr><th>fixture</th></tr></thead>
+				<tbody><tr><td>somefix</td></tr></tbody>
+				</table>
+				<pre>
+				<code data-prefix-example="simple" data-prefix-format="json" class="language-json">abcd</code>
+				</pre>
+				<p><img src="images/somepic.png" alt="test123" data-prefix-example="simple"></p>
+				<h1>title</h1>
+			`);
+		});
+
 	});
 
 });

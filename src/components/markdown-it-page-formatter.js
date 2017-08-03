@@ -1,13 +1,24 @@
 'use strict';
-const mdToHtml = require('../tasks/md-to-html');
 
-module.exports = function MarkdownItPageFormatter(config, components) {
-	const fileRepository = components.fileRepository,
+const Markdown = require('markdown-it'),
+	annotateExample = require('../util/md-annotate-example'),
+	annotateImage = require('../util/md-annotate-image'),
+	githubPreamble = require('../util/markdown-it-github-preamble');
+
+module.exports = function MarkdownItPageFormatter(config/*, components*/) {
+	const self = this,
 		propertyPrefix = config['html-attribute-prefix'],
-		self = this;
-	self.format = function (filePath) {
-		return fileRepository.readText(filePath)
-			.then(mdSource =>  mdToHtml(mdSource, propertyPrefix));
+		md = new Markdown()
+			.use(annotateExample, {propertyPrefix: propertyPrefix})
+			.use(annotateImage, {propertyPrefix: propertyPrefix})
+			.use(githubPreamble, {
+				className: 'preamble',
+				tableAttributeName: propertyPrefix + '-role',
+				tableAttributeValue: 'preamble'
+			});
+
+	self.format = function (mdSource) {
+		return md.render(mdSource);
 	};
 };
 

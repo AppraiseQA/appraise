@@ -1,6 +1,6 @@
 /*global describe, it, expect */
 'use strict';
-const extractExamplesFromHtml = require('../src/tasks/extract-examples-from-html');
+const extractExamplesFromHtml = require('../../src/util/extract-examples-from-html');
 describe('extractExamplesFromHtml', function () {
 	it('pulls out examples from images and matching code blocks', function () {
 		expect(
@@ -14,7 +14,7 @@ describe('extractExamplesFromHtml', function () {
 			).toEqual({
 				first: {
 					expected: '/some/path/image-1st.png',
-					params: { example: 'first', format: 'json' },
+					params: { format: 'json' },
 					input: '1st input'
 				}
 			});
@@ -31,7 +31,7 @@ describe('extractExamplesFromHtml', function () {
 			).toEqual({
 				first: {
 					expected: '/some/path/image-1st.png',
-					params: { example: 'first' },
+					params: {  },
 					input: '1st input'
 				}
 			});
@@ -52,12 +52,12 @@ describe('extractExamplesFromHtml', function () {
 			).toEqual({
 				first: {
 					expected: '/some/path/image-1st.png',
-					params: { example: 'first', format: 'json' },
+					params: { format: 'json' },
 					input: '1st input'
 				},
 				second: {
 					expected: '/some/path/image-2nd.png',
-					params: { example: 'second', format: 'yaml' },
+					params: { format: 'yaml' },
 					input: '\n2nd input 1\n2nd input 2\n'
 				}
 			});
@@ -76,7 +76,7 @@ describe('extractExamplesFromHtml', function () {
 			).toEqual({
 				first: {
 					expected: '/some/path/image-1st.png',
-					params: { example: 'first', format: 'json' },
+					params: { format: 'json' },
 					input: '1st input'
 				}
 			});
@@ -100,12 +100,12 @@ describe('extractExamplesFromHtml', function () {
 			).toEqual({
 				first: {
 					expected: '/some/path/image-1st.png',
-					params: { example: 'first', format: 'json', fixture: 'fix.js', region: '200x300' },
+					params: { format: 'json', fixture: 'fix.js', region: '200x300' },
 					input: '1st input'
 				},
 				second: {
 					expected: '/some/path/image-2nd.png',
-					params: { example: 'second', format: 'yaml', fixture: 'fix.js', region: '200x300' },
+					params: { format: 'yaml', fixture: 'fix.js', region: '200x300' },
 					input: '\n2nd input 1\n2nd input 2\n'
 				}
 			});
@@ -120,7 +120,7 @@ describe('extractExamplesFromHtml', function () {
 				'attr')
 			).toEqual({
 				first: {
-					params: { example: 'first', format: 'json' },
+					params: { format: 'json' },
 					input: '1st input'
 				}
 			});

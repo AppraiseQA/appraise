@@ -1,9 +1,14 @@
 'use strict';
-const stripExtension = require('../util/strip-extension');
+const stripExtension = require('../util/strip-extension'),
+	extractExamplesFromHtml = require('../util/extract-examples-from-html');
 module.exports = function ExamplesRepository(config, components) {
-	const fileRepository = components.fileRepository,
+	const self = this,
+		fileRepository = components.fileRepository,
 		pageFormatter = components.pageFormatter,
-		self = this;
+		propertyPrefix = config['html-attribute-prefix'],
+		pagePath = function (pageName) {
+			return fileRepository.referencePath('examples', pageName + '.md');
+		};
 	self.getPageNames = function () {
 		return fileRepository.readDirContents(
 			fileRepository.referencePath('examples'),
@@ -12,15 +17,21 @@ module.exports = function ExamplesRepository(config, components) {
 		.then(r => r.map(stripExtension));
 	};
 	self.getPage = function (pageName) {
-		const filePath = fileRepository.referencePath('examples', pageName + '.md'),
+		const filePath = pagePath(pageName),
 			result = {
 				pageName: pageName,
 				sourcePath: filePath
 			};
 		return fileRepository.readModificationTs(filePath)
 			.then(modTime => result.unixTsModified = modTime)
-			.then(() => pageFormatter.format(filePath))
-			.then(html => result.body = html)
 			.then(() => result);
+	};
+	self.getPageBody = function (pageName) {
+		return fileRepository.readText(pagePath(pageName))
+			.then(pageFormatter.format);
+	};
+	self.getPageExamples = function (pageName) {
+		return self.getPageBody(pageName)
+			.then(pageBody =>  extractExamplesFromHtml(pageBody, propertyPrefix));
 	};
 };

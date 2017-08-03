@@ -21,9 +21,11 @@ module.exports = function extractExamplesFromHtml(htmlDoc, propertyPrefix) {
 			return element.attribs[matchingAttributeName];
 		},
 		initExample = function (index, element) {
+			const params = mergeProperties({}, commonAttribs, extractPrefixedProperties(element.attribs, propertyPrefix));
+			delete params.example;
 			examples[exampleName(element)] = {
 				input: doc(element).text(),
-				params: mergeProperties({}, commonAttribs, extractPrefixedProperties(element.attribs, propertyPrefix))
+				params: params
 			};
 		},
 		fillInExample = function (index, element) {
