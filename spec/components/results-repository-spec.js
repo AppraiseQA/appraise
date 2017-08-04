@@ -580,12 +580,13 @@ describe('ResultsRepository', () => {
 							pageName: 'pages/page1',
 							results: {
 								simple: {
-									index: 1,
+
 									expected: 'images/somepic.png',
 									outcome: {
 										status: 'failure',
 										message: 'borked!',
-										image: '1-diff.png'
+										image: '1-diff.png',
+										overview: '1-result.html'
 									},
 									output: {screenshot: '1-actual.png'}
 								}

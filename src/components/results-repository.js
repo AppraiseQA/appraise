@@ -183,14 +183,16 @@ module.exports = function ResultsRepository(config, components) {
 		if (pageObj.results[exampleName]) {
 			return Promise.reject(`example ${exampleName} already open in ${pageName}`);
 		}
-		pageObj.results[exampleName] = deepCopy(exampleDetails);
-		pageObj.results[exampleName].unixTsStarted = timeStamp();
-		pageObj.results[exampleName].resultPathPrefix = fileRepository.referencePath('results', pageName, String(Object.keys(pageObj.results).length));
+		pageObj.results[exampleName] = mergeProperties(deepCopy(exampleDetails), {
+			unixTsStarted: timeStamp(),
+			resultPathPrefix: fileRepository.referencePath('results', pageName, String(Object.keys(pageObj.results).length))
+		});
 		return Promise.resolve(pageObj.results[exampleName].resultPathPrefix);
 	};
 	self.closeExampleRun = function (pageName, exampleName, executionResults) {
 		const pageObj = findPage(pageName),
-			exampleObj = pageObj && pageObj.results[exampleName];
+			exampleObj = pageObj && pageObj.results[exampleName],
+			summaryPath = exampleObj.resultPathPrefix + '-result.html';
 		if (!pageObj) {
 			return Promise.reject(`page ${pageName} not found`);
 		}
@@ -199,6 +201,7 @@ module.exports = function ResultsRepository(config, components) {
 		}
 		mergeProperties(exampleObj, executionResults);
 		exampleObj.unixTsExecuted = timeStamp();
+
 
 		return templateRepository.get('result')
 			.then(template => template({
@@ -211,7 +214,8 @@ module.exports = function ResultsRepository(config, components) {
 				startedTime: timeStampString(exampleObj.unixTsStarted),
 				executedTime: timeStampString(exampleObj.unixTsExecuted)
 			}))
-			.then(html => fileRepository.writeText(exampleObj.resultPathPrefix + '-result.html', html));
+			.then(html => fileRepository.writeText(summaryPath, html))
+			.then(() => exampleObj.outcome.overview = path.basename(summaryPath));
 	};
 
 };

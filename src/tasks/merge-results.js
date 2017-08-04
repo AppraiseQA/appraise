@@ -1,6 +1,6 @@
 'use strict';
 const cheerio = require('cheerio');
-module.exports = function mergeResults(htmlDoc, examples, resultsPath, propertyPrefix) {
+module.exports = function mergeResults(htmlDoc, examples, pageName, propertyPrefix) {
 	const doc = cheerio.load(htmlDoc),
 		extractCodeBlocks = function (elements) {
 			const codeBlocks = elements.filter('code'),
@@ -17,20 +17,20 @@ module.exports = function mergeResults(htmlDoc, examples, resultsPath, propertyP
 				exampleElements.filter('img').attr('title', example.outcome.message).attr('alt', example.outcome.message);
 			}
 			if (example.outcome.image) {
-				exampleElements.filter('img').attr('src', resultsPath + '/' + example.outcome.image);
+				exampleElements.filter('img').attr('src', pageName + '/' + example.outcome.image);
 			}
 			exampleElements.filter('img').each((index, element) => {
 				doc('<a>')
-					.attr('href', resultsPath + '/' + example.index + '-result.html')
+					.attr('href', pageName + '/' + example.outcome.overview)
 					.attr('title', example.outcome.message || '')
 					.insertBefore(element).append(element);
 			});
 			if (!example.expected) {
 				const link = doc('<a>')
-						.attr('href', resultsPath + '/' + example.index + '-result.html')
+						.attr('href', pageName + '/' + example.outcome.overview)
 						.attr('title', example.outcome.message),
 					image = doc('<img>')
-						.attr('src',  resultsPath + '/' + example.output.screenshot)
+						.attr('src',  pageName + '/' + example.output.screenshot)
 						.attr('title', example.outcome.message || '')
 						.attr('alt', example.outcome.message);
 				image.appendTo(link);
