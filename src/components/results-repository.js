@@ -185,7 +185,7 @@ module.exports = function ResultsRepository(config, components) {
 		}
 		pageObj.results[exampleName] = deepCopy(exampleDetails);
 		pageObj.results[exampleName].unixTsStarted = timeStamp();
-		pageObj.results[exampleName].resultPathPrefix = fileRepository.referencePath('results', pageName, Object.keys(pageObj.results).length);
+		pageObj.results[exampleName].resultPathPrefix = fileRepository.referencePath('results', pageName, String(Object.keys(pageObj.results).length));
 		return Promise.resolve(pageObj.results[exampleName].resultPathPrefix);
 	};
 	self.closeExampleRun = function (pageName, exampleName, executionResults) {
