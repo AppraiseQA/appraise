@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function container_plugin(md, options) {
+module.exports = function markdownItGithubPreamble(md, options) {
 	options = options || {};
 	const name = 'preamble',
 		renderDefault = function (tokens, idx, _options, env, self) {
@@ -16,11 +16,12 @@ module.exports = function container_plugin(md, options) {
 			return self.renderToken(tokens, idx, _options, env, self);
 		},
 		min_markers = 3,
-		preambleSettings = [],
 		marker_str  = options.marker || '-',
 		render      = options.render || renderDefault;
 
 	function container(state, startLine, endLine, silent) {
+		const preambleSettings = [];
+
 		let pos, nextLine, params, token,
 			start = state.bMarks[startLine] + state.tShift[startLine],
 			max = state.eMarks[startLine];
@@ -73,8 +74,6 @@ module.exports = function container_plugin(md, options) {
 
 			if (marker_str !== state.src[start]) {
 				if (state.src.slice(start + 1, max - 1).indexOf(':') < 0) {
-					//not a colon-statement
-					console.log('preamble not a colon statement', state.src.slice(start + 1, max - 1));
 					return false;
 				}
 				preambleSettings.push(state.src.slice(start, max).split(':'));
