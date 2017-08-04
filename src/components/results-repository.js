@@ -5,7 +5,6 @@ const path = require('path'),
 	commandName = require('../../package.json').name,
 	aggregateSummary = require('../util/aggregate-summary'),
 	pageSummaryCounts = require('../util/page-summary-counts'),
-	reverseRootPath = require('../util/reverse-root-path'),
 	mergeResults = require('../tasks/merge-results'),
 	mergeProperties = require('../util/merge-properties');
 module.exports = function ResultsRepository(config, components) {
@@ -159,13 +158,6 @@ module.exports = function ResultsRepository(config, components) {
 		return templateRepository.get('page')
 			.then(template => template(mergeProperties({body: pageBody}, pageObj)))
 			/*{
-				body: html,
-				pageName: pageName,
-				results: pageObj.results,
-				modifiedTime: timeStampString(pageObj.unixTsModified),
-				executedTime: timeStampString(pageObj.unixTsExecuted),
-				summary: pageObj.summary,
-				rootUrl: reverseRootPath(pageName),
 				breadcrumbs: pageName.split(path.sep)
 			})) */
 			.then(htmlDoc => mergeResults(htmlDoc, pageObj.results, pageName, propertyPrefix))
@@ -209,7 +201,7 @@ module.exports = function ResultsRepository(config, components) {
 				example: exampleObj,
 				approvalInstructions: getExampleApprovalInstructions(exampleObj, exampleName, pageName),
 				pageName: pageName,
-				rootUrl: reverseRootPath(pageName) + '../',
+				//rootUrl: reverseRootPath(pageName) + '../',
 				breadcrumbs: pageName.split(path.sep),
 				startedTime: timeStampString(exampleObj.unixTsStarted),
 				executedTime: timeStampString(exampleObj.unixTsExecuted)

@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <link href="{{rootUrl}}assets/style.css" rel="stylesheet" />
+    <link href="{{rootUrl pageName}}assets/style.css" rel="stylesheet" />
   </head>
   <body>
 <header class="navigation">
@@ -9,11 +9,11 @@
 		<span class="project-name">Appraise</span>
 		<ul class="menu">
 			<li>
-          <a href="{{rootUrl}}">Home</a>
+          <a href="{{rootUrl pageName}}">Home</a>
         </li>
 		{{#if results}}
 			<li>
-			  <a href="{{rootUrl}}summary.html">Summary</a>
+			  <a href="{{rootUrl pageName}}summary.html">Summary</a>
 			</li>
 		{{/if}}
         <li>
@@ -66,9 +66,9 @@
 <div class="content page-block">
 	<div class="header">
 		<dl class="stats">
-			<dt>modified</dt><dd>{{modifiedTime}}</dd>
-			{{#if executedTime}}
-				<dt>executed</dt><dd>{{executedTime}}</dd>
+			<dt>modified</dt><dd>{{timestamp unixTsModified}}</dd>
+			{{#if unixTsExecuted}}
+				<dt>executed</dt><dd>{{timestamp unixTsExecuted}}</dd>
 			{{/if}}
 		</dl>
 	</div>
