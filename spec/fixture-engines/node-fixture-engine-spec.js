@@ -55,8 +55,8 @@ describe('NodeFixtureEngine', () => {
 				}
 			};
 			underTest.execute(example)
-			.then(result => expect(result).toEqual({name: 'examples mod', input: 'my input'}))
-			.then(done, done.fail);
+				.then(result => expect(result).toEqual({name: 'examples mod', input: 'my input'}))
+				.then(done, done.fail);
 		});
 		it('executes a fixture from the fixtures dir if it is set', done => {
 			const example = {
@@ -66,8 +66,8 @@ describe('NodeFixtureEngine', () => {
 				}
 			};
 			underTest.execute(example)
-			.then(result => expect(result).toEqual({name: 'fixtures mod', input: 'my input'}))
-			.then(done, done.fail);
+				.then(result => expect(result).toEqual({name: 'fixtures mod', input: 'my input'}))
+				.then(done, done.fail);
 		});
 		it('supports promises in fixture execution', done => {
 			const example = {
@@ -77,8 +77,8 @@ describe('NodeFixtureEngine', () => {
 				}
 			};
 			underTest.execute(example)
-			.then(result => expect(result).toEqual('promise modmy input'))
-			.then(done, done.fail);
+				.then(result => expect(result).toEqual('promise modmy input'))
+				.then(done, done.fail);
 		});
 		it('parses the input if the format is provided', done => {
 			const example = {
@@ -89,8 +89,8 @@ describe('NodeFixtureEngine', () => {
 				}
 			};
 			underTest.execute(example)
-			.then(result => expect(result).toEqual({name: 'fixtures mod', input: {a: 1}}))
-			.then(done, done.fail);
+				.then(result => expect(result).toEqual({name: 'fixtures mod', input: {a: 1}}))
+				.then(done, done.fail);
 		});
 		it('records an error if parsing fails', done => {
 			const example = {

@@ -12,8 +12,7 @@ const CDP = require('chrome-remote-interface'),
 			deviceScaleFactor: 0,
 			mobile: false,
 			fitWindow: false
-		})
-		.then(() => cdp.Emulation.setVisibleSize({width: box.width, height: box.height}));
+		}).then(() => cdp.Emulation.setVisibleSize({width: box.width, height: box.height}));
 		//.then(() => cdp.Emulation.forceViewport({x: box.x, y: box.y, scale: 1}));
 	};
 
@@ -37,12 +36,11 @@ module.exports = function HeadlessChromeScreenshotService(/*config, components*/
 	self.start = function () {
 		return chromeLauncher.launch({
 			chromeFlags: ['--headless']
-		})
-		.then(c => chrome = c)
-		.then(c => CDP({port: c.port})) //eslint-disable-line new-cap
-		.then(c => cdp = c)
-		.then(() => cdp.Page.enable())
-		.then(() => cdp.Page.loadEventFired(pageLoaded));
+		}).then(c => chrome = c)
+			.then(c => CDP({port: c.port})) //eslint-disable-line new-cap
+			.then(c => cdp = c)
+			.then(() => cdp.Page.enable())
+			.then(() => cdp.Page.loadEventFired(pageLoaded));
 	};
 	/* returns a PNG buffer */
 	self.screenshot = function (options) {
@@ -61,12 +59,11 @@ module.exports = function HeadlessChromeScreenshotService(/*config, components*/
 			deviceScaleFactor: 0,
 			mobile: false,
 			fitWindow: false
-		})
-		.then(() => loadPage(options.url))
-		.then(() => contentBox(cdp))
-		.then(box => setSize(box, cdp))
-		.then(() => cdp.Page.captureScreenshot({format: options.format, fromSurface: true}))
-		.then(screenshot => new Buffer(screenshot.data, 'base64'));
+		}).then(() => loadPage(options.url))
+			.then(() => contentBox(cdp))
+			.then(box => setSize(box, cdp))
+			.then(() => cdp.Page.captureScreenshot({format: options.format, fromSurface: true}))
+			.then(screenshot => new Buffer(screenshot.data, 'base64'));
 	};
 	self.stop = function () {
 		return chrome.kill();

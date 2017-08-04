@@ -1,6 +1,7 @@
 /*global describe, it, expect, require, jasmine, beforeEach, afterEach */
 'use strict';
 const mockFileRepository = require('../support/mock-file-repository'),
+	deepCopy = require('../../src/util/deep-copy'),
 	ResultsRepository = require('../../src/components/results-repository');
 describe('ResultsRepository', () => {
 	let fileRepository, underTest, templateRepository, pendingPromise;
@@ -560,12 +561,15 @@ describe('ResultsRepository', () => {
 		});
 	});
 	describe('writePageBody', () => {
-		let pageTemplate;
+		let pageTemplate, pageDirTemplate, page1Obj;
 		beforeEach(done => {
 			pageTemplate = jasmine.createSpy('pageTemplate');
+			pageDirTemplate = jasmine.createSpy('pageDirTemplate');
 			templateRepository.get.and.callFake(name => {
 				if (name === 'page') {
 					return Promise.resolve(pageTemplate);
+				} else if (name === 'page-dir') {
+					return Promise.resolve(pageDirTemplate);
 				} else {
 					return () => '';
 				}
@@ -573,30 +577,31 @@ describe('ResultsRepository', () => {
 			underTest.loadFromResultsDir()
 				.then(done, done.fail);
 
+			page1Obj = {
+				pageName: 'pages/page1',
+				results: {
+					simple: {
+
+						expected: 'images/somepic.png',
+						outcome: {
+							status: 'failure',
+							message: 'borked!',
+							image: '1-diff.png',
+							overview: '1-result.html'
+						},
+						output: {screenshot: '1-actual.png'}
+					}
+				},
+				summary: {
+					total: 1,
+					failure: 1,
+					status: 'failure'
+				}
+			};
 			fileRepository.promises.readJSON.resolve(
 				{
 					pages: [
-						{
-							pageName: 'pages/page1',
-							results: {
-								simple: {
-
-									expected: 'images/somepic.png',
-									outcome: {
-										status: 'failure',
-										message: 'borked!',
-										image: '1-diff.png',
-										overview: '1-result.html'
-									},
-									output: {screenshot: '1-actual.png'}
-								}
-							},
-							summary: {
-								total: 1,
-								failure: 1,
-								status: 'failure'
-							}
-						}
+						page1Obj
 					]
 				}
 			);
@@ -630,20 +635,25 @@ describe('ResultsRepository', () => {
 		});
 		it('merges the execution results into the HTML template output', done => {
 			const htmlPage = `
-				<table class="preamble" data-prefix-role="preamble">
-					<thead><tr><th>fixture</th></tr></thead>
-					<tbody><tr><td>somefix</td></tr></tbody>
-				</table>
-				<pre>
-					<code data-prefix-example="simple" data-prefix-format="json" class="language-json">abcd</code>
-				</pre>
-				<p>
-					<img src="images/somepic.png" alt="test123" data-prefix-example="simple">
-				</p>
-			`.replace(/\n|\t/g, '').replace(/\s+/g, ' ');
+					<table class="preamble" data-prefix-role="preamble">
+						<thead><tr><th>fixture</th></tr></thead>
+						<tbody><tr><td>somefix</td></tr></tbody>
+					</table>
+					<pre>
+						<code data-prefix-example="simple" data-prefix-format="json" class="language-json">abcd</code>
+					</pre>
+					<p>
+						<img src="images/somepic.png" alt="test123" data-prefix-example="simple">
+					</p>
+				`.replace(/\n|\t/g, '').replace(/\s+/g, ' '),
+				expectedMerge = deepCopy(page1Obj);
+			expectedMerge.body = 'body';
 			pageTemplate.and.returnValue(htmlPage);
+			pageDirTemplate.and.returnValue('');
 			underTest.writePageBody('pages/page1', 'body')
-				.then(() => expect(fileRepository.writeText).toHaveBeenCalledWith(
+				.then(() => expect(pageTemplate).toHaveBeenCalledWith(expectedMerge))
+				.then(() => expect(fileRepository.writeText.calls.count()).toEqual(2))
+				.then(() => expect(fileRepository.writeText.calls.argsFor(0)).toEqual([
 					'resultDir/pages/page1.html',
 					'<html><head></head><body>' +
 					'<table class="preamble" data-prefix-role="preamble">' +
@@ -655,21 +665,27 @@ describe('ResultsRepository', () => {
 					'<code data-prefix-example="simple" data-prefix-format="json" class="language-json">abcd</code>' +
 					'</pre>' +
 					'<p>' +
-					'<a href="pages/page1/1-result.html" title="borked!">' +
-						'<img src="pages/page1/1-diff.png" alt="borked!" data-prefix-example="simple" data-outcome-status="failure" data-outcome-message="borked!" title="borked!">' +
+					'<a href="page1/1-result.html" title="borked!">' +
+						'<img src="page1/1-diff.png" alt="borked!" data-prefix-example="simple" data-outcome-status="failure" data-outcome-message="borked!" title="borked!">' +
 					'</a>' +
 					'</p>' +
 					'</body></html>'
-				))
+				]))
 				.then(done, done.fail);
 			fileRepository.promises.writeText.resolve();
 		});
+		it('writes the result of the page-dir template into page-dir/index.html', done => {
+			pageTemplate.and.returnValue('<div></div>');
+			pageDirTemplate.and.returnValue('formatted-dir-index');
+			underTest.writePageBody('pages/page1', 'body')
+				.then(() => expect(pageDirTemplate).toHaveBeenCalledWith(page1Obj))
+				.then(() => expect(fileRepository.writeText.calls.count()).toEqual(2))
+				.then(() => expect(fileRepository.writeText.calls.argsFor(1)).toEqual([
+					'resultDir/pages/page1/index.html',
+					'formatted-dir-index'
+				])).then(done, done.fail);
+			fileRepository.promises.writeText.resolve();
 
-/*		it('adds the result summary and the execution timestamp to a page', done => {
-			pageTemplate.and.callFake(page => {
-
-			});
 		});
-*/
 	});
 });

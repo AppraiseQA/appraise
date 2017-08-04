@@ -1,6 +1,6 @@
 /*global module, jasmine*/
+'use strict';
 module.exports = function buildPromiseSpy(name) {
-	'use strict';
 	const deferred = {spy: jasmine.createSpy(name)};
 	deferred.promise = new Promise(function (resolve, reject) {
 		deferred.resolve = resolve;

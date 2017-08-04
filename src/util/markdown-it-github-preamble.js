@@ -95,8 +95,8 @@ module.exports = function container_plugin(md, options) {
 			break;
 		}
 
-		const old_parent = state.parentType;
-		const old_line_max = state.lineMax;
+		const old_parent = state.parentType,
+			old_line_max = state.lineMax;
 		state.parentType = 'container';
 
 		// this will prevent lazy continuations from ever going past our end marker

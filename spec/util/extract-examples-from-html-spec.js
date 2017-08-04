@@ -10,15 +10,14 @@ describe('extractExamplesFromHtml', function () {
 				<code attr-example="first" attr-format="json">1st input</code>
 				</body>
 				`,
-				'attr')
-			).toEqual([
-				{
-					exampleName: 'first',
-					expected: '/some/path/image-1st.png',
-					params: { format: 'json' },
-					input: '1st input'
-				}
-			]);
+				'attr'
+			)
+		).toEqual([{
+			exampleName: 'first',
+			expected: '/some/path/image-1st.png',
+			params: { format: 'json' },
+			input: '1st input'
+		}]);
 	});
 	it('does not set the format if no attribute provided', function () {
 		expect(
@@ -29,14 +28,14 @@ describe('extractExamplesFromHtml', function () {
 				</body>
 				`,
 				'attr')
-			).toEqual([
-				{
-					exampleName: 'first',
-					expected: '/some/path/image-1st.png',
-					params: {  },
-					input: '1st input'
-				}
-			]);
+		).toEqual([
+			{
+				exampleName: 'first',
+				expected: '/some/path/image-1st.png',
+				params: {  },
+				input: '1st input'
+			}
+		]);
 
 	});
 	it('works with multiple examples in the same file', function () {
@@ -51,20 +50,20 @@ describe('extractExamplesFromHtml', function () {
 				`</code>
 				</body>`,
 				'attr')
-			).toEqual([
-				{
-					exampleName: 'first',
-					expected: '/some/path/image-1st.png',
-					params: { format: 'json' },
-					input: '1st input'
-				},
-				{
-					exampleName: 'second',
-					expected: '/some/path/image-2nd.png',
-					params: { format: 'yaml' },
-					input: '\n2nd input 1\n2nd input 2\n'
-				}
-			]);
+		).toEqual([
+			{
+				exampleName: 'first',
+				expected: '/some/path/image-1st.png',
+				params: { format: 'json' },
+				input: '1st input'
+			},
+			{
+				exampleName: 'second',
+				expected: '/some/path/image-2nd.png',
+				params: { format: 'yaml' },
+				input: '\n2nd input 1\n2nd input 2\n'
+			}
+		]);
 	});
 	it('ignores any non-attributed code and image blocks', function () {
 		expect(
@@ -77,12 +76,12 @@ describe('extractExamplesFromHtml', function () {
 				</body>
 				`,
 				'attr')
-			).toEqual([{
-				exampleName: 'first',
-				expected: '/some/path/image-1st.png',
-				params: { format: 'json' },
-				input: '1st input'
-			}]);
+		).toEqual([{
+			exampleName: 'first',
+			expected: '/some/path/image-1st.png',
+			params: { format: 'json' },
+			input: '1st input'
+		}]);
 	});
 	it('stores any values from the preamble table into each example as common parameters', function () {
 		expect(
@@ -100,20 +99,20 @@ describe('extractExamplesFromHtml', function () {
 				`</code>
 				</body>`,
 				'attr')
-			).toEqual([
-				{
-					exampleName: 'first',
-					expected: '/some/path/image-1st.png',
-					params: { format: 'json', fixture: 'fix.js', region: '200x300' },
-					input: '1st input'
-				},
-				{
-					exampleName: 'second',
-					expected: '/some/path/image-2nd.png',
-					params: { format: 'yaml', fixture: 'fix.js', region: '200x300' },
-					input: '\n2nd input 1\n2nd input 2\n'
-				}
-			]);
+		).toEqual([
+			{
+				exampleName: 'first',
+				expected: '/some/path/image-1st.png',
+				params: { format: 'json', fixture: 'fix.js', region: '200x300' },
+				input: '1st input'
+			},
+			{
+				exampleName: 'second',
+				expected: '/some/path/image-2nd.png',
+				params: { format: 'yaml', fixture: 'fix.js', region: '200x300' },
+				input: '\n2nd input 1\n2nd input 2\n'
+			}
+		]);
 	});
 	it('does not specify expected results if image is missing', function () {
 		expect(
@@ -123,12 +122,12 @@ describe('extractExamplesFromHtml', function () {
 				</body>
 				`,
 				'attr')
-			).toEqual([
-				{
-					exampleName: 'first',
-					params: { format: 'json' },
-					input: '1st input'
-				}
-			]);
+		).toEqual([
+			{
+				exampleName: 'first',
+				params: { format: 'json' },
+				input: '1st input'
+			}
+		]);
 	});
 });

@@ -1,7 +1,7 @@
 /*global module, require*/
+'use strict';
 const buildPromiseSpy = require('./build-promise-spy');
 module.exports = function promiseSpyObject(name, methods) {
-	'use strict';
 	const spy = {
 		promises: {}
 	};

@@ -1,9 +1,9 @@
 /*global jasmine, require, process*/
+'use strict';
 const Jasmine = require('jasmine'),
 	SpecReporter = require('jasmine-spec-reporter').SpecReporter,
 	jrunner = new Jasmine(),
 	runJasmine = function () {
-		'use strict';
 		let filter;
 		process.argv.slice(2).forEach(option => {
 			if (option === 'full') {

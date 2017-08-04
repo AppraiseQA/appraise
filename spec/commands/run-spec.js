@@ -7,7 +7,7 @@ describe('run', () => {
 	beforeEach(() => {
 		executionService = promiseSpyObject('execution', ['start', 'stop', 'executePage']);
 		resultsRepository = promiseSpyObject('resultsRepository',
-				['resetResultsDir', 'createNewRun', 'closeRun', 'writeSummary']);
+			['resetResultsDir', 'createNewRun', 'closeRun', 'writeSummary']);
 		examplesRepository = promiseSpyObject('examplesRepository', ['getPageNames']);
 		components = {
 			executionService: executionService,
