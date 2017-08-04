@@ -20,7 +20,7 @@ module.exports = function ExecutionService(config, components) {
 				.then(resultPathPrefix => fixtureService.executeExample(example, resultPathPrefix))
 				.then(executionResult => resultsRepository.closeExampleRun(pageName, example.exampleName, executionResult));
 		};
-		return examplesRepository.getPage()
+		return examplesRepository.getPage(pageName)
 			.then(page => resultsRepository.openPageRun(page))
 			.then(() => examplesRepository.getPageExamples(pageName))
 			.then(examples => sequentialPromiseMap(examples, runSingleExample))

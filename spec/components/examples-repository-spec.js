@@ -71,16 +71,15 @@ describe('ExamplesRepository', () => {
 	describe('getPageExamples', () => {
 		it('collects images and code blocks marked as examples', done => {
 			underTest.getPageExamples('some/page')
-				.then(result => expect(result).toEqual({
-					simple: {
-						input: 'abcd',
-						params: {
-							fixture: 'somefix',
-							format: 'json'
-						},
-						expected: 'images/somepic.png'
-					}
-				}))
+				.then(result => expect(result).toEqual([{
+					exampleName: 'simple',
+					input: 'abcd',
+					params: {
+						fixture: 'somefix',
+						format: 'json'
+					},
+					expected: 'images/somepic.png'
+				}]))
 				.then(done, done.fail);
 			fileRepository.promises.readText.resolve();
 			pageFormatter.promises.format.resolve(`

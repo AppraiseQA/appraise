@@ -7,7 +7,7 @@ module.exports = function extractExamplesFromHtml(htmlDoc, propertyPrefix) {
 		throw new Error('invalid-args');
 	}
 	const doc = cheerio.load(htmlDoc),
-		examples = {},
+		examples = [],
 		matchingAttributeName = propertyPrefix + '-example',
 		commonAttribNames = [],
 		commonAttribs = {},
@@ -23,13 +23,14 @@ module.exports = function extractExamplesFromHtml(htmlDoc, propertyPrefix) {
 		initExample = function (index, element) {
 			const params = mergeProperties({}, commonAttribs, extractPrefixedProperties(element.attribs, propertyPrefix));
 			delete params.example;
-			examples[exampleName(element)] = {
+			examples.push({
 				input: doc(element).text(),
-				params: params
-			};
+				params: params,
+				exampleName: exampleName(element)
+			});
 		},
 		fillInExample = function (index, element) {
-			const example = examples[exampleName(element)];
+			const example = examples.find(e => e.exampleName === exampleName(element));
 			example.expected = element.attribs.src;
 		},
 		preamble = doc(`table[${propertyPrefix}-role=preamble]`);

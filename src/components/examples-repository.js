@@ -17,6 +17,9 @@ module.exports = function ExamplesRepository(config, components) {
 		.then(r => r.map(stripExtension));
 	};
 	self.getPage = function (pageName) {
+		if (!pageName) {
+			throw 'page name must be provided';
+		}
 		const filePath = pagePath(pageName),
 			result = {
 				pageName: pageName,
@@ -27,10 +30,16 @@ module.exports = function ExamplesRepository(config, components) {
 			.then(() => result);
 	};
 	self.getPageBody = function (pageName) {
+		if (!pageName) {
+			throw 'page name must be provided';
+		}
 		return fileRepository.readText(pagePath(pageName))
 			.then(pageFormatter.format);
 	};
 	self.getPageExamples = function (pageName) {
+		if (!pageName) {
+			throw 'page name must be provided';
+		}
 		return self.getPageBody(pageName)
 			.then(pageBody =>  extractExamplesFromHtml(pageBody, propertyPrefix));
 	};

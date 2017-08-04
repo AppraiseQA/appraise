@@ -3,13 +3,15 @@
 const ExecutionService = require('../../src/components/execution-service'),
 	promiseSpyObject = require('../support/promise-spy-object');
 describe('executionService', () => {
-	let fixtureService, examplesRepository, underTest;
+	let fixtureService, examplesRepository, resultsRepository, underTest;
 	beforeEach(() => {
 		fixtureService = promiseSpyObject('fixtureService', ['start', 'stop']);
 		examplesRepository = promiseSpyObject('examplesRepository', ['getPageNames']);
+		resultsRepository = {};
 		underTest = new ExecutionService({}, {
 			fixtureService: fixtureService,
-			examplesRepository: examplesRepository
+			examplesRepository: examplesRepository,
+			resultsRepository: resultsRepository
 		});
 	});
 	describe('start', () => {
