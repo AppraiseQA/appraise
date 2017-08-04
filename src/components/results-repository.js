@@ -157,13 +157,16 @@ module.exports = function ResultsRepository(config, components) {
 		}
 		return templateRepository.get('page')
 			.then(template => template(mergeProperties({body: pageBody}, pageObj)))
-			/*{
-				breadcrumbs: pageName.split(path.sep)
-			})) */
 			.then(htmlDoc => mergeResults(htmlDoc, pageObj.results, pageName, propertyPrefix))
 			.then(htmlPageResult => fileRepository.writeText(
 				fileRepository.referencePath('results', pageName + '.html'),
 				htmlPageResult
+			))
+			.then(() => templateRepository.get('page-dir'))
+			.then(template => template(pageObj))
+			.then(htmlDirIndex => fileRepository.writeText(
+				fileRepository.referencePath('results', pageName, 'index.html'),
+				htmlDirIndex
 			));
 	};
 	/****************************************************/

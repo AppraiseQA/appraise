@@ -1,5 +1,6 @@
 'use strict';
-const cheerio = require('cheerio');
+const cheerio = require('cheerio'),
+	path = require('path');
 module.exports = function mergeResults(htmlDoc, examples, pageName, propertyPrefix) {
 	const doc = cheerio.load(htmlDoc),
 		extractCodeBlocks = function (elements) {
@@ -9,6 +10,7 @@ module.exports = function mergeResults(htmlDoc, examples, pageName, propertyPref
 		},
 		mergeExampleResult = function (exampleName) {
 			const example = examples[exampleName],
+				resultsDir = path.basename(pageName),
 				exampleElements = extractCodeBlocks(doc(`[${propertyPrefix}-example="${exampleName}"]`));
 			doc('<a>').attr('name', exampleName).insertBefore(exampleElements.first());
 			exampleElements.attr('data-outcome-status', example.outcome.status);
@@ -17,20 +19,20 @@ module.exports = function mergeResults(htmlDoc, examples, pageName, propertyPref
 				exampleElements.filter('img').attr('title', example.outcome.message).attr('alt', example.outcome.message);
 			}
 			if (example.outcome.image) {
-				exampleElements.filter('img').attr('src', pageName + '/' + example.outcome.image);
+				exampleElements.filter('img').attr('src', resultsDir + '/' + example.outcome.image);
 			}
 			exampleElements.filter('img').each((index, element) => {
 				doc('<a>')
-					.attr('href', pageName + '/' + example.outcome.overview)
+					.attr('href', resultsDir + '/' + example.outcome.overview)
 					.attr('title', example.outcome.message || '')
 					.insertBefore(element).append(element);
 			});
 			if (!example.expected) {
 				const link = doc('<a>')
-						.attr('href', pageName + '/' + example.outcome.overview)
+						.attr('href', resultsDir + '/' + example.outcome.overview)
 						.attr('title', example.outcome.message),
 					image = doc('<img>')
-						.attr('src',  pageName + '/' + example.output.screenshot)
+						.attr('src',  resultsDir + '/' + example.output.screenshot)
 						.attr('title', example.outcome.message || '')
 						.attr('alt', example.outcome.message);
 				image.appendTo(link);

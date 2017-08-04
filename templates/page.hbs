@@ -17,7 +17,7 @@
 			</li>
 		{{/if}}
         <li>
-          <a href="https://github.com/gojko/appraise">Help</a>
+          <a href="http://appraise.qa">Help</a>
         </li>
       </ul>
     </div>
@@ -25,10 +25,15 @@
   <header class="page-header">
     <div class="content">
       <ul class="navigation-crumbs">
-		{{#each breadcrumbs}}
-			<li>{{this}}</li>
-		{{/each}}		
-
+		{{#breadCrumbs pageName}}
+			<li>
+        {{#if last}}
+          {{name}}
+        {{else}}
+          <a href="{{path}}">{{name}}</a>
+        {{/if}}
+      </li>
+		{{/breadCrumbs}}		
       </ul>
     </div>
   </header>

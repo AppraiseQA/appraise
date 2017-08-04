@@ -13,8 +13,7 @@ module.exports = function ExamplesRepository(config, components) {
 		return fileRepository.readDirContents(
 			fileRepository.referencePath('examples'),
 			fileRepository.isSourcePage
-		)
-		.then(r => r.map(stripExtension));
+		).then(r => r.map(stripExtension));
 	};
 	self.getPage = function (pageName) {
 		if (!pageName) {

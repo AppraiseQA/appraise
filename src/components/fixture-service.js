@@ -54,6 +54,7 @@ module.exports = function FixtureService(config, components) {
 		return screenshotService.stop();
 	};
 	self.executeExample = function (example, resultPathPrefix) {
+		let filePath;
 		const requestedEngine = (example && example.params && example.params.fixtureEngine) || 'node',
 			fixtureEngine = components['fixture-engine-' + requestedEngine],
 			result = {};
@@ -68,8 +69,9 @@ module.exports = function FixtureService(config, components) {
 		return fixtureEngine.execute(example)
 			.then(output => result.output = output)
 			.then(() => writeOutput (result.output, resultPathPrefix))
-			.then(fpath => result.output.source = path.basename(fpath))
-			.then(fpath => screenshotService.screenshot({url: 'file:' + fpath}))
+			.then(fpath => filePath = fpath)
+			.then(() => result.output.source = path.basename(filePath))
+			.then(() => screenshotService.screenshot({url: 'file:' + filePath}))
 			.then(buffer => writeBase64Buffer(buffer, resultPathPrefix + '-actual.png'))
 			.then(fpath => result.output.screenshot = path.basename(fpath))
 			.then(() => calculateOutcome(example, resultPathPrefix))

@@ -7,8 +7,9 @@ const Markdown = require('markdown-it'),
 
 module.exports = function MarkdownItPageFormatter(config/*, components*/) {
 	const self = this,
-		propertyPrefix = config['html-attribute-prefix'],
-		md = new Markdown()
+		propertyPrefix = config['html-attribute-prefix'];
+	self.format = function (mdSource) {
+		const md = new Markdown()
 			.use(annotateExample, {propertyPrefix: propertyPrefix})
 			.use(annotateImage, {propertyPrefix: propertyPrefix})
 			.use(githubPreamble, {
@@ -16,8 +17,6 @@ module.exports = function MarkdownItPageFormatter(config/*, components*/) {
 				tableAttributeName: propertyPrefix + '-role',
 				tableAttributeValue: 'preamble'
 			});
-
-	self.format = function (mdSource) {
 		return md.render(mdSource);
 	};
 };
