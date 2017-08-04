@@ -1,11 +1,10 @@
 'use strict';
-
+const jsYaml = require('js-yaml');
 module.exports = function markdownItGithubPreamble(md, options) {
 	options = options || {};
-	const name = 'preamble',
+	const name = options.name || 'preamble',
 		renderDefault = function (tokens, idx, _options, env, self) {
-			// add a class to the opening tag
-			if (tokens[idx].nesting === 1) {
+			if (tokens[idx].type === name + '_open') {
 				if (options.className) {
 					tokens[idx].attrPush(['class', options.className]);
 				}
@@ -15,160 +14,152 @@ module.exports = function markdownItGithubPreamble(md, options) {
 			}
 			return self.renderToken(tokens, idx, _options, env, self);
 		},
-		min_markers = 3,
-		marker_str  = options.marker || '-',
-		render      = options.render || renderDefault;
-
-	function container(state, startLine, endLine, silent) {
-		const preambleSettings = [];
-
-		let pos, nextLine, params, token,
-			start = state.bMarks[startLine] + state.tShift[startLine],
-			max = state.eMarks[startLine];
-
-		if (marker_str !== state.src[start]) {
-			return false;
-		}
-		if (startLine !== 0) {
-			return false;
-		}
-		if (state.blkIndent > 0) {
-			return false;
-		}
-
-		for (pos = start + 1; pos <= max; pos++) {
-			if (marker_str !== state.src[pos]) {
-				break;
+		minMarkers = 3,
+		markerSymbol  = options.marker || '-',
+		render      = options.render || renderDefault,
+		countFenceMarkers = function (state, lineNumber) {
+			const startIndex = state.bMarks[lineNumber] + state.tShift[lineNumber],
+				lineLength = state.eMarks[lineNumber] - startIndex + 1;
+			if (state.src[startIndex] !== markerSymbol) {
+				return 0;
 			}
-		}
-		if (pos - start < min_markers) {
-			return false;
-		}
+			let counter = 0;
+			while (counter <= lineLength && state.src[startIndex + counter] === markerSymbol) {
+				counter++;
+			};
+			return counter;
+		},
+		findEndOfBlock = function (state, startLine, endLine) {
+			let nextLine = startLine + 1;
+			while (nextLine < endLine && countFenceMarkers(state, nextLine) < minMarkers) {
+				nextLine++;
+			}
+			if (nextLine > endLine) {
+				return false;
+			}
+			return nextLine;
+		},
+		parseYaml = function (state, startOfBlock, endOfBlock) {
+			const content = (state.src.slice(
+				state.bMarks[startOfBlock] + state.tShift[startOfBlock],
+				state.eMarks[endOfBlock] + 1
+			));
+			return jsYaml.safeLoad(content);
+		},
+		pushTokensToState = function (state, blockStartLine, blockEndLine, initialLineMarkerCount, preambleContents) {
+			const oldParent = state.parentType,
+				oldLineMax = state.lineMax,
+				preambleKeys = Object.keys(preambleContents);
 
-		pos -= start;
+			let token;
+			state.parentType = name;
 
-		const markup = state.src.slice(start, pos);
+			// this will prevent lazy continuations from ever going past our end marker
+			state.lineMax = blockEndLine;
 
-		if (silent) {
+			token        = state.push(name + '_open', 'table', 1);
+			token.markup = state.src.slice(state.bMarks[blockStartLine] + state.tShift[blockStartLine], state.eMarks[blockStartLine]);
+			token.block  = true;
+			token.map    = [blockStartLine, blockEndLine];
+
+			token = state.push(name + '_thead_open', 'thead', 1);
+			token.map    = [blockStartLine, blockEndLine];
+
+			token = state.push(name + '_tr_open', 'tr', 1);
+			token.map    = [blockStartLine, blockEndLine];
+
+			preambleKeys.forEach(key => {
+				token = state.push(name + '_th_open', 'th', 1);
+				token.map    = [blockStartLine, blockEndLine];
+				token = state.push('inline', '', 0);
+				token.content = key;
+				token.map    = [blockStartLine, blockEndLine];
+				token.children = [];
+				token = state.push(name + '_th_close', 'th', -1);
+			});
+
+			token = state.push(name + '_tr_close', 'tr', -1);
+			token = state.push(name + '_thead_close', 'thead', -1);
+
+			token = state.push(name + '_tbody_open', 'tbody', 1);
+			token.map    = [blockStartLine, blockEndLine];
+
+			token = state.push(name + '_tr_open', 'tr', 1);
+			token.map    = [blockStartLine, blockEndLine];
+
+			preambleKeys.forEach(key => {
+				token = state.push(name + '_td_open', 'td', 1);
+				token.map    = [blockStartLine, blockEndLine];
+
+				token = state.push('inline', '', 0);
+				token.content = String(preambleContents[key]);
+				token.map    = [blockStartLine, blockEndLine];
+
+				token.children = [];
+				token = state.push(name + '_td_close', 'td', -1);
+			});
+
+			token = state.push(name + '_tr_close', 'tr', -1);
+			token = state.push(name + '_tbody_close', 'tbody', -1);
+
+
+			token        = state.push(name + '_close', 'table', -1);
+			token.markup = state.src.slice(state.bMarks[blockEndLine] + state.tShift[blockEndLine], state.eMarks[blockEndLine]);
+			token.block  = true;
+
+			state.parentType = oldParent;
+			state.lineMax = oldLineMax;
+			state.line = blockEndLine + 1;
+
 			return true;
-		}
-
-		// Search for the end of the block
-		//
-		nextLine = startLine;
-
-		for (;;) {
-			nextLine += 1;
-			if (nextLine >= endLine) {
-				// unclosed block
-				console.log('preamble unclosed block', startLine, state.blkIndent, markup);
-				return false;
-				break;
-			}
-
-			start = state.bMarks[nextLine] + state.tShift[nextLine];
-			max = state.eMarks[nextLine];
-			if (state.sCount[nextLine] > 0) {
+		},
+		parsePreamble = function (state, startLine, endLine, silent) {
+			let preambleContents = false, blockEndLine = false;
+			if (startLine !== 0 || state.blkIndent > 0) {
 				return false;
 			}
-
-			if (marker_str !== state.src[start]) {
-				if (state.src.slice(start + 1, max - 1).indexOf(':') < 0) {
-					return false;
-				}
-				preambleSettings.push(state.src.slice(start, max).split(':'));
-				continue;
+			const initialLineMarkerCount = countFenceMarkers(state, startLine);
+			if (initialLineMarkerCount < minMarkers) {
+				return false;
 			}
-			for (pos = start + 1; pos <= max; pos++) {
-				if (marker_str !== state.src[pos]) {
-					break;
-				}
+			if (silent) {
+				return true;
 			}
-
-			// closing code fence must be at least as long as the opening one
-			if (pos - start < min_markers) {
-				continue;
+			blockEndLine = findEndOfBlock(state, startLine, endLine);
+			if (!blockEndLine) {
+				return false;
+			};
+			try {
+				preambleContents = parseYaml(state, startLine + 1, blockEndLine - 1);
+			} catch (e) {
+				return false;
 			}
+			if (!preambleContents || preambleContents === {}) {
+				return false;
+			}
+			pushTokensToState(
+				state,
+				startLine,
+				blockEndLine,
+				initialLineMarkerCount,
+				preambleContents
+			);
+			return true;
+		};
 
-			// make sure tail has spaces only
-			break;
-		}
-
-		const old_parent = state.parentType,
-			old_line_max = state.lineMax;
-		state.parentType = 'container';
-
-		// this will prevent lazy continuations from ever going past our end marker
-		state.lineMax = nextLine;
-
-		token        = state.push('container_' + name + '_open', 'table', 1);
-		token.markup = markup;
-		token.block  = true;
-		token.info   = params;
-		token.map    = [startLine, nextLine];
-
-		//state.md.block.tokenize(state, startLine + 1, nextLine);
-		token = state.push('thead_open', 'thead', 1);
-		token.map    = [startLine, nextLine];
-
-		token = state.push('tr_open', 'tr', 1);
-		token.map    = [startLine, nextLine];
-		for (let i = 0; i < preambleSettings.length; i++) {
-			token = state.push('th_open', 'th', 1);
-			token.map    = [startLine, nextLine];
-
-
-			token = state.push('inline', '', 0);
-			token.content = preambleSettings[i][0].trim();
-			token.map    = [startLine, nextLine];
-
-			token.children = [];
-
-			token = state.push('th_close', 'th', -1);
-		}
-
-		token = state.push('tr_close', 'tr', -1);
-		token = state.push('thead_close', 'thead', -1);
-
-
-		token = state.push('tbody_open', 'tbody', 1);
-		token.map    = [startLine, nextLine];
-
-		token = state.push('tr_open', 'tr', 1);
-		token.map    = [startLine, nextLine];
-		for (let i = 0; i < preambleSettings.length; i++) {
-			token = state.push('td_open', 'td', 1);
-			token.map    = [startLine, nextLine];
-
-
-			token = state.push('inline', '', 0);
-			token.content = preambleSettings[i][1].trim();
-			token.map    = [startLine, nextLine];
-
-			token.children = [];
-
-			token = state.push('td_close', 'td', -1);
-		}
-
-		token = state.push('tr_close', 'tr', -1);
-		token = state.push('tbody_close', 'tbody', -1);
-
-
-
-		token        = state.push('container_' + name + '_close', 'table', -1);
-		token.markup = state.src.slice(start, pos);
-		token.block  = true;
-
-		state.parentType = old_parent;
-		state.lineMax = old_line_max;
-		state.line = nextLine + 1;
-
-		return true;
-	}
-
-	md.block.ruler.before('fence', 'container_' + name, container, {
+	md.block.ruler.before('fence', name, parsePreamble, {
 		alt: ['paragraph', 'reference', 'blockquote', 'list']
 	});
-	md.renderer.rules['container_' + name + '_open'] = render;
-	md.renderer.rules['container_' + name + '_close'] = render;
+	md.renderer.rules[name + '_open'] = render;
+	md.renderer.rules[name + '_close'] = render;
+	md.renderer.rules[name + '_thead_open'] = render;
+	md.renderer.rules[name + '_thead_close'] = render;
+	md.renderer.rules[name + '_tbody_open'] = render;
+	md.renderer.rules[name + '_tbody_close'] = render;
+	md.renderer.rules[name + '_tr_open'] = render;
+	md.renderer.rules[name + '_tr_close'] = render;
+	md.renderer.rules[name + '_th_open'] = render;
+	md.renderer.rules[name + '_th_close'] = render;
+	md.renderer.rules[name + '_td_open'] = render;
+	md.renderer.rules[name + '_td_close'] = render;
 };

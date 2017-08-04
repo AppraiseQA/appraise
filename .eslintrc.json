@@ -16,7 +16,7 @@
     "one-var": "error",
     "prefer-const": "error",
     "no-var": "error",
-    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+    "no-plusplus": ["off"],
     "quotes": ["error", "single", {"avoidEscape": true, "allowTemplateLiterals": true}]
   }
 }

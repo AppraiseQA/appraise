@@ -50,8 +50,18 @@ describe('markdownItGithubPreamble', () => {
 			'-----',
 			'',
 			'abcd'
-		])).toEqual('<hr><h2>propa: valapropb valb</h2><p>abcd</p>');
+		])).not.toMatch(/<table>/);
 	});
+	it('does not render the preamble if the contents are indented', () => {
+		expect(toHtml([
+			'    ---',
+			'    propa: vala',
+			'    propb: valb',
+			'    ---',
+			''
+		])).not.toMatch(/<table>/);
+	});
+
 	it('does not render the preamble if prefixed by less than three markers', () => {
 		expect(toHtml([
 			'--',
@@ -60,8 +70,39 @@ describe('markdownItGithubPreamble', () => {
 			'--',
 			'',
 			'abcd'
-		])).toEqual('<h2>--propa: valapropb: valb</h2><p>abcd</p>');
+		])).not.toMatch(/<table>/);
 	});
+	it('does not render the preamble if it contains empty lines', () => {
+		expect(toHtml([
+			'--',
+			'propa: vala',
+			'',
+			'propb: valb',
+			'--',
+			'',
+			'abcd'
+		])).not.toMatch(/<table>/);
+	});
+
+	it('does not render the preamble if it is unclosed', () => {
+		expect(toHtml([
+			'--',
+			'propa: vala',
+			'propb: valb'
+		])).not.toMatch(/<table>/);
+	});
+
+	it('does not count markers broken accross lines', () => {
+		expect(toHtml([
+			'--',
+			'-',
+			'propa: vala',
+			'propb: valb',
+			'---',
+			''
+		])).not.toMatch(/<table>/);
+	});
+
 	it('does nothing if the fenced block is not the first in the page', () => {
 		expect(toHtml([
 			'abcd',
@@ -70,7 +111,7 @@ describe('markdownItGithubPreamble', () => {
 			'propa: vala',
 			'propb: valb',
 			'---'
-		])).toEqual('<p>abcd</p><hr><h2>propa: valapropb: valb</h2>');
+		])).not.toMatch(/<table>/);
 	});
 	it('runs each time from a clean position', () => {
 		toHtml([
@@ -158,15 +199,15 @@ describe('markdownItGithubPreamble', () => {
 					'propb: valb',
 					'---',
 					''
-				])).toEqual(
-					'<hr><h2>propa: valapropb: valb</h2>'
-				);
+				])).not.toMatch(/<table>/);
 			});
 		});
 		describe('render', () => {
 			it('sets an alternative renderer for the opening/closing table element', () => {
 				md = new Markdown().use(markdownItGithubPreamble, {
-					render: (/*tokens, idx, _options, env, self*/) => 'xxxx'
+					render: (tokens, idx /*, _options, env, self*/) => {
+						return '[' + tokens[idx].type + ']';
+					}
 				});
 				expect(toHtml([
 					'---',
@@ -176,10 +217,55 @@ describe('markdownItGithubPreamble', () => {
 					'',
 					'abcdef'
 				])).toEqual(
-					'xxxx' +
-					'<thead><tr><th>propa</th><th>propb</th></tr></thead>' +
-					'<tbody><tr><td>vala</td><td>valb</td></tr></tbody>' +
-					'xxxx' +
+					'[preamble_open]' +
+						'[preamble_thead_open]' +
+							'[preamble_tr_open]' +
+								'[preamble_th_open]propa[preamble_th_close]' +
+								'[preamble_th_open]propb[preamble_th_close]' +
+							'[preamble_tr_close]' +
+						'[preamble_thead_close]' +
+						'[preamble_tbody_open]' +
+							'[preamble_tr_open]' +
+								'[preamble_td_open]vala[preamble_td_close]' +
+								'[preamble_td_open]valb[preamble_td_close]' +
+							'[preamble_tr_close]' +
+						'[preamble_tbody_close]' +
+					'[preamble_close]' +
+					'<p>abcdef</p>'
+				);
+
+			});
+		});
+		describe('name', () => {
+			it('sets the render block name to avoid conflicts with other plugins', () => {
+				md = new Markdown().use(markdownItGithubPreamble, {
+					render: (tokens, idx /*, _options, env, self*/) => {
+						return '[' + tokens[idx].type + ']';
+					},
+					name: 'PPX'
+				});
+				expect(toHtml([
+					'---',
+					'propa: vala',
+					'propb: valb',
+					'---',
+					'',
+					'abcdef'
+				])).toEqual(
+					'[PPX_open]' +
+						'[PPX_thead_open]' +
+							'[PPX_tr_open]' +
+								'[PPX_th_open]propa[PPX_th_close]' +
+								'[PPX_th_open]propb[PPX_th_close]' +
+							'[PPX_tr_close]' +
+						'[PPX_thead_close]' +
+						'[PPX_tbody_open]' +
+							'[PPX_tr_open]' +
+								'[PPX_td_open]vala[PPX_td_close]' +
+								'[PPX_td_open]valb[PPX_td_close]' +
+							'[PPX_tr_close]' +
+						'[PPX_tbody_close]' +
+					'[PPX_close]' +
 					'<p>abcdef</p>'
 				);
 
