@@ -27,10 +27,13 @@
   <header class="page-header">
     <div class="content">
       <ul class="navigation-crumbs">
-		{{#each breadcrumbs}}
-			<li>{{this}}</li>
-		{{/each}}		
-		<li>{{exampleName}}</li>
+       <li><a href="../{{rootUrl pageName}}summary.html">Start</a></li>
+      {{#breadCrumbs pageName}}
+        <li>
+            <a href="../{{path}}{{#if last}}.html{{/if}}">{{name}}</a>
+        </li>
+      {{/breadCrumbs}}		
+      <li>{{example/exampleName}}</li>
       </ul>
     </div>
 	<div class="content tab-container">
@@ -54,9 +57,11 @@
 		<dl class="stats">
 		<dt>Outcome</dt>
 		<dd>{{example.outcome.status}}</dd>
+    <dt>Duration</dt>
+    <dd>{{duration example.unixTsStarted example.unixTsExecuted}}</dd>
 		{{#if example.outcome.message}}
-		<dt>Cause</dt>
-		<dd>{{example.outcome.message}}</dd>
+		  <dt>Cause</dt>
+  		<dd>{{example.outcome.message}}</dd>
 		{{/if}}
 		</dl>
 	</div>

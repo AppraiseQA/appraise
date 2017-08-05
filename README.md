@@ -92,19 +92,18 @@ too early to use (pre-alpha)
 
 - [ ] record timestamp when a page started executing, use in the result template
 - [ ] use pageObj.sourcePath when approving with new result instead of hard-coding the path
-- [ ] put example name into the example object/results object for easier templating
-- [ ] use timestamps for executed and started in result template
+- [x] put example name into the example object/results object for easier templating
+- [x] use timestamps for executed and started in result template
 - [ ] test with multiple examples in a single file
 - [ ] test with multiple files
 - [ ] test with files in subfolders
 - [ ] test with large images
 - [ ] test with complex page and example names
 - [ ] test with exceptions thrown throughout the test process
-
-### Known problems
-
-- [ ] breadcrumbs on rendered page -> links
-- [ ] navigation on results page (breadcrumbs and page links)
+- [x] breadcrumbs on rendered page -> links
+- [ ] directory summaries for page folders
+- [ ] tabs in summary (pages/examples)
+- [x] navigation on results page (breadcrumbs and page links)
 - [ ] Retina screen sizing
 - [ ] Solve cross-linking (eg replace .md in local links to .html when generating html)
 - [ ] detect examples with the same name on a page

@@ -21,9 +21,6 @@ module.exports = function ResultsRepository(config, components) {
 		timeStamp = function () {
 			return Math.floor(new Date().getTime() / 1000);
 		},
-		timeStampString = function (ts) {
-			return new Date(ts * 1000).toString();
-		},
 		findPage = function (pageName) {
 			return results && results.pages && results.pages.find(p => p.pageName === pageName);
 		},
@@ -200,14 +197,9 @@ module.exports = function ResultsRepository(config, components) {
 
 		return templateRepository.get('result')
 			.then(template => template({
-				exampleName: exampleName,
 				example: exampleObj,
 				approvalInstructions: getExampleApprovalInstructions(exampleObj, exampleName, pageName),
-				pageName: pageName,
-				//rootUrl: reverseRootPath(pageName) + '../',
-				breadcrumbs: pageName.split(path.sep),
-				startedTime: timeStampString(exampleObj.unixTsStarted),
-				executedTime: timeStampString(exampleObj.unixTsExecuted)
+				pageName: pageName
 			}))
 			.then(html => fileRepository.writeText(summaryPath, html))
 			.then(() => exampleObj.outcome.overview = path.basename(summaryPath));

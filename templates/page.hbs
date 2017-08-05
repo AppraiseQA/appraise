@@ -25,6 +25,7 @@
   <header class="page-header">
     <div class="content">
       <ul class="navigation-crumbs">
+       <li><a href="{{rootUrl pageName}}summary.html">Start</a></li>
 		{{#breadCrumbs pageName}}
 			<li>
         {{#if last}}
@@ -60,7 +61,7 @@
 		  <tbody>
 			{{#each results}}
 				<tr data-outcome-status="{{outcome.status}}">
-				  <td><a href="{{../pageName}}/{{outcome.overview}}">{{@key}}</a></td><td>{{outcome.message}}</td>
+				  <td><a href="{{rootUrl ../pageName}}{{../pageName}}/{{outcome.overview}}">{{@key}}</a></td><td>{{outcome.message}}</td>
 				</tr>
 			{{/each}}
 		  </tbody>
