@@ -3,7 +3,7 @@
 const Markdown = require('markdown-it'),
 	annotateExample = require('../util/md-annotate-example'),
 	annotateImage = require('../util/md-annotate-image'),
-	githubPreamble = require('../util/markdown-it-github-preamble');
+	githubPreamble = require('markdown-it-github-preamble');
 
 module.exports = function MarkdownItPageFormatter(config/*, components*/) {
 	const self = this,
