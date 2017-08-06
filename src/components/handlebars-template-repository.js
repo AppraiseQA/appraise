@@ -1,18 +1,27 @@
 /*global module, require*/
 'use strict';
 
-const Handlebars = require('handlebars');
-Handlebars.registerHelper('timestamp', require('../util/handlebars-helpers/timestamp'));
-Handlebars.registerHelper('rootUrl', require('../util/handlebars-helpers/root-url'));
-Handlebars.registerHelper('breadCrumbs', require('../util/handlebars-helpers/breadcrumbs'));
-Handlebars.registerHelper('duration', require('../util/handlebars-helpers/duration'));
-Handlebars.registerHelper('approvalInstructions', require('../util/handlebars-helpers/approval-instructions'));
+const Handlebars = require('handlebars'),
+	fs = require('fs'),
+	path = require('path'),
+	loadHelpers = function () {
+		const helpersDir = path.join(__dirname, '..', 'util', 'handlebars-helpers');
+		fs.readdirSync(helpersDir).forEach(fileName => {
+			const helperFunction = require(path.resolve(helpersDir, fileName));
+			if (!helperFunction.name) {
+				throw `error loading helpers, ${fileName} does not export a named function`;
+			}
+			Handlebars.registerHelper(helperFunction.name, helperFunction);
+		});
+	};
+
 module.exports = function HandlebarsTemplateRepository(config, components) {
 	const fileRepository = components.fileRepository,
 		self = this,
 		templates = {};
-
+	loadHelpers();
 	self.get = function (name) {
+
 		if (templates[name]) {
 			return Promise.resolve(templates[name]);
 		} else {

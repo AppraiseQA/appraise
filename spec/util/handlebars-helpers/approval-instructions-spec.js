@@ -1,15 +1,16 @@
 /*global describe, it, expect */
 'use strict';
-const approvalInstructions = require('../../../src/util/handlebars-helpers/approvalInstructions');
+const approvalInstructions = require('../../../src/util/handlebars-helpers/approval-instructions');
 describe('approvalInstructions', () => {
-	it('returns a single component for a path without a directory', () => {
-		expect(breadCrumbs('page1', {fn: JSON.stringify})).toEqual('{"name":"page1","path":"page1","last":true}');
+	it('returns blank if the example has not failed', () => {
+		expect(approvalInstructions({})).toEqual('');
+		expect(approvalInstructions({ outcome: {nStatus: 'x'}})).toEqual('');
+		expect(approvalInstructions({ outcome: {status: 'success'}})).toEqual('');
+		expect(approvalInstructions({ outcome: {status: 'error'}})).toEqual('');
 	});
-	it('returns components for each path element with relative paths', () => {
-		expect(breadCrumbs(path.join('dir1', 'dir2', 'page.md'), {fn: JSON.stringify})).toEqual(
-			'{"name":"dir1","path":"../../dir1","last":false}\n' +
-			'{"name":"dir2","path":"../dir2","last":false}\n' +
-			'{"name":"page.md","path":"page.md","last":true}'
+	it('a command line instruction if in command line mode', () => {
+		expect(approvalInstructions({ outcome: {status: 'failure'}, exampleName: 'ex', pageName: 'px'}, {fn: t => t})).toEqual(
+			{cmdLine: 'appraise approve --page "px" --example "ex"'}
 		);
 	});
 });

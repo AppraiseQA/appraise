@@ -8,6 +8,6 @@ const path = require('path'),
 		}));
 	};
 
-module.exports = function (context, options) {
+module.exports = function breadCrumbs(context, options) {
 	return toCrumbs(context).map(item => options.fn(item)).join('\n');
 };

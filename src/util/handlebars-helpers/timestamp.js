@@ -1,4 +1,4 @@
 'use strict';
-module.exports = function (unixTs) {
+module.exports = function timestamp(unixTs) {
 	return new Date(unixTs * 1000).toString();
 };
