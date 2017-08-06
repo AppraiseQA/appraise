@@ -406,7 +406,7 @@ describe('ResultsRepository', () => {
 				done();
 				return pendingPromise;
 			});
-			jasmine.clock().mockDate(new Date(5000));
+			jasmine.clock().mockDate(new Date(5050));
 			underTest.loadFromResultsDir()
 				.then(underTest.closeRun)
 				.then(underTest.writeSummary)
@@ -731,7 +731,7 @@ describe('ResultsRepository', () => {
 				.then(done, done.fail);
 		});
 		it('adds the execution start timestamp', done => {
-			jasmine.clock().mockDate(new Date(5000));
+			jasmine.clock().mockDate(new Date(5500));
 			underTest.openExampleRun('pages/page1', {exampleName: 'aloha', params: 'xxx'})
 				.then(() => expect(underTest.getPageRun('pages/page1').results.aloha.unixTsStarted).toEqual(5))
 				.then(done, done.fail);
@@ -788,6 +788,176 @@ describe('ResultsRepository', () => {
 				.then(() => expect(underTest.getPageRun('pages/page1').results.aloha).toBeUndefined())
 				.then(done, done.fail);
 
+		});
+	});
+	describe('closeExampleRun', () => {
+		let resultTemplate, page1Obj;
+		afterEach(() => {
+			jasmine.clock().uninstall();
+		});
+		beforeEach(done => {
+			jasmine.clock().install();
+			resultTemplate = jasmine.createSpy('pageTemplate');
+			templateRepository.get.and.callFake(name => {
+				if (name === 'result') {
+					return Promise.resolve(resultTemplate);
+				} else {
+					return () => '';
+				}
+			});
+			underTest.loadFromResultsDir()
+				.then(done, done.fail);
+			page1Obj = {
+				pageName: 'pages/page1',
+				results: {
+					simple: {
+						exampleName: 'simple',
+						expected: 'images/somepic.png',
+						outcome: {
+							status: 'failure',
+							message: 'something is different',
+							image: '1-diff.png',
+							overview: '1-result.html'
+						},
+						output: {screenshot: '1-actual.png'}
+					},
+					complicated: {
+						exampleName: 'complicated',
+						expected: 'images/somepic.png',
+						resultPathPrefix: 'somePath123/0'
+					}
+				}
+			};
+			fileRepository.promises.readJSON.resolve(
+				{
+					pages: [
+						page1Obj
+					]
+				}
+			);
+		});
+		it('merges the execution results into the result object before saving', done => {
+			fileRepository.writeText.and.callFake(() => {
+				expect(underTest.getPageRun('pages/page1').results.complicated.outcome).toEqual({
+					status: 'error',
+					message: 'borked!'
+				});
+				done();
+				return pendingPromise;
+			});
+			underTest.closeExampleRun('pages/page1', 'complicated', {
+				outcome: {
+					status: 'error',
+					message: 'borked!'
+				}
+			}).then(done.fail, done.fail);
+		});
+		it('keeps all the old attributes in the results object', done => {
+			fileRepository.writeText.and.callFake(() => {
+				expect(underTest.getPageRun('pages/page1').results.complicated.exampleName).toEqual('complicated');
+				expect(underTest.getPageRun('pages/page1').results.complicated.expected).toEqual('images/somepic.png');
+				expect(underTest.getPageRun('pages/page1').results.complicated.resultPathPrefix).toEqual('somePath123/0');
+				done();
+				return pendingPromise;
+			});
+			underTest.closeExampleRun('pages/page1', 'complicated', {
+				outcome: {
+					status: 'error',
+					message: 'borked!'
+				}
+			}).then(done.fail, done.fail);
+		});
+		it('appends the executed timestamp', done => {
+			jasmine.clock().mockDate(new Date(5050));
+			fileRepository.writeText.and.callFake(() => {
+				expect(underTest.getPageRun('pages/page1').results.complicated.unixTsExecuted).toEqual(5);
+				done();
+				return pendingPromise;
+			});
+			underTest.closeExampleRun('pages/page1', 'complicated', {
+				outcome: {
+					status: 'error',
+					message: 'borked!'
+				}
+			}).then(done.fail, done.fail);
+		});
+		it('writes the processed result template to <resultPathPrefix>-result.html', done => {
+			jasmine.clock().mockDate(new Date(5050));
+			resultTemplate.and.callFake(JSON.stringify);
+			fileRepository.writeText.and.callFake((path, contents) => {
+				expect(path).toEqual('somePath123/0-result.html');
+				expect(JSON.parse(contents)).toEqual({
+					pageName: 'pages/page1',
+					exampleName: 'complicated',
+					expected: 'images/somepic.png',
+					outcome: { status: 'error', message: 'borked!' },
+					unixTsExecuted: 5,
+					resultPathPrefix: 'somePath123/0'
+				});
+				expect(underTest.getPageRun('pages/page1').results.complicated.pageName).toBeUndefined();
+				done();
+				return pendingPromise;
+			});
+			underTest.closeExampleRun('pages/page1', 'complicated', {
+				outcome: {
+					status: 'error',
+					message: 'borked!'
+				}
+			}).then(done.fail, done.fail);
+		});
+		it('adds the HTML result path to outcome.overview after writing', done => {
+			fileRepository.promises.writeText.resolve();
+			underTest.closeExampleRun('pages/page1', 'complicated', {
+				outcome: {
+					status: 'error',
+					message: 'borked!'
+				}
+			}).then(() =>
+				expect(underTest.getPageRun('pages/page1').results.complicated.outcome.overview).toEqual('0-result.html')
+			).then(done, done.fail);
+		});
+		it('rejects if the page name is not provided', done => {
+			underTest.closeExampleRun('', 'complicated', {})
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('page name must be provided'))
+				.then(done, done.fail);
+		});
+		it('rejects if the example name is not provided', done => {
+			underTest.closeExampleRun('pages/page1', '', {})
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('example name must be provided'))
+				.then(done, done.fail);
+		});
+		it('rejects if the page does not exist', done => {
+			underTest.closeExampleRun('pagexx', 'complicated', {})
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('page pagexx not found'))
+				.then(done, done.fail);
+		});
+		it('rejects if the example is already closed', done => {
+			underTest.closeExampleRun('pages/page1', 'simple', {})
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('example simple already closed in pages/page1'))
+				.then(done, done.fail);
+		});
+		it('rejects if the execution results are not set', done => {
+			underTest.closeExampleRun('pages/page1', 'complicated')
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('execution results must be provided'))
+				.then(done, done.fail);
+		});
+		it('rejects if the execution results do not contain an outcome', done => {
+			underTest.closeExampleRun('pages/page1', 'complicated', {notOutcome: {}})
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('execution results must contain an outcome'))
+				.then(done, done.fail);
+		});
+		it('rejects if writing the result file rejects', done => {
+			underTest.closeExampleRun('pages/page1', 'complicated', {outcome: {}})
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('bomb!'))
+				.then(done, done.fail);
+			fileRepository.promises.writeText.reject('bomb!');
 		});
 	});
 });

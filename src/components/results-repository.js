@@ -184,16 +184,30 @@ module.exports = function ResultsRepository(config, components) {
 		});
 		return Promise.resolve(pageObj.results[exampleName].resultPathPrefix);
 	};
-	/****************************************************/
 	self.closeExampleRun = function (pageName, exampleName, executionResults) {
 		const pageObj = findPage(pageName),
 			exampleObj = pageObj && pageObj.results[exampleName],
-			summaryPath = exampleObj.resultPathPrefix + '-result.html';
+			summaryPath = exampleObj && exampleObj.resultPathPrefix + '-result.html';
+		if (!pageName) {
+			return Promise.reject('page name must be provided');
+		}
 		if (!pageObj) {
 			return Promise.reject(`page ${pageName} not found`);
 		}
+		if (!exampleName) {
+			return Promise.reject('example name must be provided');
+		}
 		if (!exampleObj) {
 			return Promise.reject(`example ${exampleName} not found in ${pageName}`);
+		}
+		if (exampleObj.outcome && exampleObj.outcome.overview) {
+			return Promise.reject(`example ${exampleName} already closed in ${pageName}`);
+		}
+		if (!executionResults) {
+			return Promise.reject('execution results must be provided');
+		}
+		if (!executionResults.outcome) {
+			return Promise.reject('execution results must contain an outcome');
 		}
 		mergeProperties(exampleObj, executionResults);
 		exampleObj.unixTsExecuted = timeStamp();
