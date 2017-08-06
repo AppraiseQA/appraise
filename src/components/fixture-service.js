@@ -1,36 +1,31 @@
 'use strict';
 const path = require('path'),
 	getErrorMessage = require('../util/get-error-message'),
-	validateRequiredComponents = require('../util/validate-required-components'),
-	pngDiff = require('../util/png-diff');
+	validateRequiredComponents = require('../util/validate-required-components');
+
 module.exports = function FixtureService(config, components) {
 	const self = this,
 		screenshotService = components.screenshotService,
 		fileRepository = components.fileRepository,
+		pngComparisonService = components.pngComparisonService,
 		writeOutput = function (fixtureOutput, pathPrefix) {
 			const ext = {
 					'image/svg': '.svg'
 				},
 				filePath = path.resolve(pathPrefix + ext[fixtureOutput.contentType]);
-			return fileRepository.writeText(filePath, fixtureOutput.content)
-				.then(() => filePath);
-		},
-		writeBase64Buffer = function (buffer, filePath) {
-			return fileRepository.writeBuffer(filePath, buffer, 'base64')
-				.then(() => filePath);
+			return fileRepository.writeText(filePath, fixtureOutput.content);
 		},
 		calculateOutcome = function (example, pathPrefix) {
-			if (example.expected) {
-				return pngDiff(
-					path.resolve(pathPrefix, '..', '..', example.expected),
-					pathPrefix + '-actual.png',
-					pathPrefix + '-diff.png'
-				);
-			} else {
+			if (!example.expected) {
 				return {
 					message: 'no expected result provided'
 				};
 			}
+			return pngComparisonService.compare(
+				path.resolve(pathPrefix, '..', '..', example.expected),
+				pathPrefix + '-actual.png',
+				pathPrefix + '-diff.png'
+			);
 		},
 		mergeOutcome = function (result, diffResult) {
 			result.outcome = {
@@ -45,7 +40,7 @@ module.exports = function FixtureService(config, components) {
 			return result;
 		};
 
-	validateRequiredComponents(components, ['screenshotService', 'fileRepository']);
+	validateRequiredComponents(components, ['screenshotService', 'fileRepository', 'pngComparisonService']);
 
 	self.start = function () {
 		return screenshotService.start();
@@ -71,7 +66,8 @@ module.exports = function FixtureService(config, components) {
 				}
 			});
 		}
-		return fixtureEngine.execute(example)
+		return Promise.resolve()
+			.then(() => fixtureEngine.execute(example))
 			.then(output => writeOutput (output, resultPathPrefix))
 			.then(filePath => {
 				result.output = {
@@ -79,15 +75,15 @@ module.exports = function FixtureService(config, components) {
 				};
 				return screenshotService.screenshot({url: 'file:' + filePath});
 			})
-			.then(buffer => writeBase64Buffer(buffer, resultPathPrefix + '-actual.png'))
+			.then(buffer => fileRepository.writeBuffer(resultPathPrefix + '-actual.png', buffer))
 			.then(fpath => result.output.screenshot = path.basename(fpath))
 			.then(() => calculateOutcome(example, resultPathPrefix))
 			.then(outcome => mergeOutcome(result, outcome))
 			.catch(err => {
-				result.error = err;
 				result.outcome = {
 					status: 'error',
-					message: getErrorMessage(err)
+					message: getErrorMessage(err),
+					error: err
 				};
 			})
 			.then(() => result);

@@ -17,7 +17,8 @@ const minimist = require('minimist'),
 		examplesRepository: defaultComponentPath('examples-repository'),
 		pageFormatter: defaultComponentPath('markdown-it-page-formatter'),
 		executionService: defaultComponentPath('execution-service'),
-		fixtureService: defaultComponentPath('fixture-service')
+		fixtureService: defaultComponentPath('fixture-service'),
+		pngComparisonService: defaultComponentPath('png-comparison-service')
 	},
 	readArgs = function () {
 		return minimist(process.argv.slice(2), {

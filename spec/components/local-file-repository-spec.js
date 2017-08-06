@@ -103,6 +103,12 @@ describe('LocalFileRepository', () => {
 				.then(r => expect(r).toEqual('{"a":1}'))
 				.then(done, done.fail);
 		});
+		it('resolves with the path of the written file', done => {
+			const sourcePath = path.join(workingDir, 'some.txt');
+			underTest.writeJSON(sourcePath, {a: 1})
+				.then(r => expect(r).toEqual(sourcePath))
+				.then(done, done.fail);
+		});
 		it('fails if the source file cannot be written to', done => {
 			const sourcePath = path.join(workingDir, 'subdir/some.txt');
 			underTest.writeJSON(sourcePath, {a: 1})
@@ -126,7 +132,12 @@ describe('LocalFileRepository', () => {
 				.then(() => fs.readFileSync(sourcePath, 'utf8'))
 				.then(r => expect(r).toEqual('added123'))
 				.then(done, done.fail);
-
+		});
+		it('resolves with the path of the written file', done => {
+			const sourcePath = path.join(workingDir, 'some.txt');
+			underTest.writeText(sourcePath, 'added123')
+				.then(r => expect(r).toEqual(sourcePath))
+				.then(done, done.fail);
 		});
 		it('fails if the source file cannot be writeed to', done => {
 			const sourcePath = path.join(workingDir, 'subdir/some.txt');
@@ -140,30 +151,40 @@ describe('LocalFileRepository', () => {
 		let actualContent, base64Content;
 		beforeEach(() => {
 			actualContent = 'this is something!';
-			base64Content = new Buffer(actualContent).toString('base64');
+			base64Content = new Buffer('dGhpcyBpcyBzb21ldGhpbmch', 'base64');
 		});
 		it('writes to a file using a promised interface', done => {
 			const sourcePath = path.join(workingDir, 'some.txt');
 			fs.writeFileSync(sourcePath, 'content 123', 'utf8');
-			underTest.writeBuffer(sourcePath, base64Content, 'base64')
+			underTest.writeBuffer(sourcePath, base64Content)
 				.then(() => fs.readFileSync(sourcePath, 'utf8'))
 				.then(r => expect(r).toEqual(actualContent))
 				.then(done, done.fail);
 		});
 		it('creates a file if it does not exist', done => {
 			const sourcePath = path.join(workingDir, 'some.txt');
-			underTest.writeBuffer(sourcePath, base64Content, 'base64')
+			underTest.writeBuffer(sourcePath, base64Content)
 				.then(() => fs.readFileSync(sourcePath, 'utf8'))
 				.then(r => expect(r).toEqual(actualContent))
 				.then(done, done.fail);
-
+		});
+		it('resolves with the path of the written file', done => {
+			const sourcePath = path.join(workingDir, 'some.txt');
+			underTest.writeBuffer(sourcePath, base64Content)
+				.then(r => expect(r).toEqual(sourcePath))
+				.then(done, done.fail);
 		});
 		it('fails if the source file cannot be writeed to', done => {
 			const sourcePath = path.join(workingDir, 'subdir/some.txt');
-			underTest.writeBuffer(sourcePath, base64Content, 'base64')
+			underTest.writeBuffer(sourcePath, base64Content)
 				.then(done.fail)
 				.catch(e => expect(e.message).toMatch(/ENOENT: no such file or directory/))
 				.then(done);
+		});
+		it('refuses to write something that is not a buffer', () => {
+			const sourcePath = path.join(workingDir, 'some.txt');
+			expect(() => underTest.writeBuffer(sourcePath, actualContent))
+				.toThrowError('content must be a buffer');
 		});
 	});
 

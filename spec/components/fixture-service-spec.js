@@ -4,13 +4,14 @@ const FixtureService = require('../../src/components/fixture-service'),
 	promiseSpyObject = require('../support/promise-spy-object'),
 	mockFileRepository = require('../support/mock-file-repository');
 describe('FixtureService', () => {
-	let underTest, screenshotService, fileRepository, config, nodeFixtureEngine, customFixtureEngine, pendingPromise;
+	let underTest, screenshotService, fileRepository, pngComparisonService, config, nodeFixtureEngine, customFixtureEngine, pendingPromise;
 	beforeEach(() => {
 		config = {};
 		screenshotService = promiseSpyObject('screenshotService', ['start', 'stop', 'screenshot']);
 		fileRepository = mockFileRepository({
 			'examples-dir': 'examplesDir'
 		});
+		pngComparisonService = promiseSpyObject('pngComparisonService', ['compare']);
 		nodeFixtureEngine = {execute: jasmine.createSpy('node execute') };
 		customFixtureEngine = {execute: jasmine.createSpy('custom execute') };
 		pendingPromise = new Promise(() => false);
@@ -18,7 +19,8 @@ describe('FixtureService', () => {
 			screenshotService: screenshotService,
 			fileRepository: fileRepository,
 			'fixture-engine-node': nodeFixtureEngine,
-			'fixture-engine-custom': customFixtureEngine
+			'fixture-engine-custom': customFixtureEngine,
+			pngComparisonService: pngComparisonService
 		});
 	});
 	describe('start', () => {
@@ -112,8 +114,140 @@ describe('FixtureService', () => {
 						done();
 					});
 
-					fileRepository.promises.writeText.resolve();
+					fileRepository.promises.writeText.resolve('/some/path1.svg');
 				});
+				it('can work with synchronous replies',	done => {
+					nodeFixtureEngine.execute.and.returnValue({
+						contentType: 'image/svg',
+						content: 'a-b-c'
+					});
+
+					underTest.executeExample({a: 1}, '/some/path1')
+						.then(done.fail, done.fail);
+
+					screenshotService.screenshot.and.callFake(props => {
+						expect(props).toEqual({url: 'file:/some/path1.svg'});
+						expect(fileRepository.writeText).toHaveBeenCalledWith('/some/path1.svg', 'a-b-c');
+						done();
+					});
+
+					fileRepository.promises.writeText.resolve('/some/path1.svg');
+				});
+
+			});
+			it('reports an error after an exception', done => {
+				nodeFixtureEngine.execute.and.throwError('boom!');
+				underTest.executeExample({a: 1}, '/some/path1')
+					.then(result => {
+						expect(result.outcome.error.message).toEqual('boom!');
+						expect(result.outcome.status).toEqual('error');
+						expect(result.outcome.message).toMatch(/^Error boom!/);
+					})
+					.then(done, done.fail);
+			});
+			it('reports an error after a rejection', done => {
+				nodeFixtureEngine.execute.and.returnValue(Promise.reject('boom!'));
+				underTest.executeExample({a: 1}, '/some/path1')
+					.then(result => {
+						expect(result.outcome.error).toEqual('boom!');
+						expect(result.outcome.status).toEqual('error');
+						expect(result.outcome.message).toEqual('boom!');
+					})
+					.then(done, done.fail);
+			});
+
+		});
+		describe('once the result is processed', () => {
+			let resultBuffer;
+			beforeEach(() => {
+				nodeFixtureEngine.execute.and.returnValue(Promise.resolve({
+					contentType: 'image/svg',
+					content: 'a-b-c'
+				}));
+				fileRepository.promises.writeText.resolve('/some/path1.svg');
+				resultBuffer = 'bbbbb';
+				screenshotService.promises.screenshot.resolve(resultBuffer);
+				fileRepository.promises.writeBuffer.resolve('/some/path1-actual.png');
+			});
+			it('stores the screenshot into the <prefix>-actual.png', done => {
+				fileRepository.writeBuffer.and.callFake((path, content)	 => {
+					expect(path).toEqual('/some/path1-actual.png');
+					expect(content).toEqual('bbbbb');
+					done();
+					return pendingPromise;
+				});
+				underTest.executeExample({a: 1}, '/some/path1')
+					.then(done.fail, done.fail);
+			});
+			it('reports a failure immediately if the example contains no expected result', done => {
+				underTest.executeExample({a: 1}, '/some/path1')
+					.then(result => {
+						expect(result).toEqual({
+							output: { source: 'path1.svg', screenshot: 'path1-actual.png' },
+							outcome: { status: 'failure', message: 'no expected result provided' }
+						});
+					})
+					.then(() => expect(pngComparisonService.compare).not.toHaveBeenCalled())
+					.then(done, done.fail);
+			});
+			it('runs the expected result through the PNG comparison engine', done => {
+				pngComparisonService.compare.and.callFake((expected, actual, diff)  => {
+					expect(expected).toEqual('/images/image1.png');
+					expect(actual).toEqual('/some/path1-actual.png');
+					expect(diff).toEqual('/some/path1-diff.png');
+					done();
+					return pendingPromise;
+				});
+				underTest.executeExample({expected: 'images/image1.png'}, '/some/path1')
+					.then(done.fail, done.fail);
+			});
+			it('reports success if the png comparison engine returns false', done => {
+				underTest.executeExample({expected: 'images/image1.png'}, '/some/path1')
+					.then(result => {
+						expect(result).toEqual({
+							output: { source: 'path1.svg', screenshot: 'path1-actual.png' },
+							outcome: { status: 'success' }
+						});
+					})
+					.then(done, done.fail);
+				pngComparisonService.promises.compare.resolve();
+			});
+			it('reports a failure if the PNG comparison engine reports a failure', done => {
+				underTest.executeExample({expected: 'images/image1.png'}, '/some/path1')
+					.then(result => {
+						expect(result).toEqual({
+							output: { source: 'path1.svg', screenshot: 'path1-actual.png' },
+							outcome: { status: 'failure', message: 'totally different!' }
+						});
+					})
+					.then(done, done.fail);
+				pngComparisonService.promises.compare.resolve({message: 'totally different!'});
+			});
+			it('includes the image base name if the png comparison service resolves with an image path', done => {
+				underTest.executeExample({expected: 'images/image1.png'}, '/some/path1')
+					.then(result => {
+						expect(result).toEqual({
+							output: { source: 'path1.svg', screenshot: 'path1-actual.png' },
+							outcome: { status: 'failure', message: 'totally different!', image: 'my-diff.png' }
+						});
+					})
+					.then(done, done.fail);
+				pngComparisonService.promises.compare.resolve({message: 'totally different!', image: '/a/b/c/my-diff.png'});
+			});
+			it('reports an error if the png comparison service rejects', done => {
+				underTest.executeExample({expected: 'images/image1.png'}, '/some/path1')
+					.then(result => {
+						expect(result).toEqual({
+							output: { source: 'path1.svg', screenshot: 'path1-actual.png' },
+							outcome: {
+								status: 'error',
+								message: 'totally different!',
+								error: {message: 'totally different!', other: 'props'}
+							}
+						});
+					})
+					.then(done, done.fail);
+				pngComparisonService.promises.compare.reject({message: 'totally different!', other: 'props'});
 			});
 		});
 

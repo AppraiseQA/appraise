@@ -26,6 +26,10 @@ module.exports = function LocalFileRepository(config/*, components*/) {
 			if (!fsUtil.isDir(toDir)) {
 				fsUtil.mkdirp(toDir);
 			}
+		},
+		writeFile = function (path, contents, encoding) {
+			return fsPromise.writeFileAsync(path, contents, encoding)
+				.then(() => path);
 		};
 	self.referencePath = function () {
 		const pathComponents = Array.from(arguments),
@@ -58,13 +62,16 @@ module.exports = function LocalFileRepository(config/*, components*/) {
 			.then(JSON.parse);
 	};
 	self.writeJSON = function (filePath, object) {
-		return fsPromise.writeFileAsync(filePath, JSON.stringify(object), 'utf8');
+		return writeFile(filePath, JSON.stringify(object), 'utf8');
 	};
 	self.writeText = function (filePath, text) {
-		return fsPromise.writeFileAsync(filePath, text, 'utf8');
+		return writeFile(filePath, text, 'utf8');
 	};
-	self.writeBuffer = function (filePath, buffer, encoding) {
-		return fsPromise.writeFileAsync(filePath, buffer, encoding);
+	self.writeBuffer = function (filePath, buffer) {
+		if (Object.getPrototypeOf(buffer) !== Buffer.prototype) {
+			throw new Error('content must be a buffer');
+		}
+		return writeFile(filePath, buffer);
 	};
 	self.copyFile = function (fromPath, toPath) {
 		return new Promise((resolve, reject) => {

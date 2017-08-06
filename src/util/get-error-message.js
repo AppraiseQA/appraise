@@ -9,6 +9,6 @@ module.exports = function getErrorMessage(errorOrString) {
 	if (typeof errorOrString === 'string') {
 		return errorOrString;
 	}
-	return ['name', 'type', 'message', 'stack'].filter(t => t).map(safeProp).join(' ');
+	return ['name', 'type', 'message', 'stack'].map(safeProp).filter(t => t).join(' ');
 };
 
