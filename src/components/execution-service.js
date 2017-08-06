@@ -16,7 +16,7 @@ module.exports = function ExecutionService(config, components) {
 	/****************************************************/
 	self.executePage = function (pageName) {
 		const runSingleExample = function (example) {
-			return resultsRepository.openExampleRun(pageName, example.exampleName, example)
+			return resultsRepository.openExampleRun(pageName, example)
 				.then(resultPathPrefix => fixtureService.executeExample(example, resultPathPrefix))
 				.then(executionResult => resultsRepository.closeExampleRun(pageName, example.exampleName, executionResult));
 		};

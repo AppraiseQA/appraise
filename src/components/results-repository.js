@@ -167,13 +167,23 @@ module.exports = function ResultsRepository(config, components) {
 			));
 	};
 	/****************************************************/
-	self.openExampleRun = function (pageName, exampleName, exampleDetails) {
-		const pageObj = findPage(pageName);
+	self.openExampleRun = function (pageName, exampleDetails) {
+		const pageObj = findPage(pageName),
+			exampleName = exampleDetails.exampleName;
+		if (!pageName) {
+			return Promise.reject('page name must be provided');
+		}
 		if (!pageObj) {
 			return Promise.reject(`page ${pageName} not found`);
 		}
+		if (!exampleName) {
+			return Promise.reject('example details must contain exampleName');
+		}
 		if (pageObj.results[exampleName]) {
 			return Promise.reject(`example ${exampleName} already open in ${pageName}`);
+		}
+		if (pageObj.summary) {
+			return Promise.reject(`page run ${pageName} already closed`);
 		}
 		pageObj.results[exampleName] = mergeProperties(deepCopy(exampleDetails), {
 			unixTsStarted: timeStamp(),

@@ -688,4 +688,106 @@ describe('ResultsRepository', () => {
 
 		});
 	});
+	describe('openExampleRun', () => {
+		let page1Obj;
+		afterEach(() => {
+			jasmine.clock().uninstall();
+		});
+		beforeEach(done => {
+			underTest.loadFromResultsDir()
+				.then(done, done.fail);
+			jasmine.clock().install();
+			page1Obj = {
+				pageName: 'pages/page1',
+				results: {
+					simple: {
+						expected: 'images/somepic.png',
+						outcome: {
+							status: 'failure',
+							message: 'borked!',
+							image: '1-diff.png',
+							overview: '1-result.html'
+						},
+						output: {screenshot: '1-actual.png'}
+					}
+				}
+			};
+			fileRepository.promises.readJSON.resolve(
+				{
+					pages: [page1Obj]
+				}
+			);
+		});
+		it('clones the example details into the page result object', done => {
+			underTest.openExampleRun('pages/page1', {exampleName: 'aloha', params: 'xxx'})
+				.then(() => expect(underTest.getPageRun('pages/page1').results.aloha.params).toEqual('xxx'))
+				.then(done, done.fail);
+		});
+		it('creates a detached clone so modifications to original example details will not affect the results', done => {
+			const original = {exampleName: 'aloha', params: 'xxx'};
+			underTest.openExampleRun('pages/page1', original)
+				.then(() => original.params = 'yyy')
+				.then(() => expect(underTest.getPageRun('pages/page1').results.aloha.params).toEqual('xxx'))
+				.then(done, done.fail);
+		});
+		it('adds the execution start timestamp', done => {
+			jasmine.clock().mockDate(new Date(5000));
+			underTest.openExampleRun('pages/page1', {exampleName: 'aloha', params: 'xxx'})
+				.then(() => expect(underTest.getPageRun('pages/page1').results.aloha.unixTsStarted).toEqual(5))
+				.then(done, done.fail);
+		});
+		it('adds the resultPathPrefix', done => {
+			underTest.openExampleRun('pages/page1', {exampleName: 'aloha', params: 'xxx'})
+				.then(() => expect(underTest.getPageRun('pages/page1').results.aloha.resultPathPrefix).toEqual('resultDir/pages/page1/1'))
+				.then(done, done.fail);
+		});
+		it('resolves with the resultPathPrefix', done => {
+			underTest.openExampleRun('pages/page1', {exampleName: 'aloha', params: 'xxx'})
+				.then(result => expect(result).toEqual('resultDir/pages/page1/1'))
+				.then(done, done.fail);
+		});
+		it('rejects if the page name is not set', done => {
+			underTest.openExampleRun('', {exampleName: 'aloha', params: 'xxx'})
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('page name must be provided'))
+				.then(() => expect(underTest.getPageNames()).toEqual(['pages/page1']))
+				.then(() => expect(Object.keys(underTest.getPageRun('pages/page1').results).length).toEqual(1))
+				.then(() => expect(underTest.getPageRun('pages/page1').results.aloha).toBeUndefined())
+				.then(done, done.fail);
+		});
+		it('rejects if the page run does not exist', done => {
+			underTest.openExampleRun('page2', {exampleName: 'aloha', params: 'xxx'})
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('page page2 not found'))
+				.then(() => expect(underTest.getPageNames()).toEqual(['pages/page1']))
+				.then(() => expect(Object.keys(underTest.getPageRun('pages/page1').results).length).toEqual(1))
+				.then(() => expect(underTest.getPageRun('pages/page1').results.aloha).toBeUndefined())
+				.then(done, done.fail);
+		});
+		it('rejects if the example details do not contain an exampleName', done => {
+			underTest.openExampleRun('pages/page1', {examplexName: 'aloha', params: 'xxx'})
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('example details must contain exampleName'))
+				.then(() => expect(Object.keys(underTest.getPageRun('pages/page1').results).length).toEqual(1))
+				.then(done, done.fail);
+		});
+		it('rejects if the example with the same name already exists', done => {
+			underTest.openExampleRun('pages/page1', {exampleName: 'simple', params: 'xxx'})
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('example simple already open in pages/page1'))
+				.then(() => expect(Object.keys(underTest.getPageRun('pages/page1').results).length).toEqual(1))
+				.then(() => expect(underTest.getPageRun('pages/page1').results.simple.params).toBeUndefined())
+				.then(done, done.fail);
+		});
+		it('rejects if the page run is already closed', done => {
+			underTest.closePageRun('pages/page1')
+				.then(() => underTest.openExampleRun('pages/page1', {exampleName: 'aloha', params: 'xxx'}))
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('page run pages/page1 already closed'))
+				.then(() => expect(Object.keys(underTest.getPageRun('pages/page1').results).length).toEqual(1))
+				.then(() => expect(underTest.getPageRun('pages/page1').results.aloha).toBeUndefined())
+				.then(done, done.fail);
+
+		});
+	});
 });
