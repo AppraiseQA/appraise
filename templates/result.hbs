@@ -33,113 +33,117 @@
             <a href="../{{path}}{{#if last}}.html{{/if}}">{{name}}</a>
         </li>
       {{/breadCrumbs}}		
-      <li>{{example/exampleName}}</li>
+      <li>{{exampleName}}</li>
       </ul>
     </div>
 	<div class="content tab-container">
 		<label for="tab1">Grid</label>
-		{{#if example.output.screenshot}}
-			{{#if example.expected}}    
+		{{#if output.screenshot}}
+			{{#if expected}}    
 				<label for="tab2">Overlay</label>
 			{{/if}}
 		{{/if}}
-		{{#if example.output.source}}
+		{{#if output.source}}
 		<label for="tab3">Inspect</label>
 		{{/if}}
-		{{#if example.output.logs}}
+		{{#if output.logs}}
 		<label for="tab4">Logs</label>
 		{{/if}}
 	</div>	  
   </header>
 
-  <div class="content page-block summary" data-outcome-status="{{example.outcome.status}}">
-	<div class="header">
-		<dl class="stats">
-		<dt>Outcome</dt>
-		<dd>{{example.outcome.status}}</dd>
-    <dt>Duration</dt>
-    <dd>{{duration example.unixTsStarted example.unixTsExecuted}}</dd>
-		{{#if example.outcome.message}}
-		  <dt>Cause</dt>
-  		<dd>{{example.outcome.message}}</dd>
-		{{/if}}
-		</dl>
-	</div>
-  {{#if approvalInstructions}}
-    <div class="instructions">
-      Approve this example from your command line using:
-      <code>
-        {{approvalInstructions}}
-      </code>
+  <div class="content page-block summary" data-outcome-status="{{outcome.status}}">
+    <div class="header">
+      <dl class="stats">
+      <dt>Outcome</dt>
+      <dd>{{outcome.status}}</dd>
+      <dt>Duration</dt>
+      <dd>{{duration unixTsStarted unixTsExecuted}}</dd>
+      {{#if outcome.message}}
+        <dt>Cause</dt>
+        <dd>{{outcome.message}}</dd>
+      {{/if}}
+      </dl>
     </div>
-  {{/if}}
+    {{#approvalInstructions .}}
+      <div class="instructions">
+        {{#if cmdLine}}
+        Approve this example from your command line using:
+        <code>
+          {{cmdLine}}
+        </code>
+        {{/if}}
+      </div>
+    {{/approvalInstructions}}
   </div>
 
 
   <div class="content card-container"  data-tab-panel="tab1">		
-	{{#if example.expected}}  
+	{{#if expected}}  
     <div class="card">
 		<span class="card-title">Expected</span>
 		<div class="card-contents">
-			<img src="../{{example.expected}}"/>
+			<img src="../{{expected}}"/>
 		</div>
 	</div>
 	{{/if}}	
-	{{#if example.output.screenshot}}
+	{{#if output.screenshot}}
 		<div class="card">
 			<span class="card-title">Actual</span>
 			<div class="card-contents" >
-				<img class="card-contents" src="{{example.output.screenshot}}" />
+				<img class="card-contents" src="{{output.screenshot}}" />
 			</div>
 		</div>
 	 {{/if}}
-	{{#if example.outcome.image}}
+	{{#if outcome.image}}
 		<div class="card">
 			<span class="card-title">Diff</span>
 			<div class="card-contents" >
-			<img src="{{example.outcome.image}}" />
+			<img src="{{outcome.image}}" />
 			</div>
 		</div>
 	 {{/if}}
 
-	 {{#if example.output.source}}
+	 {{#if output.source}}
 		<div class="card">
 			<span class="card-title">Source</span>
-			<iframe class="card-contents" src="{{example.output.source}}"></iframe>
+			<iframe class="card-contents" src="{{output.source}}"></iframe>
 		</div>
 	 {{/if}}
   </div>
   <div class="content"  data-tab-panel="tab2">
 	 <div class="box controls" data-overlay-control="overlay-expected">
-		  <span class="box-title"><input data-overlay-role="visibility" data-target="overlay-expected" type="checkbox" checked="checked"/> Expected</span>
+		  <span class="box-title"><input data-overlay-role="visibility" type="checkbox" checked="checked"/> Expected</span>
 		  <span class="control"><label>Opacity</label><input data-overlay-role="opacity" type="range" min="0" max="1" step="0.05" value="0.5"></span>
 		  <span class="control"><label>Scale</label><input data-overlay-role="scale" type="range" min="-10" max="10" step="1" value="0"></span>
 	  </div>
 	 <div class="box controls" data-overlay-control="overlay-actual">
-		  <span class="box-title"><input data-overlay-role="visibility" data-target="overlay-expected" type="checkbox" checked="checked"/> Actual</span>
+		  <span class="box-title"><input data-overlay-role="visibility" type="checkbox" checked="checked"/> Actual</span>
 		  <span class="control"><label>Opacity</label><input data-overlay-role="opacity" type="range" min="0" max="1" step="0.05" value="0.5"></span>
 		  <span class="control"><label>Scale</label><input data-overlay-role="scale" type="range" min="-10" max="10" step="1" value="0"></span>
 	  </div>
-	{{#if example.outcome.image}}
+	{{#if outcome.image}}
 	 <div class="box controls"  data-overlay-control="overlay-diff">
-		  <span class="box-title"><input data-overlay-role="visibility" data-target="overlay-expected" type="checkbox" /> Diff</span>
+		  <span class="box-title"><input data-overlay-role="visibility" type="checkbox" /> Diff</span>
 		  <span class="control"><label>Opacity</label><input data-overlay-role="opacity" type="range" min="0" max="1" step="0.05" value="0.5"></span>
 		  <span class="control"><label>Scale</label><input data-overlay-role="scale" type="range" min="-10" max="10" step="1" value="0"></span>
 	  </div>
 	 {{/if}}
 	   <div class="overlay-container">		
-		   <img class="draggable" id="overlay-expected" src="../{{example.expected}}"/>
-		   {{#if example.output.screenshot}}
-			 <img class="draggable" id="overlay-actual" class="card-contents" src="{{example.output.screenshot}}" />
+		   {{#if expected}} 
+  		   <img class="draggable" id="overlay-expected" src="../{{expected}}"/>
+       {{/if}}
+		   {{#if output.screenshot}}
+		  	 <img class="draggable" id="overlay-actual" class="card-contents" src="{{output.screenshot}}" />
 		   {{/if}}
-		   {{#if example.outcome.image}}
-			  <img class="draggable" id="overlay-diff" src="{{example.outcome.image}}" />
+		   {{#if outcome.image}}
+			    <img class="draggable" id="overlay-diff" src="{{outcome.image}}" />
 		   {{/if}}
 	   </div>
   </div>
-  {{#if example.output.source}}
+  {{#if output.source}}
 	<div class="content grow" data-tab-panel="tab3">
-  	<iframe src="{{example.output.source}}"></iframe>
+  	<iframe src="{{output.source}}"></iframe>
 	</div>
   {{/if}}
 

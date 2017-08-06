@@ -18,27 +18,27 @@ window.addEventListener('load', () => {
 			// 5 > 10
 			element.style.transform = 'scale(' + getCssScale(scale) + ')';
 		};
-	for (let control of document.querySelectorAll('[data-overlay-control]')) {
+	for (const control of document.querySelectorAll('[data-overlay-control]')) {
 		const targetId = control.getAttribute('data-overlay-control'),
 			target = document.getElementById(targetId);
-		for (let field of control.querySelectorAll('[data-overlay-role="visibility"]')) {
+		for (const field of control.querySelectorAll('[data-overlay-role="visibility"]')) {
 			field.addEventListener('change', () => target.classList.toggle('hidden'));
 			if (!field.getAttribute('checked')) {
 				target.classList.add('hidden');
 			}
 		}
-		for (let field of control.querySelectorAll('[data-overlay-role="opacity"]')) {
+		for (const field of control.querySelectorAll('[data-overlay-role="opacity"]')) {
 			field.addEventListener('change', () => setOpacity(target, field.value));
 			field.addEventListener('input', () => setOpacity(target, field.value));
 			setOpacity(target, field.value);
 		}
-		for (let field of control.querySelectorAll('[data-overlay-role="scale"]')) {
+		for (const field of control.querySelectorAll('[data-overlay-role="scale"]')) {
 			field.addEventListener('change', () => setScale(target, field.valueAsNumber));
 			field.addEventListener('input', () => setScale(target, field.valueAsNumber));
 			setScale(target, field.valueAsNumber);
 		}
 	}
-	for (let control of document.querySelectorAll('.draggable')) {
+	for (const control of document.querySelectorAll('.draggable')) {
 		control.addEventListener('dragstart', e => {
 			control.setAttribute('drag-origin-x', e.clientX);
 			control.setAttribute('drag-origin-y', e.clientY);

@@ -2,7 +2,6 @@
 'use strict';
 const path = require('path'),
 	deepCopy = require('../util/deep-copy'),
-	commandName = require('../../package.json').name,
 	aggregateSummary = require('../util/aggregate-summary'),
 	pageSummaryCounts = require('../util/page-summary-counts'),
 	mergeResults = require('../tasks/merge-results'),
@@ -13,11 +12,6 @@ module.exports = function ResultsRepository(config, components) {
 		propertyPrefix = config['html-attribute-prefix'],
 		fileRepository = components.fileRepository,
 		templateRepository = components.templateRepository,
-		getExampleApprovalInstructions = function (example, exampleName, pageName) {
-			if (example.outcome && example.outcome.status === 'failure') {
-				return `${commandName} approve --page "${pageName}" --example "${exampleName}"`;
-			}
-		},
 		timeStamp = function () {
 			return Math.floor(new Date().getTime() / 1000);
 		},
@@ -166,7 +160,6 @@ module.exports = function ResultsRepository(config, components) {
 				htmlDirIndex
 			));
 	};
-	/****************************************************/
 	self.openExampleRun = function (pageName, exampleDetails) {
 		const pageObj = findPage(pageName),
 			exampleName = exampleDetails.exampleName;
@@ -191,6 +184,7 @@ module.exports = function ResultsRepository(config, components) {
 		});
 		return Promise.resolve(pageObj.results[exampleName].resultPathPrefix);
 	};
+	/****************************************************/
 	self.closeExampleRun = function (pageName, exampleName, executionResults) {
 		const pageObj = findPage(pageName),
 			exampleObj = pageObj && pageObj.results[exampleName],
@@ -206,11 +200,7 @@ module.exports = function ResultsRepository(config, components) {
 
 
 		return templateRepository.get('result')
-			.then(template => template({
-				example: exampleObj,
-				approvalInstructions: getExampleApprovalInstructions(exampleObj, exampleName, pageName),
-				pageName: pageName
-			}))
+			.then(template => template(mergeProperties({ pageName: pageName }, exampleObj)))
 			.then(html => fileRepository.writeText(summaryPath, html))
 			.then(() => exampleObj.outcome.overview = path.basename(summaryPath));
 	};

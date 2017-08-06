@@ -6,6 +6,7 @@ Handlebars.registerHelper('timestamp', require('../util/handlebars-helpers/times
 Handlebars.registerHelper('rootUrl', require('../util/handlebars-helpers/root-url'));
 Handlebars.registerHelper('breadCrumbs', require('../util/handlebars-helpers/breadcrumbs'));
 Handlebars.registerHelper('duration', require('../util/handlebars-helpers/duration'));
+Handlebars.registerHelper('approvalInstructions', require('../util/handlebars-helpers/approval-instructions'));
 module.exports = function HandlebarsTemplateRepository(config, components) {
 	const fileRepository = components.fileRepository,
 		self = this,
