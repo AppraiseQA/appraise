@@ -74,7 +74,7 @@ module.exports = function FixtureService(config, components) {
 		return fixtureEngine.execute(example)
 			.then(output => writeOutput (output, resultPathPrefix))
 			.then(filePath => {
-				example.output = {
+				result.output = {
 					source: path.basename(filePath)
 				};
 				return screenshotService.screenshot({url: 'file:' + filePath});
