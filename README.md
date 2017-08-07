@@ -43,6 +43,12 @@ too early to use (pre-alpha)
     - [x] set view/opacity/zoom for actual/expected/diff separately
 - [x] Run examples without expected outcomes (fail + show actual)
 - [ ] Distinguish between a failure and error
+  - [x] record errors from fixtures
+  - [x] display error as status when listing results
+  - [ ] format/test error messages
+    - [ ] thrown as exceptions
+    - [ ] thrown as strings
+    - [ ] rejected from a promise
 - [ ] Fixture execution
   - [x] inside node
     - [x] detect and parse example format (eg json or yaml)
@@ -95,8 +101,8 @@ too early to use (pre-alpha)
 - [x] put example name into the example object/results object for easier templating
 - [x] use timestamps for executed and started in result template
 - [ ] test with multiple examples in a single file
-- [ ] test with multiple files
-- [ ] test with files in subfolders
+- [x] test with multiple files
+- [x] test with files in subfolders
 - [ ] test with large images
 - [ ] test with complex page and example names
 - [ ] test with exceptions thrown throughout the test process
