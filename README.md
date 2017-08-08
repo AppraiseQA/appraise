@@ -33,7 +33,7 @@ too early to use (pre-alpha)
 - [ ] Approve changes from the command line
   - [x] Approve an example with expected outcome and failed outcome
   - [x] Approve examples without expected outcomes (append image to source .md)
-  - [ ] Approve a whole page
+  - [x] Approve a whole page
   - [ ] Approve all
 - [x] Clean up templates and provide a nice layout
 - [ ] Make it easier to inspect/approve

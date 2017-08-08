@@ -10,26 +10,33 @@ const validateRequiredParams = require('../util/validate-required-params'),
 	};
 
 module.exports = function approve(config, components) {
-	validateRequiredParams(config, ['examples-dir', 'results-dir', 'templates-dir', 'page', 'example']);
+	validateRequiredParams(config, ['examples-dir', 'results-dir', 'templates-dir', 'page']);
 
 	const resultsRepository = components.resultsRepository,
-		approvePage = function (pageName) {
-			const exampleNames = resultsRepository.getResultNames(pageName).filter(exampleName => matchingName(exampleName, config.example));
-			if (exampleNames.length) {
-				return sequentialPromiseMap(exampleNames, exampleName => resultsRepository.approveResult(pageName, exampleName));
-			} else {
-				throw `example ${config.example} not found in page ${config.page} results`;
+		approveExamplesOnAPage = function (pageName, exampleNameFilter) {
+			let exampleNames = resultsRepository.getResultNames(pageName, 'failure');
+			if (exampleNameFilter) {
+				exampleNames = exampleNames.filter(exampleName => matchingName(exampleName, exampleNameFilter));
 			}
-
+			if (!exampleNames.length) {
+				if (exampleNameFilter) {
+					throw `${exampleNameFilter} does not match any failed examples in page ${pageName}`;
+				} else {
+					throw `page results for ${pageName} do not contain any failed examples`;
+				}
+			}
+			return sequentialPromiseMap(exampleNames, exampleName => resultsRepository.approveResult(pageName, exampleName));
+		},
+		approveResults = function (pageNameFilter, exampleNameFilter) {
+			const pageNames = resultsRepository.getPageNames().filter(pageName => matchingName(pageName, pageNameFilter));
+			if (pageNames.length) {
+				return sequentialPromiseMap(pageNames, pageName => approveExamplesOnAPage(pageName, exampleNameFilter));
+			}
+			throw `${config.page} does not match any result pages`;
 		};
 	return resultsRepository.loadFromResultsDir()
-		.then(() => resultsRepository.getPageNames().filter(pageName => matchingName(pageName, config.page)))
-		.then(pageNames => {
-			if (pageNames.length) {
-				return sequentialPromiseMap(pageNames, approvePage);
-			}
-			throw `page ${config.page} not found in results`;
-		});
+		.then(() => approveResults(config.page, config.example));
+
 };
 
 module.exports.doc = {
@@ -44,8 +51,8 @@ module.exports.doc = {
 		},
 		{
 			argument: 'example',
-			optional: false,
-			description: 'The name of the example to approve',
+			optional: true,
+			description: 'The name of the example to approve. If not specified, all failed examples on a page will get approved.',
 			example: 'blue line'
 		},
 		{

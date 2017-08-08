@@ -63,10 +63,7 @@ const minimist = require('minimist'),
 
 		Promise.resolve()
 			.then(() => commands[command](args, new ComponentBuilder(args, defaultComponents)))
-			.then(result => {
-				if (result) {
-					console.log(JSON.stringify(result, null, 2));
-				}
+			.then(() => {
 				process.exit();
 			}, e => {
 				console.error(e);

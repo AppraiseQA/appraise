@@ -133,6 +133,22 @@ describe('ResultsRepository', () => {
 				{pageName: 'third', results: {}}
 			]});
 		});
+		it('returns an array of result keys matching status when the second argument is provided', done => {
+			underTest.loadFromResultsDir()
+				.then(() => expect(underTest.getResultNames('first', 'failure')).toEqual(['a', 'c']))
+				.then(done, done.fail);
+			fileRepository.promises.readJSON.resolve({pages: [
+				{pageName: 'first', results: {
+					a: {outcome: {status: 'failure'}},
+					b: {outcome: {status: 'success'}},
+					c: {outcome: {status: 'failure'}},
+					d: {outcome: {xstatus: 'failure'}},
+					e: {xoutcome: {status: 'failure'}}
+				}},
+				{pageName: 'second', results: {c: {outcome: {status: 'failure'}, d: {outcome: {status: 'success'}}}}},
+				{pageName: 'third', results: {}}
+			]});
+		});
 	});
 	describe('approveResult', () => {
 		let template;

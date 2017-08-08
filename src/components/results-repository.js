@@ -84,10 +84,17 @@ module.exports = function ResultsRepository(config, components) {
 		}
 		return results.pages.map(pageObj => pageObj.pageName);
 	};
-	self.getResultNames = function (pageName) {
+	self.getResultNames = function (pageName, optionalStatus) {
 		const page = findPage(pageName),
 			resultNames = page && page.results && Object.keys(page.results);
-		return resultNames || [];
+
+		if (!resultNames) {
+			return [];
+		}
+		if (!optionalStatus) {
+			return resultNames;
+		}
+		return resultNames.filter(r => r && page.results[r].outcome && page.results[r].outcome.status === optionalStatus);
 	};
 	self.getRunStatus = function () {
 		return aggregateSummary(results && results.pages);
