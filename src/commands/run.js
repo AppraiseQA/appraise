@@ -52,6 +52,13 @@ module.exports.doc = {
 			description: 'The directory containing page templates for the resulting HTML',
 			default: 'embedded templates included with the application',
 			example: 'src/templates'
+		},
+		{
+			argument: 'tolerance',
+			optional: true,
+			description: 'Tolerance for comparing images, number between 1 and 10. Larger value makes comparisons means more forgiving',
+			default: '1',
+			example: '5'
 		}
 	]
 };

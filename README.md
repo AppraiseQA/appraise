@@ -66,7 +66,8 @@ too early to use (pre-alpha)
   - [x] Configurable source and work directories (don't just dump stuff to temp)
   - [ ] Configurable clip area for screenshots
   - [ ] Configurable initial size for html windows
-  - [ ] Configurable image matching precision and anti-aliasing
+  - [x] Configurable image matching precision 
+  - [ ] + and anti-aliasing
   - [x] Configurable HTML attributes (`data-example`)
   - [ ] Configurable HTML classes for success/failure
   - [ ] Configurable screenshot engine

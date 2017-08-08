@@ -5,6 +5,7 @@ const fs = require('fs'),
 	PNG = require('pngjs').PNG,
 	pngAlphaFilter = require('../util/png-alpha-filter'),
 	pngRect = require('../util/png-rect'),
+	getPixelmatchArgs = require('../util/get-pixelmatch-args'),
 	readPng = function (fpath) {
 		const png = new PNG();
 		return new Promise((resolve, reject) =>  fs.createReadStream(fpath).pipe(png).on('parsed', () => resolve(png)).on('error', reject));
@@ -21,12 +22,10 @@ module.exports = function PngComparisonService(config/*, components*/) {
 	// returns false if the images are the same
 	// otherwise, returns { message: "text", image: "file path" }
 	self.compare = function compare(expectedImagePath, actualImagePath, diffImgPath) {
-		const compareOptions = {threshold: config['compare-threshold'] || 0.1};
-
 		return Promise.all([readPng(expectedImagePath), readPng(actualImagePath)]).then(images => {
 			if (images[0].width === images[1].width && images[0].height === images[1].height) {
 				const difference = new PNG({width: images[0].width, height: images[0].height}),
-					numPixels = pixelmatch(images[0].data, images[1].data, difference.data, images[0].width, images[0].height, compareOptions);
+					numPixels = pixelmatch(images[0].data, images[1].data, difference.data, images[0].width, images[0].height, getPixelmatchArgs (config));
 				if (numPixels === 0) {
 					return false;
 				} else {
