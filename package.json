@@ -1,6 +1,6 @@
 {
   "name": "appraise",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Visual approval testing",
   "main": "index.js",
   "scripts": {
