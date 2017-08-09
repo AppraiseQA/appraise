@@ -1,4 +1,6 @@
-# Appraise -- Visual approval testing
+# Appraise
+
+### Painless visual test automation 
 
 ![](templates/assets/logo.png)
 

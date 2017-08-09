@@ -1,7 +1,7 @@
 {
   "name": "appraise",
   "version": "0.0.7",
-  "description": "Visual approval testing",
+  "description": "Painless visual test automation",
   "main": "index.js",
   "scripts": {
     "test": "node spec/support/jasmine-runner.js",
