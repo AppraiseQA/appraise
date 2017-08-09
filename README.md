@@ -30,28 +30,28 @@ too early to use (pre-alpha)
 - [x] Add a generic layout to HTML when converting from MD 
 - [x] Add a generic template for result files
 - [x] Create an index with all test results
-- [ ] Approve changes from the command line
-  - [x] Approve an example with expected outcome and failed outcome
-  - [x] Approve examples without expected outcomes (append image to source .md)
-  - [x] Approve a whole page
-  - [ ] Approve all
 - [x] Clean up templates and provide a nice layout
 - [ ] Make it easier to inspect/approve
   - [x] CLI Approval instructions on the results page
   - [ ] CLI Approval instructions on the rendered page (for all examples)
   - [x] Overview/Overlay/Inspect on the results page
     - [x] set view/opacity/zoom for actual/expected/diff separately
+    - [ ] scale down large images so they are easier to see on the overview 
+      - [ ] checkbox for original size/size to fit
 - [x] Run examples without expected outcomes (fail + show actual)
 - [ ] Distinguish between a failure and error
   - [x] record errors from fixtures
   - [x] display error as status when listing results
   - [ ] format/test error messages
-    - [ ] thrown as exceptions
+    - [x] thrown as exceptions
     - [ ] thrown as strings
     - [ ] rejected from a promise
 - [ ] Fixture execution
   - [x] inside node
     - [x] detect and parse example format (eg json or yaml)
+    - [ ] pass fixture parameters as the second argument
+    - [ ] pass temporary working dir
+    - [ ] allow fixtures to return a file
   - [ ] URL fixture execution (eg test the same site in various resolutions)
   - [ ] in-browser fixture execution
     - [ ] custom event to signal finished rendering
@@ -90,10 +90,16 @@ too early to use (pre-alpha)
   - [ ] ANSI color console
   - [ ] Summary (dot)
 - [ ] CLI/NPM tasks
-  - [x] executing tests
-  - [x] approving changes
-  - [ ] filtering tests for approvals
-  - [ ] filtering tests for execution
+  - [ ] executing tests
+   - [x] run all tests 
+   - [ ] run a specific page
+   - [ ] run a specific example
+   - [ ] exit with -1 in case of errors/failures
+  - [ ] approving changes
+   - [x] approve a whole page
+   - [x] approve a specific example
+   - [ ] approve all failed examples
+
 
 ## Before alpha
 
@@ -101,7 +107,7 @@ too early to use (pre-alpha)
 - [ ] use pageObj.sourcePath when approving with new result instead of hard-coding the path
 - [x] put example name into the example object/results object for easier templating
 - [x] use timestamps for executed and started in result template
-- [ ] test with multiple examples in a single file
+- [x] test with multiple examples in a single file
 - [x] test with multiple files
 - [x] test with files in subfolders
 - [ ] test with large images
@@ -114,9 +120,6 @@ too early to use (pre-alpha)
 - [ ] Retina screen sizing
 - [ ] Solve cross-linking (eg replace .md in local links to .html when generating html)
 - [ ] detect examples with the same name on a page
-  
-### Performance issues
-
 - [x] Start/stop chrome once per run, not once per page
-- [ ] change sync FS operations to async
+- [x] change sync FS operations to async
 

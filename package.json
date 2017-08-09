@@ -6,7 +6,8 @@
   "scripts": {
     "test": "node spec/support/jasmine-runner.js",
     "debug": "node debug spec/support/jasmine-runner.js",
-    "start": "node ./bin/cmd.js"
+    "start": "node ./bin/cmd.js",
+    "prepublishOnly": "npm shrinkwrap && node src/util/doc-md.js"
   },
   "files": [
     "src",

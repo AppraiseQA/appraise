@@ -24,18 +24,22 @@ module.exports = function mergeResults(htmlDoc, examples, pageName, propertyPref
 			exampleElements.filter('img').each((index, element) => {
 				doc('<a>')
 					.attr('href', resultsDir + '/' + example.outcome.overview)
-					.attr('title', example.outcome.message || '')
+					.attr('title', example.outcome.status)
 					.insertBefore(element).append(element);
 			});
 			if (!example.expected) {
 				const link = doc('<a>')
-						.attr('href', resultsDir + '/' + example.outcome.overview)
-						.attr('title', example.outcome.message),
-					image = doc('<img>')
+					.attr('href', resultsDir + '/' + example.outcome.overview)
+					.attr('title', example.outcome.status);
+				if (example.output && example.output.screenshot) {
+					doc('<img>')
 						.attr('src',  resultsDir + '/' + example.output.screenshot)
-						.attr('title', example.outcome.message || '')
-						.attr('alt', example.outcome.message);
-				image.appendTo(link);
+						.attr('title', example.outcome.status)
+						.attr('alt', example.outcome.status)
+						.appendTo(link);
+				} else {
+					link.text(example.outcome.status + ': ' + example.outcome.message);
+				}
 				link.insertAfter(exampleElements.first());
 			}
 
