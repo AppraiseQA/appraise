@@ -109,6 +109,9 @@ module.exports = function ResultsRepository(config, components) {
 		results.summary = aggregateSummary(results.pages);
 		results.finishedAt = timeStamp();
 	};
+	self.getSummary = function () {
+		return results.summary;
+	};
 	self.writeSummary = function () {
 		return fileRepository.writeJSON(fileRepository.referencePath('results', 'summary.json'), results)
 			.then(() => templateRepository.get('summary'))

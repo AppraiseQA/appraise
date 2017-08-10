@@ -18,7 +18,15 @@ module.exports = function run(args, components) {
 		.then(pageNames => sequentialPromiseMap(pageNames, executionService.executePage))
 		.then(resultsRepository.closeRun)
 		.then(resultsRepository.writeSummary)
-		.then(executionService.stop);
+		.then(executionService.stop)
+		.then(() => {
+			const summary = resultsRepository.getSummary();
+			if (summary && summary.status === 'success') {
+				return Promise.resolve(summary);
+			} else {
+				return Promise.reject(summary);
+			}
+		});
 };
 
 module.exports.doc = {

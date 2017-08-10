@@ -96,7 +96,7 @@ too early to use (pre-alpha)
    - [x] run all tests 
    - [ ] run a specific page
    - [ ] run a specific example
-   - [ ] exit with -1 in case of errors/failures
+   - [x] exit with -1 in case of errors/failures
   - [ ] approving changes
    - [x] approve a whole page
    - [x] approve a specific example

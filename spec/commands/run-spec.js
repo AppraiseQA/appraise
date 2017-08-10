@@ -1,4 +1,4 @@
-/*global describe, it, expect, beforeEach  */
+/*global describe, it, expect, beforeEach, jasmine  */
 'use strict';
 const run = require('../../src/commands/run'),
 	promiseSpyObject = require('../support/promise-spy-object');
@@ -8,6 +8,7 @@ describe('run', () => {
 		executionService = promiseSpyObject('execution', ['start', 'stop', 'executePage']);
 		resultsRepository = promiseSpyObject('resultsRepository',
 			['resetResultsDir', 'createNewRun', 'closeRun', 'writeSummary']);
+		resultsRepository.getSummary = jasmine.createSpy('getSummary');
 		examplesRepository = promiseSpyObject('examplesRepository', ['getPageNames']);
 		components = {
 			executionService: executionService,
@@ -19,6 +20,7 @@ describe('run', () => {
 			'results-dir': 'results',
 			'templates-dir': 'templates'
 		};
+
 	});
 	describe('param validation', () => {
 		['examples-dir', 'results-dir', 'templates-dir'].forEach(param => {
@@ -144,8 +146,25 @@ describe('run', () => {
 			executionService.promises.stop.reject('boom!');
 		});
 		it('completes successfully when the execution service stops', done => {
-
+			resultsRepository.getSummary.and.returnValue({
+				status: 'success'
+			});
 			run(config, components)
+				.then(done, done.fail);
+			executionService.promises.start.resolve();
+			resultsRepository.promises.resetResultsDir.resolve();
+			resultsRepository.promises.createNewRun.resolve();
+			examplesRepository.promises.getPageNames.resolve(['page1', 'page2']);
+			executionService.promises.executePage.resolve();
+			resultsRepository.promises.closeRun.resolve();
+			resultsRepository.promises.writeSummary.resolve();
+			executionService.promises.stop.resolve();
+		});
+		it('fails if the status is not success', done => {
+			resultsRepository.getSummary.and.returnValue({status: 'failure'});
+			run(config, components)
+				.then(done.fail)
+				.catch(e => expect(e).toEqual({status: 'failure'}))
 				.then(done, done.fail);
 			executionService.promises.start.resolve();
 			resultsRepository.promises.resetResultsDir.resolve();
