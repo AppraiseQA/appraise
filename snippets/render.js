@@ -1,24 +1,27 @@
 'use strict';
 const CDP = require('chrome-remote-interface'),
 	chromeLauncher = require('chrome-launcher'),
+	path = require('path'),
 	fs = require('fs'),
 	contentBox = function (cdp) {
 		return cdp.Page.getLayoutMetrics()
 			.then(layout => layout.contentSize);
 	},
 	setSize = function (box, cdp) {
+		console.log('setting size to', box);
 		return cdp.Emulation.setDeviceMetricsOverride({
 			width: box.width,
 			height: box.height,
 			deviceScaleFactor: 0,
+			scale: box.scale,
 			mobile: false,
 			fitWindow: false
 		})
-		.then(result => cdp.Emulation.setVisibleSize({width: box.width, height: box.height}));
+		.then(() => cdp.Emulation.setVisibleSize({width: box.width * box.scale, height: box.height * box.scale}));
 		//.then(() => cdp.Emulation.forceViewport({x: box.x, y: box.y, scale: 1}));
 	};
 
-let chrome, cdp, pageUrl = 'https://www.claudiajs.com', initialWidth = 1000, initialHeight = 1000;
+let chrome, cdp, dpr = 1, pageUrl = 'file:' + path.resolve('0.svg'), initialWidth = 10, initialHeight = 10;
 
 chromeLauncher.launch(
 	{
@@ -28,14 +31,16 @@ chromeLauncher.launch(
 	.then(c => CDP({port: c.port}))
 	.then(c => cdp = c)
 	.then(() => cdp.Page.enable())
-	.then(() => cdp.Emulation.setVisibleSize({
-		width: initialWidth,
-		height: initialHeight
-	}))
+	.then(() => setSize({width: initialWidth, height: initialHeight, scale: 1}, cdp))
+	.then(() => cdp.Runtime.evaluate({expression: 'window.devicePixelRatio'}))
+	.then(r => dpr = r.result.value)
+	.then(() => console.log('device pixel ratio', dpr))
 	.then(() => cdp.Page.navigate({url: /*'file:' + path.resolve('.', '1.svg')*/ pageUrl}))
 	.then(() => cdp.Page.loadEventFired())
 	.then(() => contentBox(cdp))
-	.then(box => setSize(box, cdp))
+	.then(box => console.log('page format seems to be', box) || box)
+	.then(box => setSize({width: box.width, height: box.height, scale: 1 / dpr}, cdp))
+
 	.then(() => cdp.Page.captureScreenshot({format: 'png', fromSurface: true}))
 	.then(screenshot => new Buffer(screenshot.data, 'base64'))
 	.then(buffer => fs.writeFileSync('sc.png', buffer, 'base64'))
