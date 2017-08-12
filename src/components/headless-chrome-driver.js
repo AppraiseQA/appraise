@@ -38,7 +38,8 @@ module.exports = function HeadlessChromeDriver(/*config, components*/) {
 			.then(() => cdp.Page.enable())
 			.then(() => cdp.Page.loadEventFired(pageLoaded));
 	};
-	self.setWindowSize = function (width, height) {
+	self.setWindowSize = function (width, height, scale) {
+		scale = scale || 1;
 		if (!cdp) {
 			throw new Error('cdp not initialised');
 		}
@@ -46,9 +47,10 @@ module.exports = function HeadlessChromeDriver(/*config, components*/) {
 			width: width,
 			height: height,
 			deviceScaleFactor: 0,
+			scale: scale,
 			mobile: false,
 			fitWindow: false
-		}).then(() => cdp.Emulation.setVisibleSize({width: width, height: height}));
+		}).then(() => cdp.Emulation.setVisibleSize({width: Math.round(width * scale), height: Math.round(height * scale)}));
 	};
 	self.screenshot = function () {
 		if (!cdp) {

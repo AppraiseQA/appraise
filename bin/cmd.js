@@ -18,7 +18,7 @@ const minimist = require('minimist'),
 		pageFormatter: defaultComponentPath('markdown-it-page-formatter'),
 		executionService: defaultComponentPath('execution-service'),
 		fixtureService: defaultComponentPath('fixture-service'),
-		pngComparisonService: defaultComponentPath('png-comparison-service'),
+		pngToolkit: defaultComponentPath('png-toolkit'),
 		chromeDriver: defaultComponentPath('headless-chrome-driver')
 	},
 	readArgs = function () {

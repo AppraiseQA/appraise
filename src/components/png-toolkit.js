@@ -10,6 +10,16 @@ const fs = require('fs'),
 		const png = new PNG();
 		return new Promise((resolve, reject) =>  fs.createReadStream(fpath).pipe(png).on('parsed', () => resolve(png)).on('error', reject));
 	},
+	loadPng = function (pngBufferData) {
+		const png = new PNG();
+		return new Promise((resolve, reject) => png.parse(pngBufferData, function (err) {
+			if (err) {
+				reject(err);
+			} else {
+				resolve(png);
+			}
+		}));
+	},
 	writePng = function (png, filePath) {
 		return new Promise((resolve, reject) => {
 			const stream = fs.createWriteStream(filePath).on('close', resolve).on('error', reject);
@@ -17,7 +27,7 @@ const fs = require('fs'),
 		});
 	};
 
-module.exports = function PngComparisonService(config/*, components*/) {
+module.exports = function PngToolkit(config/*, components*/) {
 	const self = this;
 	// returns false if the images are the same
 	// otherwise, returns { message: "text", image: "file path" }
@@ -57,5 +67,13 @@ module.exports = function PngComparisonService(config/*, components*/) {
 			}
 
 		});
+	};
+	self.clip = function (pngBufferData, requestedClip) {
+		const result =  new PNG({width: requestedClip.width, height: requestedClip.height});
+		return loadPng(pngBufferData)
+			.then(sourcePng => {
+				sourcePng.bitblt(result, requestedClip.x, requestedClip.y, requestedClip.width, requestedClip.height, 0, 0);
+				return PNG.sync.write(result);
+			});
 	};
 };

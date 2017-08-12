@@ -67,6 +67,20 @@ module.exports.doc = {
 			description: 'Tolerance for comparing images, number between 1 and 10. Larger value makes comparisons means more forgiving',
 			default: '1',
 			example: '5'
+		},
+		{
+			argument: 'screenshot-initial-width',
+			optional: true,
+			description: 'Initial window width in pixels for web pages before screenshots. this can be used to force responsive sites to render in different widths.',
+			default: '10',
+			example: '1024'
+		},
+		{
+			argument: 'screenshot-initial-height',
+			optional: true,
+			description: 'Initial window height in pixels for web pages before screenshots. this can be used to force responsive sites to render in different heights.',
+			default: '10',
+			example: '768'
 		}
 	]
 };

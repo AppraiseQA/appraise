@@ -7,7 +7,7 @@ module.exports = function FixtureService(config, components) {
 	const self = this,
 		screenshotService = components.screenshotService,
 		fileRepository = components.fileRepository,
-		pngComparisonService = components.pngComparisonService,
+		pngToolkit = components.pngToolkit,
 		writeOutput = function (fixtureOutput, pathPrefix) {
 			const ext = {
 					'image/svg': '.svg'
@@ -21,7 +21,7 @@ module.exports = function FixtureService(config, components) {
 					message: 'no expected result provided'
 				};
 			}
-			return pngComparisonService.compare(
+			return pngToolkit.compare(
 				path.resolve(pathPrefix, '..', '..', example.expected),
 				pathPrefix + '-actual.png',
 				pathPrefix + '-diff.png'
@@ -40,7 +40,7 @@ module.exports = function FixtureService(config, components) {
 			return result;
 		};
 
-	validateRequiredComponents(components, ['screenshotService', 'fileRepository', 'pngComparisonService']);
+	validateRequiredComponents(components, ['screenshotService', 'fileRepository', 'pngToolkit']);
 
 	self.start = function () {
 		return screenshotService.start();

@@ -66,8 +66,8 @@ too early to use (pre-alpha)
   - [ ] Configurable image matching precision and anti-aliasing
 - [ ] Extract configuration/enable overrides
   - [x] Configurable source and work directories (don't just dump stuff to temp)
-  - [ ] Configurable clip area for screenshots
-  - [ ] Configurable initial size for html windows
+  - [x] Configurable clip area for screenshots
+  - [x] Configurable initial size for html windows
   - [x] Configurable image matching precision 
   - [ ] + and anti-aliasing
   - [x] Configurable HTML attributes (`data-example`)
@@ -119,7 +119,7 @@ too early to use (pre-alpha)
 - [ ] directory summaries for page folders
 - [ ] tabs in summary (pages/examples)
 - [x] navigation on results page (breadcrumbs and page links)
-- [ ] Retina screen sizing
+- [x] Retina screen sizing
 - [ ] Solve cross-linking (eg replace .md in local links to .html when generating html)
 - [ ] detect examples with the same name on a page
 - [x] Start/stop chrome once per run, not once per page
