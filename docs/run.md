@@ -25,3 +25,9 @@ appraise run {OPTIONS}
 *  `--tolerance`:  (_optional_) Tolerance for comparing images, number between 1 and 10. Larger value makes comparisons means more forgiving
     * _For example_: 5
     * _Defaults to_: 1
+*  `--screenshot-initial-width`:  (_optional_) Initial window width in pixels for web pages before screenshots. this can be used to force responsive sites to render in different widths.
+    * _For example_: 1024
+    * _Defaults to_: 10
+*  `--screenshot-initial-height`:  (_optional_) Initial window height in pixels for web pages before screenshots. this can be used to force responsive sites to render in different heights.
+    * _For example_: 768
+    * _Defaults to_: 10

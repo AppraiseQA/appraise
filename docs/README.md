@@ -1,6 +1,6 @@
 # appraise command line usage
 
-Visual approval testing
+Painless visual test automation
 
 ## Usage
 ```bash
