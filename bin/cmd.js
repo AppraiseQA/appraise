@@ -10,7 +10,7 @@ const minimist = require('minimist'),
 	defaultFixtureEnginePath = name => path.join(__dirname, '..', 'src', 'fixture-engines', name),
 	defaultComponents = {
 		fileRepository: defaultComponentPath('local-file-repository'),
-		screenshotService: defaultComponentPath('headless-chrome-screenshot-service'),
+		screenshotService: defaultComponentPath('chrome-screenshot-service'),
 		resultsRepository: defaultComponentPath('results-repository'),
 		templateRepository: defaultComponentPath('handlebars-template-repository'),
 		'fixture-engine-node': defaultFixtureEnginePath('node-fixture-engine'),
@@ -18,7 +18,8 @@ const minimist = require('minimist'),
 		pageFormatter: defaultComponentPath('markdown-it-page-formatter'),
 		executionService: defaultComponentPath('execution-service'),
 		fixtureService: defaultComponentPath('fixture-service'),
-		pngComparisonService: defaultComponentPath('png-comparison-service')
+		pngComparisonService: defaultComponentPath('png-comparison-service'),
+		chromeDriver: defaultComponentPath('headless-chrome-driver')
 	},
 	readArgs = function () {
 		return minimist(process.argv.slice(2), {
