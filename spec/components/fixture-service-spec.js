@@ -4,14 +4,14 @@ const FixtureService = require('../../src/components/fixture-service'),
 	promiseSpyObject = require('../support/promise-spy-object'),
 	mockFileRepository = require('../support/mock-file-repository');
 describe('FixtureService', () => {
-	let underTest, screenshotService, fileRepository, pngComparisonService, config, nodeFixtureEngine, customFixtureEngine, pendingPromise;
+	let underTest, screenshotService, fileRepository, pngToolkit, config, nodeFixtureEngine, customFixtureEngine, pendingPromise;
 	beforeEach(() => {
 		config = {};
 		screenshotService = promiseSpyObject('screenshotService', ['start', 'stop', 'screenshot']);
 		fileRepository = mockFileRepository({
 			'examples-dir': 'examplesDir'
 		});
-		pngComparisonService = promiseSpyObject('pngComparisonService', ['compare']);
+		pngToolkit = promiseSpyObject('pngToolkit', ['compare']);
 		nodeFixtureEngine = {execute: jasmine.createSpy('node execute') };
 		customFixtureEngine = {execute: jasmine.createSpy('custom execute') };
 		pendingPromise = new Promise(() => false);
@@ -20,7 +20,7 @@ describe('FixtureService', () => {
 			fileRepository: fileRepository,
 			'fixture-engine-node': nodeFixtureEngine,
 			'fixture-engine-custom': customFixtureEngine,
-			pngComparisonService: pngComparisonService
+			pngToolkit: pngToolkit
 		});
 	});
 	describe('start', () => {
@@ -187,11 +187,11 @@ describe('FixtureService', () => {
 							outcome: { status: 'failure', message: 'no expected result provided' }
 						});
 					})
-					.then(() => expect(pngComparisonService.compare).not.toHaveBeenCalled())
+					.then(() => expect(pngToolkit.compare).not.toHaveBeenCalled())
 					.then(done, done.fail);
 			});
 			it('runs the expected result through the PNG comparison engine', done => {
-				pngComparisonService.compare.and.callFake((expected, actual, diff)  => {
+				pngToolkit.compare.and.callFake((expected, actual, diff)  => {
 					expect(expected).toEqual('/images/image1.png');
 					expect(actual).toEqual('/some/path1-actual.png');
 					expect(diff).toEqual('/some/path1-diff.png');
@@ -210,7 +210,7 @@ describe('FixtureService', () => {
 						});
 					})
 					.then(done, done.fail);
-				pngComparisonService.promises.compare.resolve();
+				pngToolkit.promises.compare.resolve();
 			});
 			it('reports a failure if the PNG comparison engine reports a failure', done => {
 				underTest.executeExample({expected: 'images/image1.png'}, '/some/path1')
@@ -221,7 +221,7 @@ describe('FixtureService', () => {
 						});
 					})
 					.then(done, done.fail);
-				pngComparisonService.promises.compare.resolve({message: 'totally different!'});
+				pngToolkit.promises.compare.resolve({message: 'totally different!'});
 			});
 			it('includes the image base name if the png comparison service resolves with an image path', done => {
 				underTest.executeExample({expected: 'images/image1.png'}, '/some/path1')
@@ -232,7 +232,7 @@ describe('FixtureService', () => {
 						});
 					})
 					.then(done, done.fail);
-				pngComparisonService.promises.compare.resolve({message: 'totally different!', image: '/a/b/c/my-diff.png'});
+				pngToolkit.promises.compare.resolve({message: 'totally different!', image: '/a/b/c/my-diff.png'});
 			});
 			it('reports an error if the png comparison service rejects', done => {
 				underTest.executeExample({expected: 'images/image1.png'}, '/some/path1')
@@ -247,7 +247,7 @@ describe('FixtureService', () => {
 						});
 					})
 					.then(done, done.fail);
-				pngComparisonService.promises.compare.reject({message: 'totally different!', other: 'props'});
+				pngToolkit.promises.compare.reject({message: 'totally different!', other: 'props'});
 			});
 		});
 
