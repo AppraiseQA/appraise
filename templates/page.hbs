@@ -57,6 +57,17 @@
 			  {{/if}}
 		  </dl>
 		</div>
+    {{#pageApprovalInstructions .}}
+      <div class="instructions">
+        {{#if cmdLine}}
+        Approve this page from your command line using:
+        <code>
+          {{cmdLine}}
+        </code>
+        {{/if}}
+      </div>
+    {{/pageApprovalInstructions}}
+
 		<table>
 		  <tbody>
 			{{#each results}}
