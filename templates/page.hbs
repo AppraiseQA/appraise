@@ -57,7 +57,17 @@
 			  {{/if}}
 		  </dl>
 		</div>
-    {{#pageApprovalInstructions .}}
+ 
+		<table>
+		  <tbody>
+			{{#each results}}
+				<tr data-outcome-status="{{outcome.status}}">
+				  <td><a href="{{rootUrl ../pageName}}{{../pageName}}/{{outcome.overview}}">{{@key}}</a></td><td>{{outcome.message}}</td>
+				</tr>
+			{{/each}}
+		  </tbody>
+		</table>
+       {{#pageApprovalInstructions .}}
       <div class="instructions">
         {{#if cmdLine}}
         Approve this page from your command line using:
@@ -68,15 +78,6 @@
       </div>
     {{/pageApprovalInstructions}}
 
-		<table>
-		  <tbody>
-			{{#each results}}
-				<tr data-outcome-status="{{outcome.status}}">
-				  <td><a href="{{rootUrl ../pageName}}{{../pageName}}/{{outcome.overview}}">{{@key}}</a></td><td>{{outcome.message}}</td>
-				</tr>
-			{{/each}}
-		  </tbody>
-		</table>
 	  </div>
   {{/if}}
   
