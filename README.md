@@ -35,7 +35,7 @@ too early to use (pre-alpha)
 - [x] Clean up templates and provide a nice layout
 - [ ] Make it easier to inspect/approve
   - [x] CLI Approval instructions on the results page
-  - [ ] CLI Approval instructions on the rendered page (for all examples)
+  - [x] CLI Approval instructions on the rendered page (for all examples)
   - [x] Overview/Overlay/Inspect on the results page
     - [x] set view/opacity/zoom for actual/expected/diff separately
     - [ ] scale down large images so they are easier to see on the overview 
@@ -72,8 +72,8 @@ too early to use (pre-alpha)
   - [ ] + and anti-aliasing
   - [x] Configurable HTML attributes (`data-example`)
   - [ ] Configurable HTML classes for success/failure
-  - [ ] Configurable screenshot engine
-  - [ ] Configurable fixture engines (via NPM modules)
+  - [x] Configurable screenshot engine
+  - [x] Configurable fixture engines (via NPM modules)
   - [ ] Config file to set all options quickly
 - [ ] Server for interactive work
   - [ ] render example folder structure + README.md for folders
