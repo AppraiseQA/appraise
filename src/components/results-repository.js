@@ -12,6 +12,7 @@ module.exports = function ResultsRepository(config, components) {
 		propertyPrefix = config['html-attribute-prefix'],
 		fileRepository = components.fileRepository,
 		templateRepository = components.templateRepository,
+		logger = components.logger,
 		timeStamp = function () {
 			return Math.floor(new Date().getTime() / 1000);
 		},
@@ -107,6 +108,9 @@ module.exports = function ResultsRepository(config, components) {
 	};
 	self.closeRun = function () {
 		results.summary = aggregateSummary(results.pages);
+		if (logger) {
+			logger.logSummary(results.summary);
+		}
 		results.finishedAt = timeStamp();
 	};
 	self.getSummary = function () {
@@ -133,6 +137,9 @@ module.exports = function ResultsRepository(config, components) {
 		const emptyPage = deepCopy(pageDetails);
 		emptyPage.results = {};
 		emptyPage.unixTsStarted = timeStamp();
+		if (logger) {
+			logger.logPageStarted(pageDetails.pageName);
+		}
 		return fileRepository.cleanDir(fileRepository.referencePath('results', pageDetails.pageName))
 			.then(() => results.pages.push(emptyPage));
 	};
@@ -146,6 +153,9 @@ module.exports = function ResultsRepository(config, components) {
 		}
 		pageObj.summary = pageSummaryCounts(pageObj.results);
 		pageObj.unixTsExecuted = timeStamp();
+		if (logger) {
+			logger.logPageComplete(pageName, pageObj.summary);
+		}
 		return Promise.resolve();
 	};
 	self.writePageBody = function (pageName, pageBody) {
@@ -222,7 +232,9 @@ module.exports = function ResultsRepository(config, components) {
 		mergeProperties(exampleObj, executionResults);
 		exampleObj.unixTsExecuted = timeStamp();
 
-
+		if (logger) {
+			logger.logExampleResult(exampleName, executionResults.outcome);
+		}
 		return templateRepository.get('result')
 			.then(template => template(mergeProperties({ pageName: pageName }, exampleObj)))
 			.then(html => fileRepository.writeText(summaryPath, html))

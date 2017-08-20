@@ -22,9 +22,9 @@ module.exports = function run(args, components) {
 		.then(() => {
 			const summary = resultsRepository.getSummary();
 			if (summary && summary.status === 'success') {
-				return Promise.resolve(summary);
+				return Promise.resolve();
 			} else {
-				return Promise.reject(summary);
+				return Promise.reject();
 			}
 		});
 };

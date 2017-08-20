@@ -89,7 +89,7 @@ too early to use (pre-alpha)
   - [ ] tap
 - [ ] Reporters
   - [ ] ASCII console
-  - [ ] ANSI color console
+  - [x] ANSI color console
   - [ ] Summary (dot)
 - [ ] CLI/NPM tasks
   - [ ] executing tests

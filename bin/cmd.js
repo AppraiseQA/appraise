@@ -19,7 +19,8 @@ const minimist = require('minimist'),
 		executionService: defaultComponentPath('execution-service'),
 		fixtureService: defaultComponentPath('fixture-service'),
 		pngToolkit: defaultComponentPath('png-toolkit'),
-		chromeDriver: defaultComponentPath('headless-chrome-driver')
+		chromeDriver: defaultComponentPath('headless-chrome-driver'),
+		logger: defaultComponentPath('console-color-logger')
 	},
 	readArgs = function () {
 		return minimist(process.argv.slice(2), {
@@ -67,7 +68,9 @@ const minimist = require('minimist'),
 			.then(() => {
 				process.exit();
 			}, e => {
-				console.error(e);
+				if (e) {
+					console.error(e);
+				}
 				process.exit(1);
 			});
 	};
