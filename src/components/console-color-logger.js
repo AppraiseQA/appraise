@@ -37,7 +37,8 @@ module.exports = function consoleDetailsLogger(/*config, components*/) {
 		console.log('\t', statusMessage(pageName, outcome));
 	};
 	self.logExampleResult = function (exampleName, outcome) {
-		console.log('\t', paint(`${exampleName} \t${outcome.message}`, outcome && outcome.status));
+		const message = (outcome && outcome.message) || '';
+		console.log('\t', paint(`${exampleName} \t${message}`, outcome && outcome.status));
 	};
 	self.logSummary = function (outcome) {
 		console.log(statusMessage('Summary', outcome));
