@@ -1,6 +1,6 @@
 {
   "name": "appraise",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "dependencies": {
     "@types/core-js": {
       "version": "0.9.42",
