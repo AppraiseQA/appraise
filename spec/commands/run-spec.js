@@ -160,11 +160,11 @@ describe('run', () => {
 			resultsRepository.promises.writeSummary.resolve();
 			executionService.promises.stop.resolve();
 		});
-		it('fails if the status is not success', done => {
+		it('fails without a message if the status is not success', done => {
 			resultsRepository.getSummary.and.returnValue({status: 'failure'});
 			run(config, components)
 				.then(done.fail)
-				.catch(e => expect(e).toEqual({status: 'failure'}))
+				.catch(e => expect(e).toBeUndefined())
 				.then(done, done.fail);
 			executionService.promises.start.resolve();
 			resultsRepository.promises.resetResultsDir.resolve();
