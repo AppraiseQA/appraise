@@ -31,7 +31,7 @@ module.exports = function HeadlessChromeDriver(/*config, components*/) {
 	};
 	self.start = function () {
 		return chromeLauncher.launch({
-			chromeFlags: ['--headless']
+			chromeFlags: ['--disable-gpu', '--headless']
 		}).then(c => chrome = c)
 			.then(c => CDP({port: c.port})) //eslint-disable-line new-cap
 			.then(c => cdp = c)

@@ -76,4 +76,7 @@ module.exports = function PngToolkit(config/*, components*/) {
 				return PNG.sync.write(result);
 			});
 	};
+	self.readPng = readPng;
+	self.loadPng = loadPng;
+	self.writePng = writePng;
 };
