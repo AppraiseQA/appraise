@@ -105,11 +105,10 @@ describe('FixtureService', () => {
 						content: 'a-b-c'
 					}));
 
-					underTest.executeExample({a: 1}, '/some/path1')
-						.then(done.fail, done.fail);
+					underTest.executeExample({a: 1}, '/some/path1');
 
 					screenshotService.screenshot.and.callFake(props => {
-						expect(props).toEqual({url: 'file:/some/path1.svg'});
+						expect(props).toEqual({url: 'file:/some/path1.svg', path: '/some/path1-actual.png'});
 						expect(fileRepository.writeText).toHaveBeenCalledWith('/some/path1.svg', 'a-b-c');
 						done();
 					});
@@ -122,11 +121,10 @@ describe('FixtureService', () => {
 						content: 'a-b-c'
 					});
 
-					underTest.executeExample({a: 1}, '/some/path1')
-						.then(done.fail, done.fail);
+					underTest.executeExample({a: 1}, '/some/path1');
 
 					screenshotService.screenshot.and.callFake(props => {
-						expect(props).toEqual({url: 'file:/some/path1.svg'});
+						expect(props).toEqual({url: 'file:/some/path1.svg', path: '/some/path1-actual.png'});
 						expect(fileRepository.writeText).toHaveBeenCalledWith('/some/path1.svg', 'a-b-c');
 						done();
 					});
@@ -158,26 +156,13 @@ describe('FixtureService', () => {
 
 		});
 		describe('once the result is processed', () => {
-			let resultBuffer;
 			beforeEach(() => {
 				nodeFixtureEngine.execute.and.returnValue(Promise.resolve({
 					contentType: 'image/svg',
 					content: 'a-b-c'
 				}));
 				fileRepository.promises.writeText.resolve('/some/path1.svg');
-				resultBuffer = 'bbbbb';
-				screenshotService.promises.screenshot.resolve(resultBuffer);
-				fileRepository.promises.writeBuffer.resolve('/some/path1-actual.png');
-			});
-			it('stores the screenshot into the <prefix>-actual.png', done => {
-				fileRepository.writeBuffer.and.callFake((path, content)	 => {
-					expect(path).toEqual('/some/path1-actual.png');
-					expect(content).toEqual('bbbbb');
-					done();
-					return pendingPromise;
-				});
-				underTest.executeExample({a: 1}, '/some/path1')
-					.then(done.fail, done.fail);
+				screenshotService.promises.screenshot.resolve();
 			});
 			it('reports a failure immediately if the example contains no expected result', done => {
 				underTest.executeExample({a: 1}, '/some/path1')
