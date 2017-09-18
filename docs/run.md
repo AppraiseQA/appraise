@@ -22,9 +22,14 @@ appraise run {OPTIONS}
 *  `--templates-dir`:  (_optional_) The directory containing page templates for the resulting HTML
     * _For example_: src/templates
     * _Defaults to_: embedded templates included with the application
-*  `--tolerance`:  (_optional_) Tolerance for comparing images, number between 1 and 10. Larger value makes comparisons means more forgiving
+*  `--page`:  (_optional_) The name of the page to execute. If not specified, executes all pages.
+    * _For example_: hello-world
+*  `--tolerance`:  (_optional_) Tolerance for comparing individual pixels, number between 1 and 10. Larger value makes comparisons means more forgiving
     * _For example_: 5
     * _Defaults to_: 1
+*  `--allowed-difference`:  (_optional_) Number of pixels allowed to be different until comparisons fail
+    * _For example_: 30
+    * _Defaults to_: 0
 *  `--screenshot-initial-width`:  (_optional_) Initial window width in pixels for web pages before screenshots. this can be used to force responsive sites to render in different widths.
     * _For example_: 1024
     * _Defaults to_: 10
