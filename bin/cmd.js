@@ -19,7 +19,7 @@ const minimist = require('minimist'),
 		executionService: defaultComponentPath('execution-service'),
 		fixtureService: defaultComponentPath('fixture-service'),
 		pngToolkit: defaultComponentPath('png-toolkit'),
-		chromeDriver: defaultComponentPath('headless-chrome-driver'),
+		chromeDriver: defaultComponentPath('puppeteer-chrome-driver'),
 		logger: defaultComponentPath('console-color-logger')
 	},
 	readArgs = function () {

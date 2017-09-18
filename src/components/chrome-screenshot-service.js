@@ -20,19 +20,17 @@ module.exports = function HeadlessChromeScreenshotService(config, components) {
 	self.start = chromeDriver.start;
 	self.stop = chromeDriver.stop;
 	self.screenshot = function (options) {
-		let scale, naturalSize;
+		let naturalSize;
 		if (!options.url) {
 			return Promise.reject('invalid-args');
 		}
 		const initialWidth = options.initialWidth || config['screenshot-initial-width'] || 10,
 			initialHeight = options.initialHeight || config['screenshot-initial-height'] || 10;
-		return chromeDriver.getDevicePixelRatio()
-			.then (dpr => scale = 1 / dpr)
-			.then (() => chromeDriver.setWindowSize(initialWidth, initialHeight))
+		return chromeDriver.setWindowSize(initialWidth, initialHeight)
 			.then(() => chromeDriver.loadUrl(options.url))
 			.then(() => chromeDriver.getContentBox())
 			.then(box => naturalSize = box)
-			.then(() => chromeDriver.setWindowSize(naturalSize.width, naturalSize.height, scale))
+			.then(() => chromeDriver.setWindowSize(naturalSize.width, naturalSize.height))
 			.then(() => chromeDriver.screenshot())
 			.then(buffer => pngToolkit.clip(buffer, calculateClip(options.clip, naturalSize)));
 	};
