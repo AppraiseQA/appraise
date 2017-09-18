@@ -104,6 +104,21 @@ describe('run', () => {
 				}
 			});
 		});
+		it('applies a page filter',	done => {
+			config.page = 'page2';
+			run(config, components)
+				.then(done.fail)
+				.catch(e => expect(e).toEqual('boom!'))
+				.then(() => expect(executionService.executePage).toHaveBeenCalledWith('page2', 0))
+				.then(() => expect(executionService.executePage.calls.count()).toEqual(1))
+				.then(done);
+			executionService.promises.start.resolve();
+			resultsRepository.promises.resetResultsDir.resolve();
+			resultsRepository.promises.createNewRun.resolve();
+			examplesRepository.promises.getPageNames.resolve(['page1', 'page2']);
+			executionService.promises.executePage.resolve();
+			resultsRepository.promises.closeRun.reject('boom!');
+		});
 		it('closes the run when all pages finish executing, before writing the summary', done => {
 			run(config, components)
 				.then(done.fail)

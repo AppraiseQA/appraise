@@ -1,12 +1,14 @@
 'use strict';
 const validateRequiredParams = require('../util/validate-required-params'),
 	validateRequiredComponents = require('../util/validate-required-components'),
+	matchingName = require('../util/matching-name'),
 	sequentialPromiseMap = require('sequential-promise-map');
 
 module.exports = function run(args, components) {
 	const executionService = components.executionService,
 		examplesRepository = components.examplesRepository,
-		resultsRepository = components.resultsRepository;
+		resultsRepository = components.resultsRepository,
+		pageNameFilter = args && args.page;
 
 	validateRequiredComponents(components, ['executionService', 'examplesRepository', 'resultsRepository']);
 	validateRequiredParams(args, ['examples-dir', 'results-dir', 'templates-dir']);
@@ -15,6 +17,7 @@ module.exports = function run(args, components) {
 		.then(resultsRepository.resetResultsDir)
 		.then(resultsRepository.createNewRun)
 		.then(examplesRepository.getPageNames)
+		.then(pageNames => pageNameFilter ? pageNames.filter(pageName => matchingName(pageName, pageNameFilter)) : pageNames)
 		.then(pageNames => sequentialPromiseMap(pageNames, executionService.executePage))
 		.then(resultsRepository.closeRun)
 		.then(resultsRepository.writeSummary)
@@ -62,11 +65,24 @@ module.exports.doc = {
 			example: 'src/templates'
 		},
 		{
+			argument: 'page',
+			optional: true,
+			description: 'The name of the page to execute. If not specified, executes all pages.',
+			example: 'hello-world'
+		},
+		{
 			argument: 'tolerance',
 			optional: true,
-			description: 'Tolerance for comparing images, number between 1 and 10. Larger value makes comparisons means more forgiving',
+			description: 'Tolerance for comparing individual pixels, number between 1 and 10. Larger value makes comparisons means more forgiving',
 			default: '1',
 			example: '5'
+		},
+		{
+			argument: 'allowed-difference',
+			optional: true,
+			description: 'Number of pixels allowed to be different until comparisons fail',
+			default: '0',
+			example: '30'
 		},
 		{
 			argument: 'screenshot-initial-width',

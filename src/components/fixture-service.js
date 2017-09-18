@@ -16,6 +16,7 @@ module.exports = function FixtureService(config, components) {
 			return fileRepository.writeText(filePath, fixtureOutput.content);
 		},
 		calculateOutcome = function (example, pathPrefix) {
+			const allowedDifference = example.params && example.params['allowed-difference'] || config['allowed-difference'] || 0;
 			if (!example.expected) {
 				return {
 					message: 'no expected result provided'
@@ -24,7 +25,8 @@ module.exports = function FixtureService(config, components) {
 			return pngToolkit.compare(
 				path.resolve(pathPrefix, '..', '..', example.expected),
 				pathPrefix + '-actual.png',
-				pathPrefix + '-diff.png'
+				pathPrefix + '-diff.png',
+				allowedDifference
 			);
 		},
 		mergeOutcome = function (result, diffResult) {

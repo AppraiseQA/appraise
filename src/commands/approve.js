@@ -5,9 +5,7 @@
 //
 const validateRequiredParams = require('../util/validate-required-params'),
 	sequentialPromiseMap = require('sequential-promise-map'),
-	matchingName = function (objectName, expression) {
-		return objectName === expression;
-	};
+	matchingName = require('../util/matching-name');
 
 module.exports = function approve(config, components) {
 	validateRequiredParams(config, ['examples-dir', 'results-dir', 'templates-dir', 'page']);
