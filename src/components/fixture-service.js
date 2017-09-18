@@ -51,8 +51,7 @@ module.exports = function FixtureService(config, components) {
 	self.executeExample = function (example, resultPathPrefix) {
 		const requestedEngine = (example && example.params && example.params.fixtureEngine) || 'node',
 			fixtureEngine = components['fixture-engine-' + requestedEngine],
-			result = {},
-			screenshotPath = resultPathPrefix + '-actual.png';
+			result = {};
 		if (!example) {
 			return Promise.reject('example must be provided');
 		}
@@ -74,9 +73,10 @@ module.exports = function FixtureService(config, components) {
 				result.output = {
 					source: path.basename(filePath)
 				};
-				return screenshotService.screenshot({url: 'file:' + filePath, path: screenshotPath });
+				return screenshotService.screenshot({url: 'file:' + filePath});
 			})
-			.then(() => result.output.screenshot = path.basename(screenshotPath))
+			.then(buffer => fileRepository.writeBuffer(resultPathPrefix + '-actual.png', buffer))
+			.then(fpath => result.output.screenshot = path.basename(fpath))
 			.then(() => calculateOutcome(example, resultPathPrefix))
 			.then(outcome => mergeOutcome(result, outcome))
 			.catch(err => {
