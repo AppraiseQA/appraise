@@ -16,7 +16,7 @@ module.exports = function FixtureService(config, components) {
 			return fileRepository.writeText(filePath, fixtureOutput.content);
 		},
 		calculateOutcome = function (example, pathPrefix) {
-			const allowedDifference = example.params && example.params['allowed-difference'] || config['allowed-difference'] || 0;
+			const allowedDifference = parseInt((example.params && example.params['allowed-difference']) || config['allowed-difference'] || 0);
 			if (!example.expected) {
 				return {
 					message: 'no expected result provided'
