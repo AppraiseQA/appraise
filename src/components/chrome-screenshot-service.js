@@ -1,7 +1,7 @@
 'use strict';
 const mergeProperties = require('../util/merge-properties'),
 	validateRequiredComponents = require('../util/validate-required-components');
-module.exports = function HeadlessChromeScreenshotService(config, components) {
+module.exports = function ChromeScreenshotService(config, components) {
 	const self = this,
 		chromeDriver = components.chromeDriver,
 		pngToolkit = components.pngToolkit,
@@ -21,7 +21,7 @@ module.exports = function HeadlessChromeScreenshotService(config, components) {
 	self.stop = chromeDriver.stop;
 	self.screenshot = function (options) {
 		let naturalSize;
-		if (!options.url) {
+		if (!options || !options.url) {
 			return Promise.reject('invalid-args');
 		}
 		const initialWidth = options.initialWidth || config['screenshot-initial-width'] || 10,

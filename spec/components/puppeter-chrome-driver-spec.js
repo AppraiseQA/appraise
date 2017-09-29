@@ -54,4 +54,16 @@ describe('PuppeteerChromeDriver', () => {
 		});
 
 	});
+	describe('setWindowSize', () => {
+		it('resizes the active window', done => {
+			chrome.setWindowSize(222, 444)
+				.then(() => chrome.screenshot())
+				.then(pngToolkit.loadPng)
+				.then(png => {
+					expect(png.width).toEqual(222);
+					expect(png.height).toEqual(444);
+				})
+				.then(done, done.fail);
+		});
+	});
 });

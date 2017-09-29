@@ -9,21 +9,20 @@ const Jasmine = require('jasmine'),
 			if (option === 'full') {
 				jasmine.getEnv().clearReporters();
 				jasmine.getEnv().addReporter(new SpecReporter({
-					displayStacktrace: 'all'
+					spec: {
+						displayStacktrace: 'all'
+					}
 				}));
 			}
 			if (option === 'ci') {
 				jasmine.getEnv().clearReporters();
 				jasmine.getEnv().addReporter(new SpecReporter({
-					displayStacktrace: 'all',
-					displaySpecDuration: true,
-					displaySuiteNumber: true,
-					colors: false,
-					prefixes: {
-						success: '[pass] ',
-						failure: '[fail] ',
-						pending: '[skip] '
-					}
+					spec: {
+						displayStacktrace: 'all',
+						displaySpecDuration: true,
+						displaySuiteNumber: true
+					},
+					colors: {enabled: false}
 				}));
 			}
 			if (option.match('^filter=')) {
