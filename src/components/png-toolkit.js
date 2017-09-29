@@ -73,6 +73,9 @@ module.exports = function PngToolkit(config/*, components*/) {
 		const result =  new PNG({width: requestedClip.width, height: requestedClip.height});
 		return loadPng(pngBufferData)
 			.then(sourcePng => {
+				if (sourcePng.width === requestedClip.width && sourcePng.height === requestedClip.height && requestedClip.x === 0 && requestedClip.y === 0) {
+					return pngBufferData;
+				}
 				sourcePng.bitblt(result, requestedClip.x, requestedClip.y, requestedClip.width, requestedClip.height, 0, 0);
 				return PNG.sync.write(result);
 			});
