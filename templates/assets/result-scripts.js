@@ -17,25 +17,30 @@ window.addEventListener('load', () => {
 			// -5 > 0.1
 			// 5 > 10
 			element.style.transform = 'scale(' + getCssScale(scale) + ')';
+		},
+		setupListeners = function (target, control) {
+			for (const field of control.querySelectorAll('[data-overlay-role="visibility"]')) {
+				field.addEventListener('change', () => target.classList.toggle('hidden'));
+				if (!field.getAttribute('checked')) {
+					target.classList.add('hidden');
+				}
+			}
+			for (const field of control.querySelectorAll('[data-overlay-role="opacity"]')) {
+				field.addEventListener('change', () => setOpacity(target, field.value));
+				field.addEventListener('input', () => setOpacity(target, field.value));
+				setOpacity(target, field.value);
+			}
+			for (const field of control.querySelectorAll('[data-overlay-role="scale"]')) {
+				field.addEventListener('change', () => setScale(target, field.valueAsNumber));
+				field.addEventListener('input', () => setScale(target, field.valueAsNumber));
+				setScale(target, field.valueAsNumber);
+			}
 		};
 	for (const control of document.querySelectorAll('[data-overlay-control]')) {
 		const targetId = control.getAttribute('data-overlay-control'),
 			target = document.getElementById(targetId);
-		for (const field of control.querySelectorAll('[data-overlay-role="visibility"]')) {
-			field.addEventListener('change', () => target.classList.toggle('hidden'));
-			if (!field.getAttribute('checked')) {
-				target.classList.add('hidden');
-			}
-		}
-		for (const field of control.querySelectorAll('[data-overlay-role="opacity"]')) {
-			field.addEventListener('change', () => setOpacity(target, field.value));
-			field.addEventListener('input', () => setOpacity(target, field.value));
-			setOpacity(target, field.value);
-		}
-		for (const field of control.querySelectorAll('[data-overlay-role="scale"]')) {
-			field.addEventListener('change', () => setScale(target, field.valueAsNumber));
-			field.addEventListener('input', () => setScale(target, field.valueAsNumber));
-			setScale(target, field.valueAsNumber);
+		if (target) {
+			setupListeners(target, control);
 		}
 	}
 	for (const control of document.querySelectorAll('.draggable')) {
