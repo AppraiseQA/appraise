@@ -1,6 +1,7 @@
 'use strict';
 const path = require('path'),
 	getErrorMessage = require('../util/get-error-message'),
+	isUrl = require('../util/is-url'),
 	validateRequiredComponents = require('../util/validate-required-components');
 
 module.exports = function FixtureService(config, components) {
@@ -63,7 +64,24 @@ module.exports = function FixtureService(config, components) {
 		const requestedEngine = (example && example.params && example.params.fixtureEngine) || 'node',
 			fixtureEngine = components['fixture-engine-' + requestedEngine],
 			outputPath = resultPathPrefix + '-output',
-			result = {};
+			result = {},
+			recordOutputSource = function (filePath) {
+				result.output = {
+					source: path.relative(path.dirname(resultPathPrefix), filePath)
+				};
+				return filePath;
+			},
+			processOutput = function (output) {
+				const resultType = typeof output;
+				if (resultType === 'object') {
+					return writeOutput (output, outputPath);
+				} else if (resultType === 'string') {
+					return Promise.resolve(path.join(outputPath, output));
+				} else {
+					throw new Error(`unsupported fixture result type ${resultType}`);
+				};
+			};
+
 		if (!example) {
 			return Promise.reject('example must be provided');
 		}
@@ -80,12 +98,20 @@ module.exports = function FixtureService(config, components) {
 		}
 		return fileRepository.cleanDir(outputPath)
 			.then(() => fixtureEngine.execute(example))
-			.then(output => writeOutput (output, outputPath))
-			.then(filePath => {
-				result.output = {
-					source: path.relative(path.dirname(resultPathPrefix), filePath)
-				};
-				return screenshotService.screenshot({url: 'file:' + filePath});
+			.then(output => {
+				if (isUrl(output)) {
+					result.output = {
+						source: output
+					};
+					return output;
+				} else {
+					return processOutput(output)
+						.then(recordOutputSource)
+						.then(path => 'file:' + path);
+				}
+			})
+			.then(resultUrl => {
+				return screenshotService.screenshot({url: resultUrl});
 			})
 			.then(buffer => fileRepository.writeBuffer(resultPathPrefix + '-actual.png', buffer))
 			.then(fpath => result.output.screenshot = path.basename(fpath))

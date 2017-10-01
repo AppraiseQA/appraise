@@ -6,6 +6,7 @@ const FixtureService = require('../../src/components/fixture-service'),
 describe('FixtureService', () => {
 	let underTest, screenshotService, fileRepository, pngToolkit, config, nodeFixtureEngine, customFixtureEngine, pendingPromise;
 	beforeEach(() => {
+		jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;
 		config = {};
 		screenshotService = promiseSpyObject('screenshotService', ['start', 'stop', 'screenshot']);
 		fileRepository = mockFileRepository({
@@ -111,8 +112,66 @@ describe('FixtureService', () => {
 		});
 		describe('fixture result processing', () => {
 			beforeEach(() => {
-				fileRepository.writeText.and.callFake(t => t);
+				fileRepository.writeText.and.callFake(t => Promise.resolve(t));
 				fileRepository.promises.cleanDir.resolve();
+			});
+			describe('when the fixture returns a string', () => {
+				describe('when the result is a relative path', () => {
+					beforeEach(() => {
+						nodeFixtureEngine.execute.and.returnValue('result.html');
+					});
+					it('takes a screenshot of the file from the result dir', done => {
+						screenshotService.screenshot.and.callFake(props => {
+							expect(props).toEqual({url: 'file:/some/path1-output/result.html'});
+							done();
+							return pendingPromise;
+						});
+						underTest.executeExample({a: 1}, '/some/path1')
+							.then(done.fail, done.fail);
+					});
+					it('stores the output as a relative path', done => {
+						fileRepository.writeText.and.callFake(t => Promise.resolve(t));
+						fileRepository.writeBuffer.and.callFake(t => Promise.resolve(t));
+						screenshotService.promises.screenshot.resolve('bbbb');
+
+						underTest.executeExample({a: 1}, '/some/path1')
+							.then(e => {
+								expect(e.output).toEqual({
+									source: 'path1-output/result.html',
+									screenshot: 'path1-actual.png'
+								});
+							})
+							.then(done, done.fail);
+					});
+				});
+				describe('when the result is a URL with a protocol', () => {
+					beforeEach(() => {
+						nodeFixtureEngine.execute.and.returnValue('https://result.html');
+					});
+					it('takes a screenshot of the file from the result dir', done => {
+						screenshotService.screenshot.and.callFake(props => {
+							expect(props).toEqual({url: 'https://result.html'});
+							done();
+							return pendingPromise;
+						});
+						underTest.executeExample({a: 1}, '/some/path1')
+							.then(done.fail, done.fail);
+					});
+					it('stores the output as a URL', done => {
+						fileRepository.writeText.and.callFake(t => Promise.resolve(t));
+						fileRepository.writeBuffer.and.callFake(t => Promise.resolve(t));
+						screenshotService.promises.screenshot.resolve('bbbb');
+
+						underTest.executeExample({a: 1}, '/some/path1')
+							.then(e => {
+								expect(e.output).toEqual({
+									source: 'https://result.html',
+									screenshot: 'path1-actual.png'
+								});
+							})
+							.then(done, done.fail);
+					});
+				});
 			});
 			describe('when the fixture returns a content/content type', () => {
 				it('saves image/svg to .svg files',	done => {
@@ -131,6 +190,24 @@ describe('FixtureService', () => {
 					underTest.executeExample({a: 1}, '/some/path1')
 						.then(done.fail, done.fail);
 
+				});
+				it('stores the output as a relative path', done => {
+					nodeFixtureEngine.execute.and.returnValue(Promise.resolve({
+						contentType: 'image/svg',
+						content: 'a-b-c'
+					}));
+					fileRepository.writeText.and.callFake(t => Promise.resolve(t));
+					fileRepository.writeBuffer.and.callFake(t => Promise.resolve(t));
+					screenshotService.promises.screenshot.resolve('bbbb');
+
+					underTest.executeExample({a: 1}, '/some/path1')
+						.then(e => {
+							expect(e.output).toEqual({
+								source: 'path1-output/index.svg',
+								screenshot: 'path1-actual.png'
+							});
+						})
+						.then(done, done.fail);
 				});
 				it('saves text/html to .html files', done => {
 					nodeFixtureEngine.execute.and.returnValue(Promise.resolve({
@@ -155,7 +232,7 @@ describe('FixtureService', () => {
 						content: result
 					}));
 
-					fileRepository.writeBuffer.and.callFake(t => t);
+					fileRepository.writeBuffer.and.callFake(t => Promise.resolve(t));
 
 					screenshotService.screenshot.and.callFake(props => {
 						expect(props).toEqual({url: 'file:/some/path1-output/index.html'});
@@ -234,8 +311,8 @@ describe('FixtureService', () => {
 					contentType: 'image/svg',
 					content: 'a-b-c'
 				}));
-				fileRepository.writeText.and.callFake(t => t);
-				fileRepository.writeBuffer.and.callFake(t => t);
+				fileRepository.writeText.and.callFake(t => Promise.resolve(t));
+				fileRepository.writeBuffer.and.callFake(t => Promise.resolve(t));
 				resultBuffer = 'bbbbb';
 				screenshotService.promises.screenshot.resolve(resultBuffer);
 			});
