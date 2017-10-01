@@ -10,10 +10,19 @@ module.exports = function FixtureService(config, components) {
 		pngToolkit = components.pngToolkit,
 		writeOutput = function (fixtureOutput, pathPrefix) {
 			const ext = {
-					'image/svg': '.svg'
+					'image/svg': '.svg',
+					'text/html': '.html'
 				},
-				filePath = path.resolve(pathPrefix, 'index' + ext[fixtureOutput.contentType]);
-			return fileRepository.writeText(filePath, fixtureOutput.content);
+				extension = fixtureOutput.contentType && ext[fixtureOutput.contentType],
+				filePath = extension && path.resolve(pathPrefix, 'index' + extension);
+			if (!filePath) {
+				throw new Error(`unsupported file type ${fixtureOutput.contentType}`);
+			}
+			if (typeof fixtureOutput.content === 'string') {
+				return fileRepository.writeText(filePath, fixtureOutput.content);
+			} else {
+				return fileRepository.writeBuffer(filePath, fixtureOutput.content);
+			}
 		},
 		calculateOutcome = function (example, pathPrefix) {
 			const allowedDifference = parseInt((example.params && example.params['allowed-difference']) || config['allowed-difference'] || 0);

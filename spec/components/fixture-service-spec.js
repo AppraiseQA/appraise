@@ -121,14 +121,53 @@ describe('FixtureService', () => {
 						content: 'a-b-c'
 					}));
 
-					underTest.executeExample({a: 1}, '/some/path1')
-						.then(done.fail, done.fail);
-
 					screenshotService.screenshot.and.callFake(props => {
 						expect(props).toEqual({url: 'file:/some/path1-output/index.svg'});
 						expect(fileRepository.writeText).toHaveBeenCalledWith('/some/path1-output/index.svg', 'a-b-c');
 						done();
+						return pendingPromise;
 					});
+
+					underTest.executeExample({a: 1}, '/some/path1')
+						.then(done.fail, done.fail);
+
+				});
+				it('saves text/html to .html files', done => {
+					nodeFixtureEngine.execute.and.returnValue(Promise.resolve({
+						contentType: 'text/html',
+						content: 'a-b-c'
+					}));
+
+					screenshotService.screenshot.and.callFake(props => {
+						expect(props).toEqual({url: 'file:/some/path1-output/index.html'});
+						expect(fileRepository.writeText).toHaveBeenCalledWith('/some/path1-output/index.html', 'a-b-c');
+						done();
+						return pendingPromise;
+					});
+
+					underTest.executeExample({a: 1}, '/some/path1')
+						.then(done.fail, done.fail);
+				});
+				it('saves Buffer results using writeBuffer', done => {
+					const result =  new Buffer('a-b-c');
+					nodeFixtureEngine.execute.and.returnValue(Promise.resolve({
+						contentType: 'text/html',
+						content: result
+					}));
+
+					fileRepository.writeBuffer.and.callFake(t => t);
+
+					screenshotService.screenshot.and.callFake(props => {
+						expect(props).toEqual({url: 'file:/some/path1-output/index.html'});
+						expect(fileRepository.writeBuffer).toHaveBeenCalledWith('/some/path1-output/index.html', result);
+						expect(fileRepository.writeText).not.toHaveBeenCalled();
+						done();
+						return pendingPromise;
+					});
+
+					underTest.executeExample({a: 1}, '/some/path1')
+						.then(done.fail, done.fail);
+
 				});
 				it('can work with synchronous replies',	done => {
 					nodeFixtureEngine.execute.and.returnValue({
@@ -136,14 +175,31 @@ describe('FixtureService', () => {
 						content: 'a-b-c'
 					});
 
-					underTest.executeExample({a: 1}, '/some/path1')
-						.then(done.fail, done.fail);
-
 					screenshotService.screenshot.and.callFake(props => {
 						expect(props).toEqual({url: 'file:/some/path1-output/index.svg'});
 						expect(fileRepository.writeText).toHaveBeenCalledWith('/some/path1-output/index.svg', 'a-b-c');
 						done();
+						return pendingPromise;
 					});
+
+					underTest.executeExample({a: 1}, '/some/path1')
+						.then(done.fail, done.fail);
+
+				});
+				it('complains about unsupported content types', done => {
+					nodeFixtureEngine.execute.and.returnValue({
+						contentType: 'xml/123',
+						content: 'a-b-c'
+					});
+
+					underTest.executeExample({a: 1}, '/some/path1')
+						.then(r => {
+							expect(r.outcome.status).toEqual('error');
+							expect(r.outcome.error.message).toEqual('unsupported file type xml/123');
+							expect(fileRepository.writeText).not.toHaveBeenCalled();
+							expect(fileRepository.writeBuffer).not.toHaveBeenCalled();
+						})
+						.then(done, done.fail);
 				});
 
 			});
