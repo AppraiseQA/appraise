@@ -66,6 +66,15 @@ describe('FixtureService', () => {
 				.catch(e => expect(e).toEqual('example must be provided'))
 				.then(done, done.fail);
 		});
+		it('creates a clean directory for outputs in the output path', done => {
+			const example = { params: {fixtureEngine: 'custom'}};
+			fileRepository.cleanDir.and.callFake(param => {
+				expect(param).toEqual('result-example-output');
+				done();
+				return pendingPromise;
+			});
+			underTest.executeExample(example, 'result-example');
+		});
 		it('runs the example through the chosen fixture engine', done => {
 			const example = { params: {fixtureEngine: 'custom'}};
 			customFixtureEngine.execute.and.callFake(param => {
@@ -75,6 +84,7 @@ describe('FixtureService', () => {
 				return pendingPromise;
 			});
 			underTest.executeExample(example, 'path1');
+			fileRepository.promises.cleanDir.resolve();
 		});
 		it('uses the node fixture engine by default', done => {
 			const example = { a: 1 };
@@ -85,6 +95,7 @@ describe('FixtureService', () => {
 				return pendingPromise;
 			});
 			underTest.executeExample(example, 'path1');
+			fileRepository.promises.cleanDir.resolve();
 		});
 		it('resolves with an error outcome if the example expects an unconfigured fixture engine', done => {
 			const example = { params: {fixtureEngine: 'something-else'}};
@@ -96,8 +107,13 @@ describe('FixtureService', () => {
 					});
 				})
 				.then(done, done.fail);
+			fileRepository.promises.cleanDir.resolve();
 		});
 		describe('fixture result processing', () => {
+			beforeEach(() => {
+				fileRepository.writeText.and.callFake(t => t);
+				fileRepository.promises.cleanDir.resolve();
+			});
 			describe('when the fixture returns a content/content type', () => {
 				it('saves image/svg to .svg files',	done => {
 					nodeFixtureEngine.execute.and.returnValue(Promise.resolve({
@@ -109,12 +125,10 @@ describe('FixtureService', () => {
 						.then(done.fail, done.fail);
 
 					screenshotService.screenshot.and.callFake(props => {
-						expect(props).toEqual({url: 'file:/some/path1.svg'});
-						expect(fileRepository.writeText).toHaveBeenCalledWith('/some/path1.svg', 'a-b-c');
+						expect(props).toEqual({url: 'file:/some/path1-output/index.svg'});
+						expect(fileRepository.writeText).toHaveBeenCalledWith('/some/path1-output/index.svg', 'a-b-c');
 						done();
 					});
-
-					fileRepository.promises.writeText.resolve('/some/path1.svg');
 				});
 				it('can work with synchronous replies',	done => {
 					nodeFixtureEngine.execute.and.returnValue({
@@ -126,12 +140,10 @@ describe('FixtureService', () => {
 						.then(done.fail, done.fail);
 
 					screenshotService.screenshot.and.callFake(props => {
-						expect(props).toEqual({url: 'file:/some/path1.svg'});
-						expect(fileRepository.writeText).toHaveBeenCalledWith('/some/path1.svg', 'a-b-c');
+						expect(props).toEqual({url: 'file:/some/path1-output/index.svg'});
+						expect(fileRepository.writeText).toHaveBeenCalledWith('/some/path1-output/index.svg', 'a-b-c');
 						done();
 					});
-
-					fileRepository.promises.writeText.resolve('/some/path1.svg');
 				});
 
 			});
@@ -144,6 +156,7 @@ describe('FixtureService', () => {
 						expect(result.outcome.message).toMatch(/^Error boom!/);
 					})
 					.then(done, done.fail);
+
 			});
 			it('reports an error after a rejection', done => {
 				nodeFixtureEngine.execute.and.returnValue(Promise.reject('boom!'));
@@ -160,14 +173,15 @@ describe('FixtureService', () => {
 		describe('once the result is processed', () => {
 			let resultBuffer;
 			beforeEach(() => {
+				fileRepository.promises.cleanDir.resolve();
 				nodeFixtureEngine.execute.and.returnValue(Promise.resolve({
 					contentType: 'image/svg',
 					content: 'a-b-c'
 				}));
-				fileRepository.promises.writeText.resolve('/some/path1.svg');
+				fileRepository.writeText.and.callFake(t => t);
+				fileRepository.writeBuffer.and.callFake(t => t);
 				resultBuffer = 'bbbbb';
 				screenshotService.promises.screenshot.resolve(resultBuffer);
-				fileRepository.promises.writeBuffer.resolve('/some/path1-actual.png');
 			});
 			it('stores the screenshot into the <prefix>-actual.png', done => {
 				fileRepository.writeBuffer.and.callFake((path, content)	 => {
@@ -183,7 +197,7 @@ describe('FixtureService', () => {
 				underTest.executeExample({a: 1}, '/some/path1')
 					.then(result => {
 						expect(result).toEqual({
-							output: { source: 'path1.svg', screenshot: 'path1-actual.png' },
+							output: { source: 'path1-output/index.svg', screenshot: 'path1-actual.png' },
 							outcome: { status: 'failure', message: 'no expected result provided' }
 						});
 					})
@@ -205,7 +219,7 @@ describe('FixtureService', () => {
 				underTest.executeExample({expected: 'images/image1.png'}, '/some/path1')
 					.then(result => {
 						expect(result).toEqual({
-							output: { source: 'path1.svg', screenshot: 'path1-actual.png' },
+							output: { source: 'path1-output/index.svg', screenshot: 'path1-actual.png' },
 							outcome: { status: 'success' }
 						});
 					})
@@ -216,7 +230,7 @@ describe('FixtureService', () => {
 				underTest.executeExample({expected: 'images/image1.png'}, '/some/path1')
 					.then(result => {
 						expect(result).toEqual({
-							output: { source: 'path1.svg', screenshot: 'path1-actual.png' },
+							output: { source: 'path1-output/index.svg', screenshot: 'path1-actual.png' },
 							outcome: { status: 'failure', message: 'totally different!' }
 						});
 					})
@@ -227,7 +241,7 @@ describe('FixtureService', () => {
 				underTest.executeExample({expected: 'images/image1.png'}, '/some/path1')
 					.then(result => {
 						expect(result).toEqual({
-							output: { source: 'path1.svg', screenshot: 'path1-actual.png' },
+							output: { source: 'path1-output/index.svg', screenshot: 'path1-actual.png' },
 							outcome: { status: 'failure', message: 'totally different!', image: 'my-diff.png' }
 						});
 					})
@@ -238,7 +252,7 @@ describe('FixtureService', () => {
 				underTest.executeExample({expected: 'images/image1.png'}, '/some/path1')
 					.then(result => {
 						expect(result).toEqual({
-							output: { source: 'path1.svg', screenshot: 'path1-actual.png' },
+							output: { source: 'path1-output/index.svg', screenshot: 'path1-actual.png' },
 							outcome: {
 								status: 'error',
 								message: 'totally different!',

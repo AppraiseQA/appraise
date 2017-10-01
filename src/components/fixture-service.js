@@ -12,7 +12,7 @@ module.exports = function FixtureService(config, components) {
 			const ext = {
 					'image/svg': '.svg'
 				},
-				filePath = path.resolve(pathPrefix + ext[fixtureOutput.contentType]);
+				filePath = path.resolve(pathPrefix, 'index' + ext[fixtureOutput.contentType]);
 			return fileRepository.writeText(filePath, fixtureOutput.content);
 		},
 		calculateOutcome = function (example, pathPrefix) {
@@ -53,6 +53,7 @@ module.exports = function FixtureService(config, components) {
 	self.executeExample = function (example, resultPathPrefix) {
 		const requestedEngine = (example && example.params && example.params.fixtureEngine) || 'node',
 			fixtureEngine = components['fixture-engine-' + requestedEngine],
+			outputPath = resultPathPrefix + '-output',
 			result = {};
 		if (!example) {
 			return Promise.reject('example must be provided');
@@ -68,12 +69,12 @@ module.exports = function FixtureService(config, components) {
 				}
 			});
 		}
-		return Promise.resolve()
+		return fileRepository.cleanDir(outputPath)
 			.then(() => fixtureEngine.execute(example))
-			.then(output => writeOutput (output, resultPathPrefix))
+			.then(output => writeOutput (output, outputPath))
 			.then(filePath => {
 				result.output = {
-					source: path.basename(filePath)
+					source: path.relative(path.dirname(resultPathPrefix), filePath)
 				};
 				return screenshotService.screenshot({url: 'file:' + filePath});
 			})
