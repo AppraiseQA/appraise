@@ -114,6 +114,30 @@ describe('extractExamplesFromHtml', function () {
 			}
 		]);
 	});
+	it('overrides global parameters with those defined in the example', function () {
+		expect(
+			extractExamplesFromHtml(
+				`<body>
+				<table attr-role="preamble">
+				<thead><tr><th>fixture</th><th>region</th></tr></thead>
+				<tbody><tr><td>fix.js</td><td>200x300</td></tr></thead>
+				</table>
+				<code attr-example="first" attr-format="json">1st input</code>
+				<code attr-example="second" attr-format="yaml" attr-fixture="second.js">` +
+				'\n2nd input 1\n2nd input 2\n' +
+				`</code>
+				</body>`,
+				'attr'
+			).map(t => t.params)).toEqual([
+			{
+				format: 'json', fixture: 'fix.js', region: '200x300'
+			},
+			{
+				format: 'yaml', fixture: 'second.js', region: '200x300'
+			}
+		]);
+	});
+
 	it('does not specify expected results if image is missing', function () {
 		expect(
 			extractExamplesFromHtml(

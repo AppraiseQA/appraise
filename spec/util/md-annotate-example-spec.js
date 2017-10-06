@@ -37,6 +37,27 @@ describe('mdAnnotateExample', () => {
 	it('does not append an empty language definition as a language', () => {
 		expect(getCodeElement('~~~ example="simple example"\nabcd\n~~~').attr('prefix-format')).toBeFalsy();
 	});
+	it('appends additional parameters', () => {
+		const result = getCodeElement('~~~ example="simple example" fixture="abc.js" width=100\nabcd\n~~~');
+		expect(result.attr('prefix-fixture')).toEqual('abc.js');
+		expect(result.attr('prefix-example')).toEqual('simple example');
+		expect(result.attr('prefix-width')).toEqual('100');
+	});
+	it('ignores initial format prefix when setting examples', () => {
+		const result = getCodeElement('~~~json example="simple example" fixture="abc.js" width=100\nabcd\n~~~');
+		expect(result.attr('prefix-fixture')).toEqual('abc.js');
+		expect(result.attr('prefix-example')).toEqual('simple example');
+		expect(result.attr('prefix-width')).toEqual('100');
+		expect(result.attr.hasOwnProperty('prefix-json')).toBeFalsy();
+	});
+	it('can set blank attributes', () => {
+		const result = getCodeElement('~~~json example="" fixture="abc.js" width=100\nabcd\n~~~');
+		expect(result.attr('prefix-fixture')).toEqual('abc.js');
+		expect(result.attr('prefix-example')).toEqual('');
+		expect(result.attr('prefix-width')).toEqual('100');
+	});
+
+
 
 });
 

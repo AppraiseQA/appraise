@@ -26,7 +26,7 @@ describe('MarkdownItPageFormatter', () => {
 			).toEqual(
 				[
 					'<h1>title</h1>',
-					'<pre><code data-prefix-example="simple" data-prefix-format="json" class="language-json">abcd',
+					'<pre><code data-prefix-format="json" data-prefix-example="simple" class="language-json">abcd',
 					'</code></pre>',
 					''
 				].join('\n')

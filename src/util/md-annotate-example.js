@@ -1,5 +1,6 @@
 /*global module */
 'use strict';
+const parseAttributes = require('./parse-attributes');
 module.exports = function mdAnnotateExample(md, options) {
 	const defaultFence = md.renderer.rules.fence,
 		propertyPrefix = options.propertyPrefix,
@@ -7,15 +8,15 @@ module.exports = function mdAnnotateExample(md, options) {
 			const token = tokens[idx],
 				info = token.info;
 			if (info) {
-				const match = /example=\"([^\"]+)\"|example='([^\']+)'|example=([^'\" ]+)/.exec(info),
-					exampleName = match && (match[1] || match[2] || match[3]),
-					initialTag = info.split(/\s/)[0];
-				if (exampleName) {
-					token.attrPush([propertyPrefix + '-example', exampleName]);
-				}
+				const initialTag = info.split(/\s/)[0],
+					attributes = parseAttributes(info);
 				if (initialTag && initialTag.indexOf('=') < 0) {
 					token.attrPush([propertyPrefix + '-format', initialTag]);
+					delete attributes[initialTag];
 				};
+				Object.keys(attributes).sort().forEach(key => {
+					token.attrPush([propertyPrefix + '-' + key, attributes[key]]);
+				});
 			}
 			return defaultFence(tokens, idx, options, env, self);
 		};
