@@ -9,7 +9,7 @@ module.exports = function FixtureService(config, components) {
 		screenshotService = components.screenshotService,
 		fileRepository = components.fileRepository,
 		pngToolkit = components.pngToolkit,
-		writeOutput = function (fixtureOutput, pathPrefix) {
+		saveFixtureOutputToFile = function (fixtureOutput, pathPrefix) {
 			const ext = {
 					'image/svg': '.svg',
 					'text/html': '.html'
@@ -65,21 +65,36 @@ module.exports = function FixtureService(config, components) {
 			fixtureEngine = components['fixture-engine-' + requestedEngine],
 			outputPath = resultPathPrefix + '-output',
 			result = {},
-			recordOutputSource = function (filePath) {
+			recordFileOutput = function (filePath) {
 				result.output = {
 					source: path.relative(path.dirname(resultPathPrefix), filePath)
 				};
-				return filePath;
+				return 'file:' + filePath;
 			},
-			processOutput = function (output) {
+			recordError = function (err) {
+				result.outcome = {
+					status: 'error',
+					message: getErrorMessage(err),
+					error: err
+				};
+			},
+			processFixtureOutput = function (output) {
 				const resultType = typeof output;
-				if (resultType === 'object') {
-					return writeOutput (output, outputPath);
-				} else if (resultType === 'string') {
-					return Promise.resolve(path.join(outputPath, output));
+				if (resultType === 'string') {
+					if (isUrl(output)) {
+						result.output = {
+							source: output
+						};
+						return output;
+					} else {
+						return recordFileOutput(path.join(outputPath, output));
+					}
+				} else if (typeof output === 'object') {
+					return saveFixtureOutputToFile (output, outputPath)
+						.then(recordFileOutput);
 				} else {
 					throw new Error(`unsupported fixture result type ${resultType}`);
-				};
+				}
 			};
 
 		if (!example) {
@@ -98,32 +113,13 @@ module.exports = function FixtureService(config, components) {
 		}
 		return fileRepository.cleanDir(outputPath)
 			.then(() => fixtureEngine.execute(example))
-			.then(output => {
-				if (isUrl(output)) {
-					result.output = {
-						source: output
-					};
-					return output;
-				} else {
-					return processOutput(output)
-						.then(recordOutputSource)
-						.then(path => 'file:' + path);
-				}
-			})
-			.then(resultUrl => {
-				return screenshotService.screenshot({url: resultUrl});
-			})
+			.then(processFixtureOutput)
+			.then(resultUrl => screenshotService.screenshot({url: resultUrl}))
 			.then(buffer => fileRepository.writeBuffer(resultPathPrefix + '-actual.png', buffer))
 			.then(fpath => result.output.screenshot = path.basename(fpath))
 			.then(() => calculateOutcome(example, resultPathPrefix))
 			.then(outcome => mergeOutcome(result, outcome))
-			.catch(err => {
-				result.outcome = {
-					status: 'error',
-					message: getErrorMessage(err),
-					error: err
-				};
-			})
+			.catch(recordError)
 			.then(() => result);
 	};
 };
