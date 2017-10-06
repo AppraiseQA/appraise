@@ -48,18 +48,19 @@ too early to use (pre-alpha)
     - [x] thrown as exceptions
     - [ ] thrown as strings
     - [ ] rejected from a promise
-- [ ] Fixture execution
+- [x] Fixture execution
   - [x] inside node
     - [x] detect and parse example format (eg json or yaml)
-    - [ ] pass fixture parameters as the second argument
-    - [ ] pass temporary working dir
-    - [ ] allow fixtures to return a file
-  - [ ] URL fixture execution (eg test the same site in various resolutions)
+    - [x] pass fixture parameters in the context
+    - [x] pass temporary working dir
+    - [x] allow fixtures to return a file
+  - [x] URL fixture execution (eg test the same site in various resolutions)
   - [ ] in-browser fixture execution
-    - [ ] custom event to signal finished rendering
-    - [ ] webpack fixture packaging
-    - [ ] inject css/js
-    - [ ] AWS Lambda fixture engine
+    - [ ] record after page load
+    - [ ] record after network idle
+    - [ ] record after custom event
+  - [ ] webpack fixture packaging
+  - [ ] AWS Lambda fixture engine
 - [ ] Extend example properties
   - [ ] Configurable clip area for screenshots
   - [ ] Configurable initial size for html windows

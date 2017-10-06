@@ -112,7 +112,7 @@ module.exports = function FixtureService(config, components) {
 			});
 		}
 		return fileRepository.cleanDir(outputPath)
-			.then(() => fixtureEngine.execute(example))
+			.then(() => fixtureEngine.execute(example, outputPath))
 			.then(processFixtureOutput)
 			.then(resultUrl => screenshotService.screenshot({url: resultUrl}))
 			.then(buffer => fileRepository.writeBuffer(resultPathPrefix + '-actual.png', buffer))

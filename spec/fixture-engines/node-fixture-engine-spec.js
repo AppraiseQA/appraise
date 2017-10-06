@@ -14,13 +14,13 @@ describe('NodeFixtureEngine', () => {
 		fsUtil.mkdirp(path.join(workingDir, 'examples'));
 		fsUtil.mkdirp(path.join(workingDir, 'fixtures'));
 		fs.writeFileSync(path.join(workingDir, 'examples', 'mod.js'), `
-			module.exports = function (input) {
-				return {name: 'examples mod', input:  input};
+			module.exports = function (input, context) {
+				return {name: 'examples mod', input:  input, context: context};
 			};
 		`, 'utf8');
 		fs.writeFileSync(path.join(workingDir, 'fixtures', 'mod.js'), `
-			module.exports = function (input) {
-				return {name: 'fixtures mod', input: input};
+			module.exports = function (input, context) {
+				return {name: 'fixtures mod', input: input, context: context};
 			};
 		`, 'utf8');
 		fs.writeFileSync(path.join(workingDir, 'fixtures', 'broken.js'), `
@@ -54,8 +54,17 @@ describe('NodeFixtureEngine', () => {
 					fixture: 'mod'
 				}
 			};
-			underTest.execute(example)
-				.then(result => expect(result).toEqual({name: 'examples mod', input: 'my input'}))
+			underTest.execute(example, 'path1')
+				.then(result => expect(result).toEqual({
+					name: 'examples mod',
+					input: 'my input',
+					context: {
+						params: {
+							fixture: 'mod'
+						},
+						outputDir: 'path1'
+					}
+				}))
 				.then(done, done.fail);
 		});
 		it('executes a fixture from the fixtures dir if it is set', done => {
@@ -65,8 +74,17 @@ describe('NodeFixtureEngine', () => {
 					fixture: 'mod'
 				}
 			};
-			underTest.execute(example)
-				.then(result => expect(result).toEqual({name: 'fixtures mod', input: 'my input'}))
+			underTest.execute(example, 'path1')
+				.then(result => expect(result).toEqual({
+					name: 'fixtures mod',
+					input: 'my input',
+					context: {
+						params: {
+							fixture: 'mod'
+						},
+						outputDir: 'path1'
+					}
+				}))
 				.then(done, done.fail);
 		});
 		it('supports promises in fixture execution', done => {
@@ -89,7 +107,7 @@ describe('NodeFixtureEngine', () => {
 				}
 			};
 			underTest.execute(example)
-				.then(result => expect(result).toEqual({name: 'fixtures mod', input: {a: 1}}))
+				.then(result => expect(result.input).toEqual({a: 1}))
 				.then(done, done.fail);
 		});
 		it('records an error if parsing fails', done => {

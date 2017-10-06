@@ -13,9 +13,16 @@ module.exports = function NodeFixtureEngine(options) {
 			});
 		};
 
-	self.execute = function (example) {
+	self.execute = function (example, outputDir) {
 		return loadFixture(example)
-			.then(fixture => fixture(parse(example.input, example.params.format)));
+			.then(fixture => {
+				const parsedInput = parse(example.input, example.params.format),
+					executionContext = {
+						outputDir: outputDir,
+						params: example.params
+					};
+				return fixture(parsedInput, executionContext);
+			});
 	};
 
 };

@@ -78,9 +78,10 @@ describe('FixtureService', () => {
 		});
 		it('runs the example through the chosen fixture engine', done => {
 			const example = { params: {fixtureEngine: 'custom'}};
-			customFixtureEngine.execute.and.callFake(param => {
+			customFixtureEngine.execute.and.callFake((param, outputPath) => {
 				expect(nodeFixtureEngine.execute).not.toHaveBeenCalled();
 				expect(param).toEqual(example);
+				expect(outputPath).toEqual('path1-output');
 				done();
 				return pendingPromise;
 			});
@@ -89,9 +90,10 @@ describe('FixtureService', () => {
 		});
 		it('uses the node fixture engine by default', done => {
 			const example = { a: 1 };
-			nodeFixtureEngine.execute.and.callFake(param => {
+			nodeFixtureEngine.execute.and.callFake((param, outputPath) => {
 				expect(customFixtureEngine.execute).not.toHaveBeenCalled();
 				expect(param).toEqual(example);
+				expect(outputPath).toEqual('path1-output');
 				done();
 				return pendingPromise;
 			});
