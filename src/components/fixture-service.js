@@ -2,6 +2,7 @@
 const path = require('path'),
 	getErrorMessage = require('../util/get-error-message'),
 	isUrl = require('../util/is-url'),
+	supportedExtensions = require('../config/supported-extensions'),
 	validateRequiredComponents = require('../util/validate-required-components');
 
 module.exports = function FixtureService(config, components) {
@@ -10,11 +11,7 @@ module.exports = function FixtureService(config, components) {
 		fileRepository = components.fileRepository,
 		pngToolkit = components.pngToolkit,
 		saveFixtureOutputToFile = function (fixtureOutput, pathPrefix) {
-			const ext = {
-					'image/svg': '.svg',
-					'text/html': '.html'
-				},
-				extension = fixtureOutput.contentType && ext[fixtureOutput.contentType],
+			const extension = fixtureOutput.contentType && supportedExtensions[fixtureOutput.contentType],
 				filePath = extension && path.resolve(pathPrefix, 'index' + extension);
 			if (!filePath) {
 				throw new Error(`unsupported file type ${fixtureOutput.contentType}`);
@@ -61,7 +58,7 @@ module.exports = function FixtureService(config, components) {
 		return screenshotService.stop();
 	};
 	self.executeExample = function (example, resultPathPrefix) {
-		const requestedEngine = (example && example.params && example.params.fixtureEngine) || 'node',
+		const requestedEngine = (example && example.params && example.params['fixture-engine']) || 'node',
 			fixtureEngine = components['fixture-engine-' + requestedEngine],
 			outputPath = resultPathPrefix + '-output',
 			result = {},

@@ -37,4 +37,7 @@ Additionally, you can start without an expected output. The first time when you 
 
 Normally, for a set of related examples, you use the same fixture, as they all go through the same execution workflow. You can set the fixture for all the examples on a page in the YAML preamble of the Markdown file, using the `fixture` keyword. This page uses a simple SVG Path fixture, from [fixtures/path.js](fixtures/path.js).
 
+
+For more information on writing fixtures, check out the page documenting [Fixture types](fixture-types.md).
+
 You can customise many execution attributes for each example, such as using a different fixture or setting a clip region. Check out the [Customising Execution](customising-execution.md) guide for more information on that.

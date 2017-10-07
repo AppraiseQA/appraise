@@ -37,6 +37,7 @@ Here are some additional things that might be of interest, in the order of impor
 
 * [Creating test pages](examples/creating-test-pages.md)
 * [Customising execution](examples/customising-execution.md)
+* [Fixture types](examples/fixture-types.md)
 
 ## Contribute to Appraise
 

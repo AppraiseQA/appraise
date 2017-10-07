@@ -322,7 +322,7 @@ dl.stats dd {
 [data-outcome-message] {
   position: relative;
 }
-[data-outcome-message]:hover::before {
+[data-outcome-message]:hover::before, pre[data-outcome-message]::before {
   position: absolute;
   bottom: 1em;
   right: 1em;

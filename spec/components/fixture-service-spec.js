@@ -68,7 +68,7 @@ describe('FixtureService', () => {
 				.then(done, done.fail);
 		});
 		it('creates a clean directory for outputs in the output path', done => {
-			const example = { params: {fixtureEngine: 'custom'}};
+			const example = { params: {'fixture-engine': 'custom'}};
 			fileRepository.cleanDir.and.callFake(param => {
 				expect(param).toEqual('result-example-output');
 				done();
@@ -77,7 +77,7 @@ describe('FixtureService', () => {
 			underTest.executeExample(example, 'result-example');
 		});
 		it('runs the example through the chosen fixture engine', done => {
-			const example = { params: {fixtureEngine: 'custom'}};
+			const example = { params: {'fixture-engine': 'custom'}};
 			customFixtureEngine.execute.and.callFake((param, outputPath) => {
 				expect(nodeFixtureEngine.execute).not.toHaveBeenCalled();
 				expect(param).toEqual(example);
@@ -101,7 +101,7 @@ describe('FixtureService', () => {
 			fileRepository.promises.cleanDir.resolve();
 		});
 		it('resolves with an error outcome if the example expects an unconfigured fixture engine', done => {
-			const example = { params: {fixtureEngine: 'something-else'}};
+			const example = { params: {'fixture-engine': 'something-else'}};
 			underTest.executeExample(example, 'path1')
 				.then(result => {
 					expect(result.outcome).toEqual({
