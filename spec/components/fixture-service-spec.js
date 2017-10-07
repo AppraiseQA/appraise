@@ -124,12 +124,38 @@ describe('FixtureService', () => {
 					});
 					it('takes a screenshot of the file from the result dir', done => {
 						screenshotService.screenshot.and.callFake(props => {
-							expect(props).toEqual({url: 'file:/some/path1-output/result.html'});
+							expect(props.url).toEqual('file:/some/path1-output/result.html');
 							done();
 							return pendingPromise;
 						});
 						underTest.executeExample({a: 1}, '/some/path1')
 							.then(done.fail, done.fail);
+					});
+					it('transfers the clip parameters from the example to the screenshot service', done => {
+						screenshotService.screenshot.and.callFake(props => {
+							expect(props.initialWidth).toEqual(50);
+							expect(props.initialHeight).toEqual(100);
+							expect(props.clip.x).toEqual(200);
+							expect(props.clip.y).toEqual(300);
+							expect(props.clip.width).toEqual(400);
+							expect(props.clip.height).toEqual(500);
+							done();
+							return pendingPromise;
+						});
+						underTest.executeExample(
+							{
+								a: 1,
+								params: {
+									'initial-width': 50,
+									'initial-height': 100,
+									'clip-x': 200,
+									'clip-y': 300,
+									'clip-width': 400,
+									'clip-height': 500
+								}
+							}, '/some/path1')
+							.then(done.fail, done.fail);
+
 					});
 					it('stores the output as a relative path', done => {
 						fileRepository.writeText.and.callFake(t => Promise.resolve(t));

@@ -1,6 +1,7 @@
 'use strict';
 const stripExtension = require('../util/strip-extension'),
-	extractExamplesFromHtml = require('../util/extract-examples-from-html');
+	extractExamplesFromHtml = require('../util/extract-examples-from-html'),
+	globalProperties = require('../config/configurable-properties').map(p => p.argument);
 module.exports = function ExamplesRepository(config, components) {
 	const self = this,
 		fileRepository = components.fileRepository,
@@ -8,6 +9,14 @@ module.exports = function ExamplesRepository(config, components) {
 		propertyPrefix = config['html-attribute-prefix'],
 		pagePath = function (pageName) {
 			return fileRepository.referencePath('examples', pageName + '.md');
+		},
+		fillInGlobalParams = function (example) {
+			globalProperties.forEach(prop => {
+				if (!example.params[prop] && config[prop]) {
+					example.params[prop] = config[prop];
+				}
+			});
+			return example;
 		};
 	self.getPageNames = function () {
 		return fileRepository.readDirContents(
@@ -40,6 +49,6 @@ module.exports = function ExamplesRepository(config, components) {
 			throw 'page name must be provided';
 		}
 		return self.getPageBody(pageName)
-			.then(pageBody =>  extractExamplesFromHtml(pageBody, propertyPrefix));
+			.then(pageBody =>  extractExamplesFromHtml(pageBody, propertyPrefix).map(fillInGlobalParams));
 	};
 };

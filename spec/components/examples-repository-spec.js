@@ -4,16 +4,17 @@ const promiseSpyObject = require('../support/promise-spy-object'),
 	mockFileRepository = require('../support/mock-file-repository'),
 	ExamplesRepository = require('../../src/components/examples-repository');
 describe('ExamplesRepository', () => {
-	let fileRepository, underTest, pageFormatter;
+	let fileRepository, underTest, pageFormatter, config;
 	beforeEach(() => {
 		fileRepository = mockFileRepository({
 			'examples-dir': 'examplesDir'
 		});
+		config = {
+			'html-attribute-prefix': 'data-prefix'
+		};
 		pageFormatter = promiseSpyObject('pageFormatter', ['format']);
 		underTest = new ExamplesRepository(
-			{
-				'html-attribute-prefix': 'data-prefix'
-			},
+			config,
 			{
 				fileRepository: fileRepository,
 				pageFormatter: pageFormatter
@@ -69,18 +70,7 @@ describe('ExamplesRepository', () => {
 		});
 	});
 	describe('getPageExamples', () => {
-		it('collects images and code blocks marked as examples', done => {
-			underTest.getPageExamples('some/page')
-				.then(result => expect(result).toEqual([{
-					exampleName: 'simple',
-					input: 'abcd',
-					params: {
-						fixture: 'somefix',
-						format: 'json'
-					},
-					expected: 'images/somepic.png'
-				}]))
-				.then(done, done.fail);
+		beforeEach(() => {
 			fileRepository.promises.readText.resolve();
 			pageFormatter.promises.format.resolve(`
 				<table class="preamble" data-prefix-role="preamble">
@@ -93,6 +83,34 @@ describe('ExamplesRepository', () => {
 				<p><img src="images/somepic.png" alt="test123" data-prefix-example="simple"></p>
 				<h1>title</h1>
 			`);
+		});
+		it('collects images and code blocks marked as examples', done => {
+			underTest.getPageExamples('some/page')
+				.then(result => expect(result).toEqual([{
+					exampleName: 'simple',
+					input: 'abcd',
+					params: {
+						fixture: 'somefix',
+						format: 'json'
+					},
+					expected: 'images/somepic.png'
+				}]))
+				.then(done, done.fail);
+		});
+		it('merges global configurable properties into example params if set', done => {
+			config.fixture = 'fixture-from-global';
+			config['fixture-engine'] = 'fixture-engine-from-global';
+			config['clip-x'] = 'clip-x-from-global';
+			config['not-global-configurable'] = 'something else';
+
+			underTest.getPageExamples('some/page')
+				.then(result => expect(result[0].params).toEqual({
+					fixture: 'somefix',
+					format: 'json',
+					'fixture-engine': 'fixture-engine-from-global',
+					'clip-x': 'clip-x-from-global'
+				}))
+				.then(done, done.fail);
 		});
 
 	});

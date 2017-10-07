@@ -60,30 +60,6 @@ describe('ChromeScreenshotService', () => {
 			underTest.screenshot({url: 'xxx'})
 				.then(done.fail, done.fail);
 		});
-		it('sets the window size to config options if provided', done => {
-			config['screenshot-initial-width'] = 12;
-			config['screenshot-initial-height'] = 22;
-			chromeDriver.setWindowSize.and.callFake((width, height) => {
-				expect(width).toEqual(12);
-				expect(height).toEqual(22);
-				done();
-				return new Promise(() => false);
-			});
-			underTest.screenshot({url: 'xxx'})
-				.then(done.fail, done.fail);
-		});
-		it('sets the window size to config argument initialWidth/height if provided', done => {
-			config['screenshot-initial-width'] = 12;
-			config['screenshot-initial-height'] = 22;
-			chromeDriver.setWindowSize.and.callFake((width, height) => {
-				expect(width).toEqual(33);
-				expect(height).toEqual(44);
-				done();
-				return new Promise(() => false);
-			});
-			underTest.screenshot({url: 'xxx', initialWidth: 33, initialHeight: 44})
-				.then(done.fail, done.fail);
-		});
 		it('rejects when setting the initial size rejects', done => {
 			underTest.screenshot({url: 'yyy'})
 				.then(done.fail)

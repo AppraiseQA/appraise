@@ -24,8 +24,8 @@ module.exports = function ChromeScreenshotService(config, components) {
 		if (!options || !options.url) {
 			return Promise.reject('invalid-args');
 		}
-		const initialWidth = options.initialWidth || config['screenshot-initial-width'] || 10,
-			initialHeight = options.initialHeight || config['screenshot-initial-height'] || 10;
+		const initialWidth = options.initialWidth || 10,
+			initialHeight = options.initialHeight || 10;
 		return chromeDriver.setWindowSize(initialWidth, initialHeight)
 			.then(() => chromeDriver.loadUrl(options.url))
 			.then(() => chromeDriver.getContentBox())

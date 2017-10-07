@@ -10,6 +10,25 @@ module.exports = function FixtureService(config, components) {
 		screenshotService = components.screenshotService,
 		fileRepository = components.fileRepository,
 		pngToolkit = components.pngToolkit,
+		getScreenshotOptions = function (url, exampleParams) {
+			exampleParams = exampleParams || {};
+			const clipArgNames = ['x', 'y', 'width', 'height'],
+				clipArgs = clipArgNames.filter(t => exampleParams[`clip-${t}`]),
+				result = {
+					url: url
+				};
+			if (exampleParams['initial-width']) {
+				result.initialWidth = exampleParams['initial-width'];
+			}
+			if (exampleParams['initial-height']) {
+				result.initialHeight = exampleParams['initial-height'];
+			}
+			if (clipArgs.length) {
+				result.clip = {};
+				clipArgs.forEach(name => result.clip[name] = exampleParams[`clip-${name}`]);
+			};
+			return result;
+		},
 		saveFixtureOutputToFile = function (fixtureOutput, pathPrefix) {
 			const extension = fixtureOutput.contentType && supportedExtensions[fixtureOutput.contentType],
 				filePath = extension && path.resolve(pathPrefix, 'index' + extension);
@@ -111,7 +130,7 @@ module.exports = function FixtureService(config, components) {
 		return fileRepository.cleanDir(outputPath)
 			.then(() => fixtureEngine.execute(example, outputPath))
 			.then(processFixtureOutput)
-			.then(resultUrl => screenshotService.screenshot({url: resultUrl}))
+			.then(resultUrl => screenshotService.screenshot(getScreenshotOptions(resultUrl, example.params)))
 			.then(buffer => fileRepository.writeBuffer(resultPathPrefix + '-actual.png', buffer))
 			.then(fpath => result.output.screenshot = path.basename(fpath))
 			.then(() => calculateOutcome(example, resultPathPrefix))

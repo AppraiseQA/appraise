@@ -2,6 +2,7 @@
 const validateRequiredParams = require('../util/validate-required-params'),
 	validateRequiredComponents = require('../util/validate-required-components'),
 	matchingName = require('../util/matching-name'),
+	configurableProperties = require('../config/configurable-properties'),
 	sequentialPromiseMap = require('sequential-promise-map');
 
 module.exports = function run(args, components) {
@@ -69,34 +70,6 @@ module.exports.doc = {
 			optional: true,
 			description: 'The name of the page to execute. If not specified, executes all pages.',
 			example: 'hello-world'
-		},
-		{
-			argument: 'tolerance',
-			optional: true,
-			description: 'Tolerance for comparing individual pixels, number between 1 and 10. Larger value makes comparisons means more forgiving',
-			default: '1',
-			example: '5'
-		},
-		{
-			argument: 'allowed-difference',
-			optional: true,
-			description: 'Number of pixels allowed to be different until comparisons fail',
-			default: '0',
-			example: '30'
-		},
-		{
-			argument: 'screenshot-initial-width',
-			optional: true,
-			description: 'Initial window width in pixels for web pages before screenshots. this can be used to force responsive sites to render in different widths.',
-			default: '10',
-			example: '1024'
-		},
-		{
-			argument: 'screenshot-initial-height',
-			optional: true,
-			description: 'Initial window height in pixels for web pages before screenshots. this can be used to force responsive sites to render in different heights.',
-			default: '10',
-			example: '768'
 		}
-	]
+	].concat(configurableProperties)
 };
