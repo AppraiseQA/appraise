@@ -61,6 +61,8 @@
   - [ ] Running tests by directly reading specs from github (eg public site, connect to a gitub repo)
   - [ ] Approving by directly committing to github? (eg for specs stored in github repos)
 - [ ] AWS Lambda screenshots 
+- [ ] Enable people to extend/plug easier
+  - [ ] add more parsers
 - [ ] Result formatters 
   - [x] JSON
   - [ ] junit

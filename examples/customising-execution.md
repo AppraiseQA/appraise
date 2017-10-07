@@ -2,11 +2,20 @@
 fixture: fixtures/path.js
 ---
 
-## Customising execution
+# Customising execution
 
 You can customise the execution of an example by setting parameters either in the YAML preamble of the markdown file, or in the header of an individual example. Settings from the page preamble apply to all examples in a page, and values in example headers override them for individual examples. 
 
-This page sets the fixture to [`fixtures/path.js`](fixtures/path.js) in the preamble. Without any special overrides, that code will be used by default:
+Here are the parameters you can customise:
+
+* `fixture-engine`: How Appraise loads your fixtures. By default, it's using Node. Check out [Fixture Types](fixture-types.md) for more information.
+* `fixture`: the name of the fixture (normally a node.js module that executes your example). Check out [Fixture Types](fixture-types.md) for more information.
+
+You can also customise the format of the examples (JSON, YAML). For more information, check out the [Formatting Examples](formatting-examples.md) guide.
+
+## In acton
+
+This whole page sets the fixture to [`fixtures/path.js`](fixtures/path.js) in the preamble. Without any special overrides, that code will be used by default:
 
 ~~~json example="green x"
 {
@@ -31,4 +40,6 @@ The following example sets the fixture to [`fixtures/circle.js`](fixtures/circle
 ~~~
 
 ![blue circle](images/bluecircle-863293a7-e5f2-41b2-9f59-d73845cc5cfd.png)
+
+
 
