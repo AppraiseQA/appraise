@@ -1,6 +1,6 @@
 {
   "name": "appraise",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "Painless visual test automation",
   "main": "index.js",
   "scripts": {
@@ -23,14 +23,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gojko/appraise.git"
+    "url": "git+https://github.com/AppraiseQA/appraise.git"
   },
-  "author": "Gojko Adzic <gojko@neuri.co.uk>",
+  "author": "Gojko Adzic <gojko@gojko.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/gojko/appraise/issues"
+    "url": "https://github.com/AppraiseQA/appraise/issues"
   },
-  "homepage": "https://github.com/gojko/appraise#readme",
+  "homepage": "https://github.com/AppraiseQA/appraise#readme",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
     "handlebars": "^4.0.10",
