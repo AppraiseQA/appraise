@@ -24,17 +24,9 @@ This is what it will help you do in the near future:
 
 ![](screenshot.png)
 
-## Status
-
-**Alpha** -- useful to us, let's make it useful to you together. 
-
-We've been using Appraise for a while now for developing [MindMup](https://www.mindmup.com) so it is quite usable for our usage scenarios, but it's likely that we've not covered 100% of what you need. 
-
-Assume that before version 1.0, important stuff is likely going to change in a backwards-incompatible way based on community feedback.
-
 ## Examples
 
-The files in the [Examples](examples) directory are automated tests, described in Markdown, that nicely render when viewed in GitHub and serve as living documentation for the tool. 
+The files in the [Examples](examples) directory are automated tests, described in Markdown, that nicely render when viewed in GitHub and serve as living documentation for the tool. Check out the raw markdown source to see how the tests are set up. 
 
 ## Use Appraise
 
@@ -50,3 +42,16 @@ The files in the [Examples](examples) directory are automated tests, described i
 ## Get help
 
 Head over to the [AppraiseQA Chat on Gitter](https://gitter.im/AppraiseQA/Lobby) and let's talk about it!
+
+## Status
+
+**Alpha** -- useful to us, let's make it useful to you together. 
+
+We've been using Appraise for a while now for developing [MindMup](https://www.mindmup.com) so it is quite usable for our usage scenarios, but it's likely that we've not covered 100% of what you need. 
+
+Assume that before version 1.0, important stuff is likely going to change in a backwards-incompatible way based on community feedback.
+
+## License
+
+MIT, see the [license](LICENSE) file.
+
