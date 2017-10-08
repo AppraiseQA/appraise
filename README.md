@@ -32,6 +32,10 @@ We've been using Appraise for a while now for developing [MindMup](https://www.m
 
 Assume that before version 1.0, important stuff is likely going to change in a backwards-incompatible way based on community feedback.
 
+## Examples
+
+The files in the [Examples](examples) directory are automated tests, described in Markdown, that nicely render when viewed in GitHub and serve as living documentation for the tool. 
+
 ## Use Appraise
 
 * Check out the [Getting started](examples/getting-started.md) guide to learn about the basics.
