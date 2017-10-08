@@ -16,13 +16,11 @@ Appraise makes it easy to create executable specifications for visual examples. 
 
 To set the input parameters for an example, create a fenced code block and use the `example="<SOME NAME>"` in the header of the block to identify the example.
 
-~~~json example="blue line"
-{
-  "width": 80,
-  "height": 100,
-  "path": "M10,10L70,90",
-  "color": "blue"
-}
+~~~yaml example="blue line"
+width: 80
+height: 100
+path: M10,10L70,90
+color: blue
 ~~~
 
 You can have more than one example on the same page, but make sure that each example has a unique name.
