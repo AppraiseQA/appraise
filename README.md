@@ -26,7 +26,7 @@ This is what it will help you do in the near future:
 
 ## Status
 
-**Alpha** -- useful for us, let's make it useful for you together. 
+**Alpha** -- useful to us, let's make it useful to you together. 
 
 We've been using Appraise for a while now for developing [MindMup](https://www.mindmup.com) so it is quite usable for our usage scenarios, but it's likely that we've not covered 100% of what you need. 
 
