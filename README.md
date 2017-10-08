@@ -35,8 +35,7 @@ Important stuff is likely going to change in a backwards-incompatible way based 
   * [Customising execution](examples/customising-execution.md)
   * [Fixture types](examples/fixture-types.md)
   * [Formatting examples](examples/formatting-examples.md)
-  * [Controlling screenshots](controlling-screenshots.md)
-  * [Controlling image comparisons](controlling-image-comparisons.md)
+  * [Controlling screenshots](examples/controlling-screenshots.md)
 
 ## Contribute to Appraise
 
