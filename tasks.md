@@ -9,7 +9,7 @@
 - [x] Add a generic template for result files
 - [x] Create an index with all test results
 - [x] Clean up templates and provide a nice layout
-- [ ] documentation on key usage scenarios
+- [x] documentation on key usage scenarios
 - [ ] Make it easier to inspect/approve
   - [x] CLI Approval instructions on the results page
   - [x] CLI Approval instructions on the rendered page (for all examples)
@@ -39,8 +39,8 @@
   - [ ] webpack fixture packaging
   - [ ] AWS Lambda fixture engine
 - [ ] Extend example properties
-  - [ ] Configurable clip area for screenshots
-  - [ ] Configurable initial size for html windows
+  - [x] Configurable clip area for screenshots
+  - [x] Configurable initial size for html windows
   - [ ] Configurable image matching precision and anti-aliasing
 - [ ] Extract configuration/enable overrides
   - [x] Configurable source and work directories (don't just dump stuff to temp)
@@ -87,22 +87,23 @@
 
 - [ ] record timestamp when a page started executing, use in the result template
 - [ ] use pageObj.sourcePath when approving with new result instead of hard-coding the path
+- [ ] test with large images
+- [ ] test with complex page and example names
+- [ ] test with exceptions thrown throughout the test process
+- [ ] directory summaries for page folders
+- [ ] tabs in summary (pages/examples)
+- [ ] skip empty files (instead of blowing up)
+- [ ] Solve cross-linking (eg replace .md in local links to .html when generating html)
+- [ ] detect examples with the same name on a page
+- [x] breadcrumbs on rendered page -> links
+- [x] Start/stop chrome once per run, not once per page
+- [x] navigation on results page (breadcrumbs and page links)
+- [x] Retina screen sizing
+- [x] change sync FS operations to async
 - [x] put example name into the example object/results object for easier templating
 - [x] use timestamps for executed and started in result template
 - [x] test with multiple examples in a single file
 - [x] test with multiple files
 - [x] test with files in subfolders
-- [ ] test with large images
-- [ ] test with complex page and example names
-- [ ] test with exceptions thrown throughout the test process
-- [x] breadcrumbs on rendered page -> links
-- [ ] directory summaries for page folders
-- [ ] tabs in summary (pages/examples)
-- [x] navigation on results page (breadcrumbs and page links)
-- [x] Retina screen sizing
-- [ ] Solve cross-linking (eg replace .md in local links to .html when generating html)
-- [ ] detect examples with the same name on a page
-- [x] Start/stop chrome once per run, not once per page
-- [x] change sync FS operations to async
 
 
