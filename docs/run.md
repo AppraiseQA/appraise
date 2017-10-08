@@ -24,15 +24,28 @@ appraise run {OPTIONS}
     * _Defaults to_: embedded templates included with the application
 *  `--page`:  (_optional_) The name of the page to execute. If not specified, executes all pages.
     * _For example_: hello-world
-*  `--tolerance`:  (_optional_) Tolerance for comparing individual pixels, number between 1 and 10. Larger value makes comparisons means more forgiving
+*  `--tolerance`:  (_optional_) Tolerance for comparing individual pixels, number between 1 and 10. Larger value makes comparisons means more forgiving. Default is exact match.
     * _For example_: 5
-    * _Defaults to_: 1
 *  `--allowed-difference`:  (_optional_) Number of pixels allowed to be different until comparisons fail
     * _For example_: 30
-    * _Defaults to_: 0
-*  `--screenshot-initial-width`:  (_optional_) Initial window width in pixels for web pages before screenshots. this can be used to force responsive sites to render in different widths.
+*  `--initial-width`:  (_optional_) Initial window width in pixels for web pages before screenshots. This can be used to force responsive sites to render in different widths.
     * _For example_: 1024
     * _Defaults to_: 10
-*  `--screenshot-initial-height`:  (_optional_) Initial window height in pixels for web pages before screenshots. this can be used to force responsive sites to render in different heights.
+*  `--initial-height`:  (_optional_) Initial window height in pixels for web pages before screenshots. This can be used to force responsive sites to render in different heights.
     * _For example_: 768
     * _Defaults to_: 10
+*  `--clip-x`:  (_optional_) Initial X offset, in pixels, for taking screenshots, if you do not want to clip the whole page.
+    * _For example_: 200
+    * _Defaults to_: start from the left edge of the page
+*  `--clip-y`:  (_optional_) Initial Y offset, in pixels, for taking screenshots, if you do not want to clip the whole page.
+    * _For example_: 200
+    * _Defaults to_: start from the top of the page
+*  `--clip-width`:  (_optional_) The width of a clip, in pixels, for taking screenshots, if you do not want to clip the whole page.
+    * _For example_: 200
+    * _Defaults to_: full width of the rendered page
+*  `--clip-height`:  (_optional_) Initial Y offset, in pixels, for taking screenshots, if you do not want to clip the whole page.
+    * _For example_: 200
+    * _Defaults to_: full height of the rendered page
+*  `--fixture`:  (_optional_) The name of the node module for executing tests.
+*  `--fixture-engine`:  (_optional_) The name of the engine for loading fixtures
+    * _Defaults to_: node
