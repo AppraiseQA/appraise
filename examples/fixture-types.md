@@ -1,5 +1,8 @@
 # Fixture types
 
+> Note: this page is a fully executable spec for the options it demonstrates. If you are reading this on GitHub, it will render the page nicely and hide all the technical details, so check out the raw markdown to see the actual test configuration.
+
+
 Fixtures are the link between the examples and the system under test. They automate *how* an example should be checked. Each example can define how it should be executed using two parameters:
 
 * `fixture` names the function to use for processing examples.
@@ -41,7 +44,7 @@ Appraise can work with four types of fixture results:
 
 ### Fixtures returning an object
 
-The object result is useful when you can convert the input into a standalone page or file, so you do not have to save anything to the disk from the fixture. 
+The object result is useful when you can convert the input into a stand-alone page or file, so you do not have to save anything to the disk from the fixture. 
 
 Note that this approach only works for a small number of supported content types, listed in [supported-extensions.js](../src/config/supported-extensions.js). Appraise needs to know the right extension for a MIME type, so if the content type you want to use is not yet supported, submit a patch to that file, or use the local file fixture result, and save the page under the correct extension yourself.
   
@@ -74,7 +77,7 @@ This type of fixture is useful when you want to process the example on an extern
 
 Here is an example executed using [fixtures/url.js](fixtures/url.js):
 
-~~~yaml example="url" fixture="fixtures/url.js"
+~~~yaml example="url" fixture="fixtures/url.js" clip-width="370" clip-height="200"
 name: AppraiseQA
 ~~~
 

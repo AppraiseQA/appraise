@@ -4,6 +4,8 @@ fixture: fixtures/path.js
 
 # Formatting examples
 
+> Note: this page is a fully executable spec for the options it demonstrates. If you are reading this on GitHub, it will render the page nicely and hide all the technical details, so check out the raw markdown to see the actual test configuration.
+
 Appraise allows you to describe complex example structures in several ways that are nice and readable.Similar to how Github uses the first word of a fenced code block to signal the language, Appraise uses the same indicator for the format. This means that your markdown pages will render nicely in when viewed through Github.
 
 ## YAML

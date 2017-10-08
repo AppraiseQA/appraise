@@ -28,17 +28,15 @@ Important stuff is likely going to change in a backwards-incompatible way based 
 
 ## Use Appraise
 
+* Check out the [Getting started](examples/getting-started.md) guide to learn about the basics.
 * The [Docs](docs/README.md) directory contains all the information on command-line arguments. 
-* The [Examples](examples) directory contains a fully automated set of tests that illustrate the key concepts, so reading through those is a good start.
-
-Check out the [Getting started](examples/getting-started.md) guide to learn about the basics
-
-Here are some additional things that might be of interest, in the order of importance:
-
-* [Creating test pages](examples/creating-test-pages.md)
-* [Customising execution](examples/customising-execution.md)
-* [Fixture types](examples/fixture-types.md)
-* [Formatting examples](examples/formatting-examples.md)
+* For more info on writing and managing tests, check out:
+  * [Creating test pages](examples/creating-test-pages.md)
+  * [Customising execution](examples/customising-execution.md)
+  * [Fixture types](examples/fixture-types.md)
+  * [Formatting examples](examples/formatting-examples.md)
+  * [Controlling screenshots](controlling-screenshots.md)
+  * [Controlling image comparisons](controlling-image-comparisons.md)
 
 ## Contribute to Appraise
 

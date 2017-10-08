@@ -18,14 +18,14 @@ module.exports = function FixtureService(config, components) {
 					url: url
 				};
 			if (exampleParams['initial-width']) {
-				result.initialWidth = exampleParams['initial-width'];
+				result.initialWidth = parseInt(exampleParams['initial-width']);
 			}
 			if (exampleParams['initial-height']) {
-				result.initialHeight = exampleParams['initial-height'];
+				result.initialHeight = parseInt(exampleParams['initial-height']);
 			}
 			if (clipArgs.length) {
 				result.clip = {};
-				clipArgs.forEach(name => result.clip[name] = exampleParams[`clip-${name}`]);
+				clipArgs.forEach(name => result.clip[name] = parseInt(exampleParams[`clip-${name}`]));
 			};
 			return result;
 		},

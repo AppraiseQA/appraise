@@ -4,16 +4,27 @@ fixture: fixtures/path.js
 
 # Customising execution
 
-You can customise the execution of an example by setting parameters either in the YAML preamble of the markdown file, or in the header of an individual example. Settings from the page preamble apply to all examples in a page, and values in example headers override them for individual examples. 
+> Note: this page is a fully executable spec for the options it demonstrates. If you are reading this on GitHub, it will render the page nicely and hide all the technical details, so check out the raw markdown to see the actual test configuration.
 
-Here are the parameters you can customise:
+You can customise the execution of an example by setting parameters in:
 
-* `fixture-engine`: How Appraise loads your fixtures. By default, it's using Node. Check out [Fixture Types](fixture-types.md) for more information.
-* `fixture`: the name of the fixture (normally a node.js module that executes your example). Check out [Fixture Types](fixture-types.md) for more information.
+* the command line -- to set a parameter for all examples in a test run
+* the YAML preamble of a markdown file -- for settings that apply to a particular page
+* the header of an individual example -- for settings that apply to a particular example
+
+The order of precedence is example, page, command line, so you can override the generic values with more specific ones. 
+
+For a full list of parameters you can set, check out [src/config/configurable-properties.js](../src/config/configurable-properties.js).
+
+Check out the following documentation pages for more information on how individual parameters work:
+
+* [Fixture Types](fixture-types.md)
+* [Controlling screenshots](controlling-screenshots.md)
+* [Controlling image comparisons](controlling-image-comparisons.md)
 
 You can also customise the format of the examples (JSON, YAML). For more information, check out the [Formatting Examples](formatting-examples.md) guide.
 
-## In acton
+## In action
 
 This whole page sets the fixture to [`fixtures/path.js`](fixtures/path.js) in the preamble. Without any special overrides, that code will be used by default:
 

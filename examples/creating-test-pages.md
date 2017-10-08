@@ -4,6 +4,8 @@ fixture: fixtures/path.js
 
 # Creating test pages
 
+> Note: this page is a fully executable spec for the options it demonstrates. If you are reading this on GitHub, it will render the page nicely and hide all the technical details, so check out the raw markdown to see the actual test configuration.
+
 Appraise makes it easy to create executable specifications for visual examples. It works by extracting inputs and expected outputs from a Markdown file, passing the inputs to a system under test, taking a screenshot of the result, and comparing the actual outcome to the expected results. This means that you need to define three components for a test:
 
 1. The input (parameters of the example), normally some human-readable text, JSON, YAML or something else that will tell your system under test *what* to do.
