@@ -1,6 +1,6 @@
 {
   "name": "appraise",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "Painless visual test automation",
   "main": "index.js",
   "scripts": {
