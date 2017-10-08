@@ -1,6 +1,10 @@
-# Appraise
+# Appraise 
 
-### Painless visual test automation 
+[![Install from NPM](https://img.shields.io/npm/v/appraise.svg?maxAge=2592000?style=plastic)](https://www.npmjs.com/package/appraise)
+[![Chat on Gitter](https://badges.gitter.im/AppraiseQA/Lobby.png)](https://gitter.im/AppraiseQA/Lobby)
+[![MIT License](https://img.shields.io/npm/l/appraise.svg?maxAge=2592000?style=plastic)](https://github.com/appraisejs/appraise/blob/master/LICENSE)
+
+## Painless visual test automation 
 
 ![](templates/assets/logo.png)
 
@@ -22,9 +26,11 @@ This is what it will help you do in the near future:
 
 ## Status
 
-**Alpha** -- useful for us, let's make it useful to you together. 
+**Alpha** -- useful for us, let's make it useful for you together. 
 
-Important stuff is likely going to change in a backwards-incompatible way based on community feedback.
+We've been using Appraise for a while now for developing [MindMup](https://www.mindmup.com) so it is quite usable for our usage scenarios, but it's likely that we've not covered 100% of what you need. 
+
+Assume that before version 1.0, important stuff is likely going to change in a backwards-incompatible way based on community feedback.
 
 ## Use Appraise
 
@@ -37,8 +43,6 @@ Important stuff is likely going to change in a backwards-incompatible way based 
   * [Formatting examples](examples/formatting-examples.md)
   * [Controlling screenshots](examples/controlling-screenshots.md)
 
-## Contribute to Appraise
-
 ## Get help
 
-
+Head over to the [AppraiseQA Chat on Gitter](https://gitter.im/AppraiseQA/Lobby) and let's talk about it!
