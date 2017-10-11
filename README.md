@@ -51,6 +51,10 @@ We've been using Appraise for a while now for developing [MindMup](https://www.m
 
 Assume that before version 1.0, important stuff is likely going to change in a backwards-incompatible way based on community feedback.
 
+## Contribute to Appraise
+
+Here's a list of [tasks](tasks.md) that we plan to do, so join in and take one of those! 
+
 ## License
 
 MIT, see the [license](LICENSE) file.
