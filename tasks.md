@@ -1,4 +1,5 @@
 # Tasks
+
 ## Before beta 
 
 - [ ] record timestamp when a page started executing, use in the result template
@@ -16,6 +17,9 @@
 - [ ] skip over empty .md files instead of blowing up
 - [ ] Enable people to extend/plug easier
   - [ ] add more parsers
+- [ ] test overlay/positioning in other browsers
+  - [ ] safari
+  - [ ] firefox
 
 ## before 1.0
 
