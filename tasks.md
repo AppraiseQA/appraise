@@ -1,12 +1,6 @@
 # Tasks
+## Before beta 
 
-
-
-## Before Beta 
-
-- [ ] support PNG/other images as content/content type
-  - [ ] make sure window sizing works when images are loaded
-- [ ] skip over empty .md files rather than blowing up
 - [ ] record timestamp when a page started executing, use in the result template
 - [ ] use pageObj.sourcePath when approving with new result instead of hard-coding the path
 - [ ] test with large images
@@ -14,12 +8,18 @@
 - [ ] test with exceptions thrown throughout the test process
 - [ ] directory summaries for page folders
 - [ ] tabs in summary (pages/examples)
+- [ ] skip empty files (instead of blowing up)
 - [ ] Solve cross-linking (eg replace .md in local links to .html when generating html)
 - [ ] detect examples with the same name on a page
+- [ ] support `image/*` content types for content/contentType fixtures
+  - [ ] make sure we can get the right dimensions from headless chrome
+- [ ] skip over empty .md files instead of blowing up
+- [ ] Enable people to extend/plug easier
+  - [ ] add more parsers
 
-## Before 1.0
+## before 1.0
 
-- [ ] documentation on key usage scenarios
+- [ ] AWS Lambda screenshots 
 - [ ] Make it easier to inspect/approve
   - [x] CLI Approval instructions on the results page
   - [x] CLI Approval instructions on the rendered page (for all examples)
@@ -48,8 +48,8 @@
   - [ ] webpack fixture packaging
   - [ ] AWS Lambda fixture engine
 - [ ] Extend example properties
-  - [ ] Configurable clip area for screenshots
-  - [ ] Configurable initial size for html windows
+  - [x] Configurable clip area for screenshots
+  - [x] Configurable initial size for html windows
   - [ ] Configurable image matching precision and anti-aliasing
 - [ ] Extract configuration/enable overrides
   - [x] Configurable source and work directories (don't just dump stuff to temp)
@@ -69,9 +69,6 @@
   - [ ] approving changes
   - [ ] Running tests by directly reading specs from github (eg public site, connect to a gitub repo)
   - [ ] Approving by directly committing to github? (eg for specs stored in github repos)
-- [ ] AWS Lambda screenshots 
-- [ ] Enable people to extend/plug easier
-  - [ ] add more parsers
 - [ ] Result formatters 
   - [x] JSON
   - [ ] junit
@@ -91,8 +88,19 @@
    - [x] approve a specific example
    - [ ] approve all failed examples
 
-## Released in alpha
 
+# Released in Alpha
+
+- [x] breadcrumbs on rendered page -> links
+- [x] Start/stop chrome once per run, not once per page
+- [x] navigation on results page (breadcrumbs and page links)
+- [x] Retina screen sizing
+- [x] change sync FS operations to async
+- [x] put example name into the example object/results object for easier templating
+- [x] use timestamps for executed and started in result template
+- [x] test with multiple examples in a single file
+- [x] test with multiple files
+- [x] test with files in subfolders
 - [x] Choose a markdown rendering system (https://github.com/markdown-it)
 - [x] Choose a Node DOM manipulation system (https://github.com/cheeriojs/cheerio)
 - [x] Build local screenshots (using Chrome Headless and https://github.com/cyrus-and/chrome-remote-interface)
@@ -102,14 +110,5 @@
 - [x] Add a generic template for result files
 - [x] Create an index with all test results
 - [x] Clean up templates and provide a nice layout
+- [x] documentation on key usage scenarios
 - [x] Run examples without expected outcomes (fail + show actual)
-- [x] Start/stop chrome once per run, not once per page
-- [x] change sync FS operations to async
-- [x] navigation on results page (breadcrumbs and page links)
-- [x] breadcrumbs on rendered page -> links
-- [x] put example name into the example object/results object for easier templating
-- [x] use timestamps for executed and started in result template
-- [x] test with multiple examples in a single file
-- [x] test with multiple files
-- [x] test with files in subfolders
-- [x] Retina screen sizing

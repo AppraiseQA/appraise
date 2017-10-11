@@ -21,7 +21,7 @@ color: blue
 
 ![path with yaml](images/pathwithyaml-8d71a312-be76-44fb-b5d9-d13306ab972a.png)
 
-## YAML
+## JSON
 
 Start with `~~~json`, such as in the example below:
 
