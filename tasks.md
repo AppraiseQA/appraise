@@ -2,7 +2,10 @@
 
 ## Before beta 
 
+- [ ] hello-world project generator
+- [ ] alpha for images without matching dimensions
 - [ ] record timestamp when a page started executing, use in the result template
+- [ ] Node 8
 - [ ] use pageObj.sourcePath when approving with new result instead of hard-coding the path
 - [ ] test with large images
 - [ ] test with complex page and example names
