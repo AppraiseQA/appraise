@@ -23,6 +23,7 @@
 - [ ] test overlay/positioning in other browsers
   - [ ] safari
   - [ ] firefox
+- [ ] handle gracefully cases where the expected result is provided, but the file is not present
 
 ## before 1.0
 
