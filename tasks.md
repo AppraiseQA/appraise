@@ -5,19 +5,17 @@
 - [ ] hello-world project generator
 - [ ] alpha for images without matching dimensions
 - [ ] record timestamp when a page started executing, use in the result template
-- [ ] Node 8
+- [x] Node 8
 - [ ] use pageObj.sourcePath when approving with new result instead of hard-coding the path
 - [ ] test with large images
 - [ ] test with complex page and example names
 - [ ] test with exceptions thrown throughout the test process
 - [ ] directory summaries for page folders
-- [ ] tabs in summary (pages/examples)
 - [x] skip empty files (instead of blowing up)
 - [ ] Solve cross-linking (eg replace .md in local links to .html when generating html)
-- [ ] detect examples with the same name on a page
+- [x] detect examples with the same name on a page
 - [ ] support `image/*` content types for content/contentType fixtures
   - [ ] make sure we can get the right dimensions from headless chrome
-- [ ] skip over empty .md files instead of blowing up
 - [ ] Enable people to extend/plug easier
   - [ ] add more parsers
 - [ ] test overlay/positioning in other browsers
