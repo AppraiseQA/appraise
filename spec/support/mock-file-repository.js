@@ -5,7 +5,7 @@ const LocalFileRepository = require('../../src/components/local-file-repository'
 module.exports = function mockFileRepository(config) {
 	const template = new LocalFileRepository(config),
 		functionNames = Object.keys(template).filter(t => typeof template[t] === 'function'),
-		promiseMethods = functionNames.filter(t =>/^clean|^read|^copy|^append|^write/.test(t));
+		promiseMethods = functionNames.filter(t =>/^clean|^read|^copy|^append|^write|^isFileReadable/.test(t));
 	template.promises = {};
 	functionNames.forEach(name => spyOn(template, name).and.callThrough());
 	promiseMethods.forEach(function (method) {

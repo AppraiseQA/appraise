@@ -406,4 +406,19 @@ describe('LocalFileRepository', () => {
 				.then(done);
 		});
 	});
+	describe('isFileReadable', () => {
+		it('resolves with true if file is readable', done => {
+			const sourcePath = path.join(workingDir, 't.txt');
+			fs.writeFileSync(sourcePath, 't', 'utf8');
+			underTest.isFileReadable(sourcePath)
+				.then(result => expect(result).toBeTruthy())
+				.then(done, done.fail);
+		});
+		it('resolves with false if file does not exist', done => {
+			const sourcePath = path.join(workingDir, 'nofile.txt');
+			underTest.isFileReadable(sourcePath)
+				.then(result => expect(result).toBeFalsy())
+				.then(done, done.fail);
+		});
+	});
 });

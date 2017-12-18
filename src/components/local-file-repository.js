@@ -119,5 +119,8 @@ module.exports = function LocalFileRepository(config/*, components*/) {
 		return fsPromise.statAsync(filePath)
 			.then(s => Math.floor(s.mtime.getTime() / 1000));
 	};
+	self.isFileReadable = function (filePath) {
+		return fsPromise.accessAsync(filePath, fs.constants.R_OK).then(() => true).catch(() => false);
+	};
 	init();
 };

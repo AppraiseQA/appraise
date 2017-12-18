@@ -343,6 +343,7 @@ describe('FixtureService', () => {
 				fileRepository.writeBuffer.and.callFake(t => Promise.resolve(t));
 				resultBuffer = 'bbbbb';
 				screenshotService.promises.screenshot.resolve(resultBuffer);
+				fileRepository.promises.isFileReadable.resolve(true);
 			});
 			it('stores the screenshot into the <prefix>-actual.png', done => {
 				fileRepository.writeBuffer.and.callFake((path, content)	 => {
@@ -364,6 +365,30 @@ describe('FixtureService', () => {
 					})
 					.then(() => expect(pngToolkit.compare).not.toHaveBeenCalled())
 					.then(done, done.fail);
+			});
+			it('checks if a the expected file is readable before comparing, to avoid a bug with file piping throwing an async error', done => {
+				fileRepository.isFileReadable.and.callFake(fpath => {
+					expect(fpath).toEqual('/examples/images/image1.png');
+					expect(pngToolkit.compare).not.toHaveBeenCalled();
+					done();
+					return pendingPromise;
+				});
+				underTest.executeExample({expected: 'images/image1.png'}, '/examples/some/path1')
+					.then(done.fail, done.fail);
+			});
+			it('reports an error if the expected result is provided but not readable', done => {
+				fileRepository.isFileReadable.and.returnValue(Promise.resolve(false));
+
+				underTest.executeExample({expected: 'images/image1.png'}, '/examples/some/path1')
+					.then(result => {
+						expect(result).toEqual({
+							output: { source: 'path1-output/index.svg', screenshot: 'path1-actual.png' },
+							outcome: { status: 'error', message: 'expected result is not readable /examples/images/image1.png', error: 'expected result is not readable /examples/images/image1.png' }
+						});
+					})
+					.then(() => expect(pngToolkit.compare).not.toHaveBeenCalled())
+					.then(done, done.fail);
+
 			});
 			it('runs the expected result through the PNG comparison engine', done => {
 				pngToolkit.compare.and.callFake((expected, actual, diff)  => {

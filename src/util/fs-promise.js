@@ -18,6 +18,6 @@ const fs = require('fs'),
 	},
 	result = {};
 
-['writeFile', 'appendFile', 'readFile', 'mkdir', 'stat'].forEach(method => result[method + 'Async'] = promisify(fs, method));
+['writeFile', 'appendFile', 'readFile', 'mkdir', 'stat', 'access'].forEach(method => result[method + 'Async'] = promisify(fs, method));
 
 module.exports = result;

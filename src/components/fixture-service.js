@@ -42,18 +42,27 @@ module.exports = function FixtureService(config, components) {
 			}
 		},
 		calculateOutcome = function (example, pathPrefix) {
-			const allowedDifference = parseInt((example.params && example.params['allowed-difference']) || config['allowed-difference'] || 0);
+
 			if (!example.expected) {
 				return {
 					message: 'no expected result provided'
 				};
 			}
-			return pngToolkit.compare(
-				path.resolve(pathPrefix, '..', '..', example.expected),
-				pathPrefix + '-actual.png',
-				pathPrefix + '-diff.png',
-				allowedDifference
-			);
+
+			const allowedDifference = parseInt((example.params && example.params['allowed-difference']) || config['allowed-difference'] || 0),
+				expectedFilePath = path.resolve(pathPrefix, '..', '..', example.expected);
+			return fileRepository.isFileReadable(expectedFilePath)
+				.then((readable) => {
+					if (!readable) {
+						throw `expected result is not readable ${expectedFilePath}`;
+					}
+					return pngToolkit.compare(
+						expectedFilePath,
+						pathPrefix + '-actual.png',
+						pathPrefix + '-diff.png',
+						allowedDifference
+					);
+				});
 		},
 		mergeOutcome = function (result, diffResult) {
 			result.outcome = {
