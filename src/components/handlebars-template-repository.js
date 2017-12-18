@@ -21,11 +21,10 @@ module.exports = function HandlebarsTemplateRepository(config, components) {
 		templates = {};
 	loadHelpers();
 	self.get = function (name) {
-
 		if (templates[name]) {
 			return Promise.resolve(templates[name]);
 		} else {
-			return fileRepository.readText(fileRepository.referencePath('templates', name + '.hbs'))
+			return fileRepository.readText(fileRepository.referencePath('templates', name + '.html'))
 				.then(Handlebars.compile)
 				.then(t => templates[name] = t);
 		}

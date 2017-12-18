@@ -16,7 +16,7 @@ describe('HandlebarsTemplateRepository', () => {
 		it('compiles a new template from the file repository templates folder if loading for the first time', done => {
 			underTest.get('some-template')
 				.then(r => expect(r({greeting: 'hello'})).toEqual('--hello--'))
-				.then(() => expect(fileRepository.readText).toHaveBeenCalledWith('templateDir/some-template.hbs'))
+				.then(() => expect(fileRepository.readText).toHaveBeenCalledWith('templateDir/some-template.html'))
 				.then(done, done.fail);
 			fileRepository.promises.readText.resolve('--{{greeting}}--');
 		});
@@ -38,7 +38,7 @@ describe('HandlebarsTemplateRepository', () => {
 				.then(() => fileRepository.readText.calls.reset())
 				.then(() => underTest.get('some-new-template'))
 				.then(r => expect(r).not.toBe(oldResult))
-				.then(() => expect(fileRepository.readText).toHaveBeenCalledWith('templateDir/some-new-template.hbs'))
+				.then(() => expect(fileRepository.readText).toHaveBeenCalledWith('templateDir/some-new-template.html'))
 				.then(done, done.fail);
 			fileRepository.promises.readText.resolve('--{{greeting}}---');
 		});
