@@ -12,7 +12,7 @@
 - [ ] test with exceptions thrown throughout the test process
 - [ ] directory summaries for page folders
 - [ ] tabs in summary (pages/examples)
-- [ ] skip empty files (instead of blowing up)
+- [x] skip empty files (instead of blowing up)
 - [ ] Solve cross-linking (eg replace .md in local links to .html when generating html)
 - [ ] detect examples with the same name on a page
 - [ ] support `image/*` content types for content/contentType fixtures

@@ -49,6 +49,11 @@ module.exports = function ExamplesRepository(config, components) {
 			throw 'page name must be provided';
 		}
 		return self.getPageBody(pageName)
-			.then(pageBody =>  extractExamplesFromHtml(pageBody, propertyPrefix).map(fillInGlobalParams));
+			.then(pageBody => {
+				if (!pageBody) {
+					return [];
+				}
+				return extractExamplesFromHtml(pageBody, propertyPrefix).map(fillInGlobalParams);
+			});
 	};
 };

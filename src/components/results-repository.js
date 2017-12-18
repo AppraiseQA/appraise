@@ -164,7 +164,7 @@ module.exports = function ResultsRepository(config, components) {
 			return Promise.reject(`page ${pageName} not found in results`);
 		};
 		if (!pageBody) {
-			return Promise.reject('page body cannot be empty');
+			pageBody = 'this file was empty';
 		}
 		return templateRepository.get('page')
 			.then(template => template(mergeProperties({body: pageBody}, pageObj)))

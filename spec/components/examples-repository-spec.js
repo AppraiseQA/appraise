@@ -112,6 +112,12 @@ describe('ExamplesRepository', () => {
 				}))
 				.then(done, done.fail);
 		});
+		it('returns a blank array for empty pages', done => {
+			pageFormatter.format.and.returnValue(Promise.resolve(''));
+			underTest.getPageExamples('some/page')
+				.then(result => expect(result).toEqual([]))
+				.then(done, done.fail);
+		});
 
 	});
 
