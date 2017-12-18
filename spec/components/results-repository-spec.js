@@ -883,7 +883,7 @@ describe('ResultsRepository', () => {
 		it('rejects if the example with the same name already exists', done => {
 			underTest.openExampleRun('pages/page1', {exampleName: 'simple', params: 'xxx'})
 				.then(done.fail)
-				.catch(e => expect(e).toEqual('example simple already open in pages/page1'))
+				.catch(e => expect(e).toEqual('multiple example blocks named "simple" detected in pages/page1. Example names must be unique in a page.'))
 				.then(() => expect(Object.keys(underTest.getPageRun('pages/page1').results).length).toEqual(1))
 				.then(() => expect(underTest.getPageRun('pages/page1').results.simple.params).toBeUndefined())
 				.then(done, done.fail);
