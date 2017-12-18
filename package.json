@@ -38,6 +38,7 @@
     "js-yaml": "^3.9.0",
     "markdown-it": "^8.3.1",
     "markdown-it-github-preamble": "^1.0.0",
+    "minidi": "^1.0.1",
     "pixelmatch": "^4.0.2",
     "pngjs": "^3.2.0",
     "puppeteer": "^0.10.2",
