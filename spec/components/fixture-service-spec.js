@@ -115,6 +115,7 @@ describe('FixtureService', () => {
 		describe('fixture result processing', () => {
 			beforeEach(() => {
 				fileRepository.writeText.and.callFake(t => Promise.resolve(t));
+				fileRepository.writeBuffer.and.callFake(t => Promise.resolve(t));
 				fileRepository.promises.cleanDir.resolve();
 			});
 			describe('when the fixture returns a string', () => {
@@ -219,6 +220,61 @@ describe('FixtureService', () => {
 						.then(done.fail, done.fail);
 
 				});
+				it('saves image/jpeg to .jpg files',	done => {
+					const buffer = new Buffer('a-b-c', 'utf8');
+					nodeFixtureEngine.execute.and.returnValue(Promise.resolve({
+						contentType: 'image/jpeg',
+						content: buffer
+					}));
+
+					screenshotService.screenshot.and.callFake(props => {
+						expect(props).toEqual({url: 'file:/some/path1-output/index.jpg'});
+						expect(fileRepository.writeBuffer).toHaveBeenCalledWith('/some/path1-output/index.jpg', buffer);
+						done();
+						return pendingPromise;
+					});
+
+					underTest.executeExample({a: 1}, '/some/path1')
+						.then(done.fail, done.fail);
+
+				});
+				it('saves image/png to .png files',	done => {
+					const buffer = new Buffer('a-b-c', 'utf8');
+					nodeFixtureEngine.execute.and.returnValue(Promise.resolve({
+						contentType: 'image/png',
+						content: new Buffer('a-b-c', 'utf8')
+					}));
+
+					screenshotService.screenshot.and.callFake(props => {
+						expect(props).toEqual({url: 'file:/some/path1-output/index.png'});
+						expect(fileRepository.writeBuffer).toHaveBeenCalledWith('/some/path1-output/index.png', buffer);
+						done();
+						return pendingPromise;
+					});
+
+					underTest.executeExample({a: 1}, '/some/path1')
+						.then(done.fail, done.fail);
+
+				});
+				it('saves image/gif to .gif files',	done => {
+					const buffer = new Buffer('a-b-c', 'utf8');
+					nodeFixtureEngine.execute.and.returnValue(Promise.resolve({
+						contentType: 'image/gif',
+						content: new Buffer('a-b-c', 'utf8')
+					}));
+
+					screenshotService.screenshot.and.callFake(props => {
+						expect(props).toEqual({url: 'file:/some/path1-output/index.gif'});
+						expect(fileRepository.writeBuffer).toHaveBeenCalledWith('/some/path1-output/index.gif', buffer);
+						done();
+						return pendingPromise;
+					});
+
+					underTest.executeExample({a: 1}, '/some/path1')
+						.then(done.fail, done.fail);
+
+				});
+
 				it('stores the output as a relative path', done => {
 					nodeFixtureEngine.execute.and.returnValue(Promise.resolve({
 						contentType: 'image/svg',

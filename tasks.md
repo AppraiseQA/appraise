@@ -14,8 +14,7 @@
 - [x] skip empty files (instead of blowing up)
 - [ ] Solve cross-linking (eg replace .md in local links to .html when generating html)
 - [x] detect examples with the same name on a page
-- [ ] support `image/*` content types for content/contentType fixtures
-  - [ ] make sure we can get the right dimensions from headless chrome
+- [x] support `image/*` content types for content/contentType fixtures
 - [ ] Enable people to extend/plug easier
   - [ ] add more parsers
 - [ ] test overlay/positioning in other browsers
@@ -86,7 +85,7 @@
 - [ ] CLI/NPM tasks
   - [ ] executing tests
    - [x] run all tests 
-   - [ ] run a specific page
+   - [x] run a specific page
    - [ ] run a specific example
    - [x] exit with -1 in case of errors/failures
   - [ ] approving changes
