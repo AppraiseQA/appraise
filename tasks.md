@@ -23,7 +23,7 @@
 - [x] handle gracefully cases where the expected result is provided, but the file is not present
 
 ## before 1.0
-
+- [ ] [headless firefox](https://hacks.mozilla.org/2017/12/using-headless-mode-in-firefox/)
 - [ ] AWS Lambda screenshots 
 - [ ] Make it easier to inspect/approve
   - [x] CLI Approval instructions on the results page
