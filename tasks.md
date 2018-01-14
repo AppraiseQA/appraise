@@ -24,7 +24,7 @@
 
 ## before 1.0
 - [ ] [headless firefox](https://hacks.mozilla.org/2017/12/using-headless-mode-in-firefox/)
-- [ ] AWS Lambda screenshots 
+- [ ] [AWS Lambda chrome puppeteer](https://github.com/sambaiz/puppeteer-lambda-starter-kit)
 - [ ] Make it easier to inspect/approve
   - [x] CLI Approval instructions on the results page
   - [x] CLI Approval instructions on the rendered page (for all examples)
