@@ -23,10 +23,14 @@ module.exports = function FixtureService(config, components) {
 			if (exampleParams['initial-height']) {
 				result.initialHeight = parseInt(exampleParams['initial-height']);
 			}
+			if (exampleParams['evaluate-function']) {
+				// eslint-disable-next-line no-new-func
+				result.evaluateFunction = new Function(exampleParams['evaluate-function']);
+			}
 			if (clipArgs.length) {
 				result.clip = {};
 				clipArgs.forEach(name => result.clip[name] = parseInt(exampleParams[`clip-${name}`]));
-			};
+			}
 			return result;
 		},
 		saveFixtureOutputToFile = function (fixtureOutput, pathPrefix) {
