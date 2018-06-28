@@ -32,10 +32,11 @@ module.exports = function ChromeScreenshotService(config, components) {
 			.then(box => naturalSize = box)
 			.then(() => chromeDriver.setWindowSize(naturalSize.width, naturalSize.height))
 			.then(() => {
-				if (!options.evaluateFunction) {
+				if (!options.beforeScreenshot) {
 					return Promise.resolve();
 				} else {
-					return chromeDriver.evaluateFunction(options.evaluateFunction);
+					return chromeDriver.evaluate(options.beforeScreenshot);
+
 				}
 			})
 			.then(() => chromeDriver.screenshot())
