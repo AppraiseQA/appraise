@@ -10,7 +10,7 @@ module.exports = function FixtureService(config, components) {
 		screenshotService = components.screenshotService,
 		fileRepository = components.fileRepository,
 		pngToolkit = components.pngToolkit,
-		getScreenshotOptions = function (url, exampleParams) {
+		getScreenshotOptions = function (url, fixtureResult, exampleParams) {
 			exampleParams = exampleParams || {};
 			const clipArgNames = ['x', 'y', 'width', 'height'],
 				clipArgs = clipArgNames.filter(t => exampleParams[`clip-${t}`]),
@@ -23,10 +23,13 @@ module.exports = function FixtureService(config, components) {
 			if (exampleParams['initial-height']) {
 				result.initialHeight = parseInt(exampleParams['initial-height']);
 			}
+			if (fixtureResult.beforeScreenshot) {
+				result.beforeScreenshot = fixtureResult.beforeScreenshot;
+			}
 			if (clipArgs.length) {
 				result.clip = {};
 				clipArgs.forEach(name => result.clip[name] = parseInt(exampleParams[`clip-${name}`]));
-			};
+			}
 			return result;
 		},
 		saveFixtureOutputToFile = function (fixtureOutput, pathPrefix) {
@@ -115,6 +118,15 @@ module.exports = function FixtureService(config, components) {
 						return recordFileOutput(path.join(outputPath, output));
 					}
 				} else if (typeof output === 'object') {
+					if (output.beforeScreenshot) {
+						result.beforeScreenshot = output.beforeScreenshot;
+					}
+					if (typeof output.url === 'string') {
+						result.output = {
+							source: output.url
+						};
+						return output.url;
+					}
 					return saveFixtureOutputToFile (output, outputPath)
 						.then(recordFileOutput);
 				} else {
@@ -139,7 +151,7 @@ module.exports = function FixtureService(config, components) {
 		return fileRepository.cleanDir(outputPath)
 			.then(() => fixtureEngine.execute(example, outputPath))
 			.then(processFixtureOutput)
-			.then(resultUrl => screenshotService.screenshot(getScreenshotOptions(resultUrl, example.params)))
+			.then(resultUrl => screenshotService.screenshot(getScreenshotOptions(resultUrl, result, example.params)))
 			.then(buffer => fileRepository.writeBuffer(resultPathPrefix + '-actual.png', buffer))
 			.then(fpath => result.output.screenshot = path.basename(fpath))
 			.then(() => calculateOutcome(example, resultPathPrefix))

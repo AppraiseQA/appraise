@@ -17,6 +17,9 @@ module.exports = function PuppeteerChromeDriver(/*config, components*/) {
 	self.setWindowSize = function (width, height) {
 		return page.setViewport({width: width, height: height, deviceScaleFactor: 1});
 	};
+	self.evaluate = function (evaluate) {
+		return page.evaluate(evaluate);
+	};
 	self.loadUrl = function (url) {
 		return page.goto(url);
 	};

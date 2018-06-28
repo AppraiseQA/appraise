@@ -31,6 +31,14 @@ module.exports = function ChromeScreenshotService(config, components) {
 			.then(() => chromeDriver.getContentBox())
 			.then(box => naturalSize = box)
 			.then(() => chromeDriver.setWindowSize(naturalSize.width, naturalSize.height))
+			.then(() => {
+				if (!options.beforeScreenshot) {
+					return Promise.resolve();
+				} else {
+					return chromeDriver.evaluate(options.beforeScreenshot);
+
+				}
+			})
 			.then(() => chromeDriver.screenshot())
 			.then(buffer => pngToolkit.clip(buffer, calculateClip(options.clip, naturalSize)));
 	};
