@@ -2,6 +2,7 @@
 
 ## Before beta 
 
+- [ ] add ability to set project-specific css
 - [ ] hello-world project generator
 - [ ] alpha for images without matching dimensions
 - [ ] record timestamp when a page started executing, use in the result template

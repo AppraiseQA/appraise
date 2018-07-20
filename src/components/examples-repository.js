@@ -1,6 +1,7 @@
 'use strict';
 const stripExtension = require('../util/strip-extension'),
 	extractExamplesFromHtml = require('../util/extract-examples-from-html'),
+	extractCommonPageAttributesFromHtml = require('../util/extract-common-page-attributes-from-html'),
 	globalProperties = require('../config/configurable-properties').map(p => p.argument);
 module.exports = function ExamplesRepository(config, components) {
 	const self = this,
@@ -43,6 +44,15 @@ module.exports = function ExamplesRepository(config, components) {
 		}
 		return fileRepository.readText(pagePath(pageName))
 			.then(pageFormatter.format);
+	};
+	self.getPageParameters = function (pageName) {
+		return self.getPageBody(pageName)
+			.then(pageBody => {
+				if (!pageBody) {
+					return {};
+				}
+				return extractCommonPageAttributesFromHtml(pageBody, propertyPrefix);
+			});
 	};
 	self.getPageExamples = function (pageName) {
 		if (!pageName) {

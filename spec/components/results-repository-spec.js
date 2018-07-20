@@ -681,6 +681,23 @@ describe('ResultsRepository', () => {
 			underTest.writePageBody('pages/page1', 'body')
 				.then(done.fail, done.fail);
 		});
+		it('merges the optional properties into the template before usual params', done => {
+			pageTemplate.and.callFake(props => {
+				expect(props.body).toEqual('body');
+				expect(props.pageName).toEqual('pages/page1');
+				expect(props.style).toEqual('should-add');
+				expect(props.summary).toEqual({
+					total: 1,
+					failure: 1,
+					status: 'failure'
+				});
+				done();
+				return pendingPromise;
+			});
+			underTest.writePageBody('pages/page1', 'body', {'body': 'should-not-replace', 'style': 'should-add', 'pageName': 'should-not-replace'})
+				.then(done.fail, done.fail);
+		});
+
 		it('merges the execution results into the HTML template output', done => {
 			const htmlPage = `
 					<table class="preamble" data-prefix-role="preamble">

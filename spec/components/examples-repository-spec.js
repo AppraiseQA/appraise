@@ -69,6 +69,21 @@ describe('ExamplesRepository', () => {
 			pageFormatter.promises.format.resolve('<h1>Title</h1>');
 		});
 	});
+	describe('getPageParameters', () => {
+		it('extracts page parameters from the preamble', done => {
+			underTest.getPageParameters('some/page')
+				.then(result => expect(result).toEqual({style: 'x.css', fixture: 'somefix'}))
+				.then(done, done.fail);
+			fileRepository.promises.readText.resolve('#source');
+			pageFormatter.promises.format.resolve(`
+				<table class="preamble" data-prefix-role="preamble">
+				<thead><tr><th>fixture</th><th>style</th></tr></thead>
+				<tbody><tr><td>somefix</td><td>x.css</td></tr></tbody>
+				</table>
+				<h1>Title</h1>
+			`);
+		});
+	});
 	describe('getPageExamples', () => {
 		beforeEach(() => {
 			fileRepository.promises.readText.resolve();

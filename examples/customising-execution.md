@@ -20,6 +20,7 @@ Check out the following documentation pages for more information on how individu
 
 * [Fixture Types](fixture-types.md)
 * [Controlling screenshots](controlling-screenshots.md)
+* [Executing code before the screenshot](before-screenshot.md)
 * [Controlling image comparisons](controlling-image-comparisons.md)
 
 You can also customise the format of the examples (JSON, YAML). For more information, check out the [Formatting Examples](formatting-examples.md) guide.

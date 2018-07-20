@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 'use strict';
-module.exports = function () {
+module.exports = function (params) {
 	return {
 		contentType: 'text/html',
 		content: `
@@ -19,18 +19,13 @@ module.exports = function () {
         	</head>
         	<body>
         		<button id="button" onclick="showHiddenText()">Show hidden text</button><br/>
-        		<span id="hidden">I am hidden</span>
+        		<span id="hidden">${params.text}</span>
         	</body>
         </html>`,
 		beforeScreenshot: () => {
 			return new Promise(resolve => {
-				setTimeout(() => {
-					window.document.getElementById('button').click();
-					setTimeout(() => {
-						resolve();
-					}, 0);
-				}, 0);
-
+				window.document.getElementById('button').click();
+				setTimeout(resolve, 10);
 			});
 		}
 	};

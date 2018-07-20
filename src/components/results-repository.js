@@ -158,7 +158,7 @@ module.exports = function ResultsRepository(config, components) {
 		}
 		return Promise.resolve();
 	};
-	self.writePageBody = function (pageName, pageBody) {
+	self.writePageBody = function (pageName, pageBody, parameters) {
 		const pageObj = findPage(pageName);
 		if (!pageObj) {
 			return Promise.reject(`page ${pageName} not found in results`);
@@ -167,7 +167,7 @@ module.exports = function ResultsRepository(config, components) {
 			pageBody = 'this file was empty';
 		}
 		return templateRepository.get('page')
-			.then(template => template(mergeProperties({body: pageBody}, pageObj)))
+			.then(template => template(mergeProperties({}, parameters, {body: pageBody}, pageObj)))
 			.then(htmlDoc => mergeResults(htmlDoc, pageObj.results, pageName, propertyPrefix))
 			.then(htmlPageResult => fileRepository.writeText(
 				fileRepository.referencePath('results', pageName + '.html'),

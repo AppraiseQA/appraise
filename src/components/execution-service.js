@@ -25,7 +25,11 @@ module.exports = function ExecutionService(config, components) {
 			.then(() => examplesRepository.getPageExamples(pageName))
 			.then(examples => sequentialPromiseMap(examples, runSingleExample))
 			.then(() => resultsRepository.closePageRun(pageName))
-			.then(() => examplesRepository.getPageBody(pageName))
-			.then(pageBody => resultsRepository.writePageBody(pageName, pageBody));
+			.then(() => Promise.all([examplesRepository.getPageBody(pageName), examplesRepository.getPageParameters(pageName)]))
+			.then(pageProps => {
+				const pageBody = pageProps[0],
+					pageParameters = pageProps[1];
+				return resultsRepository.writePageBody(pageName, pageBody, pageParameters);
+			});
 	};
 };
