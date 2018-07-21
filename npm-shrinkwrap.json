@@ -375,35 +375,7 @@
       "integrity": "sha1-gVyZ6oT2gJUp0vRXkb34JxE1LWY=",
       "dev": true
     },
-    "claudia": {
-      "version": "file:file:../claudiajs/claudia",
-      "integrity": "sha1-0ed4drrDnFWBiTLTDdhhOo44eeg=",
-      "requires": {
-        "archiver": "2.1.0",
-        "aws-sdk": "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.62.0.tgz",
-        "gunzip-maybe": "1.4.1",
-        "minimal-request-promise": "1.5.0",
-        "minimist": "1.2.0",
-        "oh-no-i-insist": "1.1.1",
-        "proxy-agent": "2.1.0",
-        "sequential-promise-map": "1.0.4",
-        "shelljs": "0.5.3",
-        "tar-fs": "1.16.0",
-        "uuid": "2.0.3"
-      },
-      "dependencies": {
-        "minimist": {
-          "version": "1.2.0",
-          "resolved": "https://registry.npmjs.org/minimist/-/minimist-1.2.0.tgz",
-          "integrity": "sha1-o1AIsg9BOD7sH7kU9M1d95omQoQ="
-        },
-        "uuid": {
-          "version": "2.0.3",
-          "resolved": "https://registry.npmjs.org/uuid/-/uuid-2.0.3.tgz",
-          "integrity": "sha1-Z+LoY3lyFVMN/zGOW/nc6/1Hsho="
-        }
-      }
-    },
+    "claudia": {},
     "cli-cursor": {
       "version": "2.1.0",
       "resolved": "https://registry.npmjs.org/cli-cursor/-/cli-cursor-2.1.0.tgz",

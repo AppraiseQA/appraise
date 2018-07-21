@@ -49,3 +49,5 @@ appraise run {OPTIONS}
 *  `--fixture`:  (_optional_) The name of the node module for executing tests.
 *  `--fixture-engine`:  (_optional_) The name of the engine for loading fixtures
     * _Defaults to_: node
+*  `--css`:  (_optional_) path to an additional CSS file to load into pages, relative to the examples directory
+    * _Defaults to_: not set
