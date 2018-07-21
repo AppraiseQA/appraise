@@ -2,6 +2,7 @@
 
 ## Before beta 
 
+- [ ] ensure text parsing does not include starting newline
 - [x] add ability to set project-specific css
 - [ ] support different fence types for examples (eg ---)
 - [ ] hello-world project generator

@@ -760,7 +760,7 @@ describe('ResultsRepository', () => {
 						'<pre data-outcome-status="failure" data-outcome-message="borked!">' +
 							'<code data-prefix-example="simple" data-prefix-format="json" class="language-json">abcd</code>' +
 						'</pre>' +
-						'<a href="page1/1-result.html" title="failure"><img src="page1/1-actual.png" title="failure" alt="failure"></a>' +
+						'<a href="page1/1-result.html" title="failure"><img src="page1/1-actual.png" title="borked!" data-outcome-status="failure" alt="borked!"></a>' +
 					'</body></html>'
 				]))
 				.then(done, done.fail);

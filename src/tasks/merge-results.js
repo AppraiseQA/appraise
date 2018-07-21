@@ -34,8 +34,9 @@ module.exports = function mergeResults(htmlDoc, examples, pageName, propertyPref
 				if (example.output && example.output.screenshot) {
 					doc('<img>')
 						.attr('src',  resultsDir + '/' + example.output.screenshot)
-						.attr('title', example.outcome.status)
-						.attr('alt', example.outcome.status)
+						.attr('title', example.outcome.message)
+						.attr('data-outcome-status', example.outcome.status)
+						.attr('alt', example.outcome.message)
 						.appendTo(link);
 				} else {
 					link.text(example.outcome.status + ': ' + example.outcome.message);
