@@ -65,5 +65,11 @@ module.exports = [
 		optional: true,
 		description: 'The name of the engine for loading fixtures',
 		default: 'node'
+	},
+	{
+		argument: 'css',
+		optional: true,
+		description: 'path to an additional CSS file to load into pages, relative to the examples directory',
+		default: 'not set'
 	}
 ];

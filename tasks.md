@@ -2,7 +2,8 @@
 
 ## Before beta 
 
-- [ ] add ability to set project-specific css
+- [x] add ability to set project-specific css
+- [ ] support different fence types for examples (eg ---)
 - [ ] hello-world project generator
 - [ ] alpha for images without matching dimensions
 - [ ] record timestamp when a page started executing, use in the result template
@@ -22,6 +23,7 @@
   - [ ] safari
   - [ ] firefox
 - [x] handle gracefully cases where the expected result is provided, but the file is not present
+- [ ] report problems better when the expected result is provided, but there is no example matching that name
 
 ## before 1.0
 - [ ] [headless firefox](https://hacks.mozilla.org/2017/12/using-headless-mode-in-firefox/)

@@ -2,6 +2,10 @@
   <head>
     <meta charset="utf-8"/>
     <link href="{{rootUrl pageName}}../assets/style.css" rel="stylesheet" />
+	{{#if css}}
+		<link href="{{rootUrl pageName}}{{css}}" rel="stylesheet" />
+	{{/if}}
+
   </head>
   <body>
   <input type="radio" checked="checked" data-tab-name="tab1" id="tab1" name="tab"/>	  
