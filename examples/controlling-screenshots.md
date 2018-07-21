@@ -6,7 +6,11 @@ fixture: fixtures/object.js
 
 > Note: this page is a fully executable spec for the options it demonstrates. If you are reading this on GitHub, it will render the page nicely and hide all the technical details, so check out the raw markdown to see the actual test configuration.
 
-Appraise runs your result pages in headless Chrome, then takes a screenshot. You can control the screenshot with several parameters. See the [Customising Execution](customising-execution.md) for all the different ways you can set these parameters.
+Appraise runs your result pages in headless Chrome, then takes a screenshot. 
+
+The screenshot is usually taken immediately after the result page loads, but you can optionally execute some javascript code after the page load and before the screenshot. Check out [executing code before the screenshot](before-screenshot.md) for more information.
+
+You can control the screenshot with several parameters. See the [Customising Execution](customising-execution.md) for all the different ways you can set these parameters.
 
 ## Managing the clip region
 

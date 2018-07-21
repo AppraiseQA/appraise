@@ -9,7 +9,7 @@ fixture: fixtures/path.js
 You can customise the execution of an example by setting parameters in:
 
 * the command line -- to set a parameter for all examples in a test run
-* the YAML preamble of a markdown file -- for settings that apply to a particular page
+* the YAML preamble of a markdown file -- for settings that apply to all examples on a particular page
 * the header of an individual example -- for settings that apply to a particular example
 
 The order of precedence is example, page, command line, so you can override the generic values with more specific ones. 
@@ -20,10 +20,11 @@ Check out the following documentation pages for more information on how individu
 
 * [Fixture Types](fixture-types.md)
 * [Controlling screenshots](controlling-screenshots.md)
-* [Executing code before the screenshot](before-screenshot.md)
 * [Controlling image comparisons](controlling-image-comparisons.md)
 
 You can also customise the format of the examples (JSON, YAML). For more information, check out the [Formatting Examples](formatting-examples.md) guide.
+
+In addition to using the standard parameters, you can define additional parameters on the page or in the example header, and they will be passed to your fixture. This is a way to provide a generic value to all examples on a page easily. Check out [Passing parameters to fixtures](passing-parameters.md) for more information and an example.
 
 ## In action
 
