@@ -35,7 +35,14 @@ describe('approve', () => {
 		it('approves a single example', done => {
 			approve(config, components)
 				.then(() => expect(resultsRepository.getResultNames).toHaveBeenCalledWith('xx/yy/page1', 'failure'))
-				.then(() => expect(resultsRepository.approveResult).toHaveBeenCalledWith('xx/yy/page1', 'blue line'))
+				.then(() => expect(resultsRepository.approveResult).toHaveBeenCalledWith('xx/yy/page1', 'blue line', undefined))
+				.then(done, done.fail);
+		});
+		it('passes the image subdir if defined', done => {
+			config['image-subdir'] = 'img';
+			approve(config, components)
+				.then(() => expect(resultsRepository.getResultNames).toHaveBeenCalledWith('xx/yy/page1', 'failure'))
+				.then(() => expect(resultsRepository.approveResult).toHaveBeenCalledWith('xx/yy/page1', 'blue line', 'img'))
 				.then(done, done.fail);
 		});
 		it('fails if approving the example fails', done => {
@@ -73,9 +80,21 @@ describe('approve', () => {
 				.then(() =>{
 					expect(resultsRepository.getResultNames).toHaveBeenCalledWith('xx/yy/page1', 'failure');
 					expect(resultsRepository.approveResult.calls.count()).toEqual(3);
-					expect(resultsRepository.approveResult.calls.argsFor(0)).toEqual(['xx/yy/page1', 'ex1']);
-					expect(resultsRepository.approveResult.calls.argsFor(1)).toEqual(['xx/yy/page1', 'blue line']);
-					expect(resultsRepository.approveResult.calls.argsFor(2)).toEqual(['xx/yy/page1', 'red line']);
+					expect(resultsRepository.approveResult.calls.argsFor(0)).toEqual(['xx/yy/page1', 'ex1', undefined]);
+					expect(resultsRepository.approveResult.calls.argsFor(1)).toEqual(['xx/yy/page1', 'blue line', undefined]);
+					expect(resultsRepository.approveResult.calls.argsFor(2)).toEqual(['xx/yy/page1', 'red line', undefined]);
+				})
+				.then(done, done.fail);
+		});
+		it('passes the image subdir if provided', done => {
+			config['image-subdir'] = 'img';
+			approve(config, components)
+				.then(() =>{
+					expect(resultsRepository.getResultNames).toHaveBeenCalledWith('xx/yy/page1', 'failure');
+					expect(resultsRepository.approveResult.calls.count()).toEqual(3);
+					expect(resultsRepository.approveResult.calls.argsFor(0)).toEqual(['xx/yy/page1', 'ex1', 'img']);
+					expect(resultsRepository.approveResult.calls.argsFor(1)).toEqual(['xx/yy/page1', 'blue line', 'img']);
+					expect(resultsRepository.approveResult.calls.argsFor(2)).toEqual(['xx/yy/page1', 'red line', 'img']);
 				})
 				.then(done, done.fail);
 		});

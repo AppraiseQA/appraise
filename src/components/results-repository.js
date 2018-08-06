@@ -24,10 +24,11 @@ module.exports = function ResultsRepository(config, components) {
 				actual = fileRepository.referencePath('results', pageName, resultObj.output.screenshot);
 			return fileRepository.copyFile(actual, expected);
 		},
-		approveWithNew = function (pageName, resultName, resultObj, generateOutcomeTemplate) {
+		approveWithNew = function (pageName, resultName, resultObj, generateOutcomeTemplate, imageSubdir) {
 			const actual = fileRepository.referencePath('results', pageName, resultObj.output.screenshot),
-				pageDir = path.dirname(pageName),
-				targetDir = fileRepository.referencePath('examples', pageDir),
+				parentPage = path.dirname(pageName),
+				pageDir = fileRepository.referencePath('examples', parentPage),
+				targetDir = imageSubdir ? path.join(pageDir, imageSubdir) : pageDir,
 				targetPath = fileRepository.newFilePath(targetDir, resultName, 'png'),
 				pagePath = fileRepository.referencePath('examples', pageName + '.md'),
 				additionalText = generateOutcomeTemplate({
@@ -60,7 +61,7 @@ module.exports = function ResultsRepository(config, components) {
 	self.getPageRun = function (pageName) {
 		return deepCopy(findPage(pageName));
 	};
-	self.approveResult = function (pageName, resultName) {
+	self.approveResult = function (pageName, resultName, imageSubdir) {
 		const pageObj = findPage(pageName),
 			resultObj = pageObj && pageObj.results && pageObj.results[resultName];
 		if (!pageObj) {
@@ -75,7 +76,7 @@ module.exports = function ResultsRepository(config, components) {
 				if (resultObj.expected) {
 					return approveWithExpected(pageName, resultObj);
 				} else {
-					return approveWithNew(pageName, resultName, resultObj, template);
+					return approveWithNew(pageName, resultName, resultObj, template, imageSubdir);
 				}
 			});
 	};

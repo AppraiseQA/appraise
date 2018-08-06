@@ -198,9 +198,11 @@ describe('ResultsRepository', () => {
 			});
 		});
 		describe('when working without an expected result', () => {
-			it('copies the actual file to a new random location inside the same folder as the page', done => {
+			beforeEach(() => {
 				template.and.returnValue('-- from template --');
 				fileRepository.newFilePath.and.returnValue('/targetDir/newPath.png');
+			});
+			it('copies the actual file to a new random location inside the same folder as the page', done => {
 				underTest.approveResult('folder1/folder2/pageX', 'with no expected')
 					.then(() => expect(fileRepository.newFilePath).toHaveBeenCalledWith('exampleDir/folder1/folder2', 'with no expected', 'png'))
 					.then(() => expect(fileRepository.copyFile).toHaveBeenCalledWith('resultDir/folder1/folder2/pageX/exp-2.png', '/targetDir/newPath.png'))
@@ -216,6 +218,23 @@ describe('ResultsRepository', () => {
 				fileRepository.promises.appendText.resolve();
 
 			});
+			it('copies the actual file to a new random location inside a subdir if provided', done => {
+				underTest.approveResult('folder1/folder2/pageX', 'with no expected', 'subdir')
+					.then(() => expect(fileRepository.newFilePath).toHaveBeenCalledWith('exampleDir/folder1/folder2/subdir', 'with no expected', 'png'))
+					.then(() => expect(fileRepository.copyFile).toHaveBeenCalledWith('resultDir/folder1/folder2/pageX/exp-2.png', '/targetDir/newPath.png'))
+					.then(() => expect(templateRepository.get).toHaveBeenCalledWith('generate-outcome'))
+					.then(() => expect(template).toHaveBeenCalledWith(jasmine.objectContaining({
+						exampleName: 'with no expected',
+						imagePath: 'newPath.png'
+					})))
+					.then(() => expect(fileRepository.appendText).toHaveBeenCalledWith('exampleDir/folder1/folder2/pageX.md', '-- from template --'))
+					.then(done, done.fail);
+
+				fileRepository.promises.copyFile.resolve();
+				fileRepository.promises.appendText.resolve();
+
+			});
+
 		});
 	});
 	describe('resetResultsDir', () => {

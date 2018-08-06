@@ -1,8 +1,5 @@
 /*global require*/
 'use strict';
-// approve --example="blue line" --page="hello-world"
-// approve --all
-//
 const validateRequiredParams = require('../util/validate-required-params'),
 	sequentialPromiseMap = require('sequential-promise-map'),
 	matchingName = require('../util/matching-name');
@@ -11,7 +8,7 @@ module.exports = function approve(config, components) {
 	validateRequiredParams(config, ['examples-dir', 'results-dir', 'templates-dir', 'page']);
 
 	const resultsRepository = components.resultsRepository,
-		approveExamplesOnAPage = function (pageName, exampleNameFilter) {
+		approveExamplesOnAPage = function (pageName, exampleNameFilter, imageSubdir) {
 			let exampleNames = resultsRepository.getResultNames(pageName, 'failure');
 			if (exampleNameFilter) {
 				exampleNames = exampleNames.filter(exampleName => matchingName(exampleName, exampleNameFilter));
@@ -23,17 +20,17 @@ module.exports = function approve(config, components) {
 					throw `page results for ${pageName} do not contain any failed examples`;
 				}
 			}
-			return sequentialPromiseMap(exampleNames, exampleName => resultsRepository.approveResult(pageName, exampleName));
+			return sequentialPromiseMap(exampleNames, exampleName => resultsRepository.approveResult(pageName, exampleName, imageSubdir));
 		},
-		approveResults = function (pageNameFilter, exampleNameFilter) {
+		approveResults = function (pageNameFilter, exampleNameFilter, imageSubdir) {
 			const pageNames = resultsRepository.getPageNames().filter(pageName => matchingName(pageName, pageNameFilter));
 			if (pageNames.length) {
-				return sequentialPromiseMap(pageNames, pageName => approveExamplesOnAPage(pageName, exampleNameFilter));
+				return sequentialPromiseMap(pageNames, pageName => approveExamplesOnAPage(pageName, exampleNameFilter, imageSubdir));
 			}
 			throw `${config.page} does not match any result pages`;
 		};
 	return resultsRepository.loadFromResultsDir()
-		.then(() => approveResults(config.page, config.example));
+		.then(() => approveResults(config.page, config.example, config['image-subdir']));
 
 };
 
@@ -73,6 +70,14 @@ module.exports.doc = {
 			description: 'The directory containing page templates for the resulting HTML',
 			default: 'embedded templates included with the application',
 			example: 'src/templates'
+		},
+		{
+			argument: 'image-subdir',
+			optional: 'true',
+			description: 'the name of a subdirectory where to place images when generating results for '
+				+ ' examples without responses, relative to the corresponding page with examples.',
+			default: 'not set -- saving to the same directory as the page with examples',
+			example: 'images'
 		}
 
 	]
