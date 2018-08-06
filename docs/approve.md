@@ -23,3 +23,6 @@ appraise approve {OPTIONS}
 *  `--templates-dir`:  (_optional_) The directory containing page templates for the resulting HTML
     * _For example_: src/templates
     * _Defaults to_: embedded templates included with the application
+*  `--image-subdir`:  (_optional_) the name of a subdirectory where to place images when generating results for  examples without responses, relative to the corresponding page with examples.
+    * _For example_: images
+    * _Defaults to_: not set -- saving to the same directory as the page with examples
