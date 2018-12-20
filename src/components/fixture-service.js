@@ -25,6 +25,9 @@ module.exports = function FixtureService(config, components) {
 			}
 			if (fixtureResult.beforeScreenshot) {
 				result.beforeScreenshot = fixtureResult.beforeScreenshot;
+				if (fixtureResult.beforeScreenshotArgs) {
+					result.beforeScreenshotArgs = fixtureResult.beforeScreenshotArgs;
+				}
 			}
 			if (clipArgs.length) {
 				result.clip = {};
@@ -120,6 +123,7 @@ module.exports = function FixtureService(config, components) {
 				} else if (typeof output === 'object') {
 					if (output.beforeScreenshot) {
 						result.beforeScreenshot = output.beforeScreenshot;
+						result.beforeScreenshotArgs = output.beforeScreenshotArgs;
 					}
 					if (typeof output.url === 'string') {
 						result.output = {

@@ -35,8 +35,7 @@ module.exports = function ChromeScreenshotService(config, components) {
 				if (!options.beforeScreenshot) {
 					return Promise.resolve();
 				} else {
-					return chromeDriver.evaluate(options.beforeScreenshot);
-
+					return chromeDriver.evaluate(options.beforeScreenshot, options.beforeScreenshotArgs);
 				}
 			})
 			.then(() => chromeDriver.screenshot())
