@@ -37,7 +37,7 @@ Fixtures can return anything that a headless Chrome browser can render, but they
 
 Appraise can work with four types of fixture results:
 
-1. An object containing two keys: `content` and `contentType`
+1. An object
 2. A URL
 3. A local file name
 4. A `Promise` resolving to any of the above (for asynchronous operations)
@@ -46,7 +46,13 @@ Appraise can work with four types of fixture results:
 
 The object result is useful when you can convert the input into a stand-alone page or file, so you do not have to save anything to the disk from the fixture. 
 
-Note that this approach only works for a small number of supported content types, listed in [supported-extensions.js](../src/config/supported-extensions.js). Appraise needs to know the right extension for a MIME type, so if the content type you want to use is not yet supported, submit a patch to that file, or use the local file fixture result, and save the page under the correct extension yourself.
+The object needs to provide one of the following:
+
+* `content` and `contentType`, strings containing the actual result and the mime type
+* or `url`, a string pointing to external content
+* optionally with `beforeScreenshot` and `beforeScreenshotArgs` to [execute code](before-screnshot.md) before taking the screenshot.
+
+Note that supplying content/content type only works for a small number of supported content types, listed in [supported-extensions.js](../src/config/supported-extensions.js). Appraise needs to know the right extension for a MIME type, so if the content type you want to use is not yet supported, submit a patch to that file, or use the local file fixture result, and save the page under the correct extension yourself.
   
 Here is an example executed using [fixtures/object.js](fixtures/object.js):
 

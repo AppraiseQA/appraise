@@ -14,10 +14,14 @@ in your fixture.
 
 The function will be executed in the browser's page context. The browser's 
 execution context is available within the function. For example, you can access the document via
-`window.document`.
+`window.document`. 
+
+As the function is in the browser context, you can't access local variables from the fixture enclosure directly, 
+but you can pass additional arguments using the `beforeScreenshotArgs` field. See an example in [before-screenshot-with-args.md](before-screenshot-with-args.md).
 
 For asynchronous functions, return a `Promise`. Appraise will wait until the promise resolves before
 taking the screenshot.
+
 
 ## Example
 
