@@ -9,7 +9,14 @@ module.exports = function PuppeteerChromeDriver(/*config, components*/) {
 		return puppeteer.launch()
 			.then(t => browser = t)
 			.then(() => browser.newPage())
-			.then(p => page = p);
+			.then(p => {
+				page = p;
+				page.on('console', msg => {
+					Promise.all(msg.args().map(x => x.jsonValue()))
+						.then(actualValues => console.log.apply(console, actualValues));
+				});
+				return page;
+			});
 	};
 	self.stop = function () {
 		return Promise.resolve().then(() => browser.close());

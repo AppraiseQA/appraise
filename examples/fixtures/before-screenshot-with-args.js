@@ -11,6 +11,7 @@ module.exports = function (params) {
         </html>`,
 		beforeScreenshotArgs: [params.text],
 		beforeScreenshot: (newText) => {
+			console.log('I am in your browser', newText);
 			window.document.getElementById('content').innerHTML = newText;
 		}
 	};

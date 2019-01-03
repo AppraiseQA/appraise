@@ -73,7 +73,7 @@ describe('run', () => {
 			run(config, components)
 				.then(done.fail)
 				.catch(e => expect(e).toEqual('boom!'))
-				.then(() => expect(executionService.executePage).toHaveBeenCalledWith('page1', 0))
+				.then(() => expect(executionService.executePage).toHaveBeenCalledWith('page1', 0, ['page1', 'page2']))
 				.then(() => expect(executionService.executePage.calls.count()).toEqual(1))
 				.then(() => expect(resultsRepository.closeRun).not.toHaveBeenCalled())
 				.then(done);
@@ -87,8 +87,8 @@ describe('run', () => {
 			run(config, components)
 				.then(done.fail)
 				.catch(e => expect(e).toEqual('boom!'))
-				.then(() => expect(executionService.executePage).toHaveBeenCalledWith('page1', 0))
-				.then(() => expect(executionService.executePage).toHaveBeenCalledWith('page2', 1))
+				.then(() => expect(executionService.executePage).toHaveBeenCalledWith('page1', 0, ['page1', 'page2']))
+				.then(() => expect(executionService.executePage).toHaveBeenCalledWith('page2', 1, ['page1', 'page2']))
 				.then(() => expect(executionService.executePage.calls.count()).toEqual(2))
 				.then(() => expect(resultsRepository.closeRun).not.toHaveBeenCalled())
 				.then(done);
@@ -109,7 +109,7 @@ describe('run', () => {
 			run(config, components)
 				.then(done.fail)
 				.catch(e => expect(e).toEqual('boom!'))
-				.then(() => expect(executionService.executePage).toHaveBeenCalledWith('page2', 0))
+				.then(() => expect(executionService.executePage).toHaveBeenCalledWith('page2', 0, ['page2']))
 				.then(() => expect(executionService.executePage.calls.count()).toEqual(1))
 				.then(done);
 			executionService.promises.start.resolve();
