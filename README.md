@@ -20,7 +20,11 @@ This is what it will help you do in the near future:
 - Speed up visual exploratory testing by making it easier to rebuild visual components from example data/configuration
 - Run visual tests quickly/in parallel using AWS Lambda
 
-For a more detailed introduction on when Appraise might be useful and why we built it, check out the [Painless Visual Testing](https://vimeo.com/album/4897573/video/247763289) presentation from Agile Tour Vienna 2017.
+For a more detailed introduction on when Appraise might be useful and why we built it, check out:
+
+* [Painless Visual Testing](https://vimeo.com/album/4897573/video/247763289) presentation from Agile Tour Vienna 2017.
+* [Slides from the Painless Visual Testing presentation](https://www.slideshare.net/gojkoadzic/painless-visual-testing)
+* [Automating Visual Testing with Appraise](https://www.infoq.com/news/2018/05/automated-visual-testing/), interview with Gojko Adzic for InfoQ
 
 ## In action
 
