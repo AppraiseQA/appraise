@@ -28,9 +28,12 @@ module.exports = function PuppeteerChromeDriver(/*config, components*/) {
 		return page.evaluate.apply(page, [evaluate].concat(args || []));
 	};
 	self.loadUrl = function (url) {
-		return page.goto(url);
+		return page.goto(url, {waitUntil: 'networkidle2'});
 	};
-	self.getContentBox = function () {
+	self.describeContent = async function () {
+		return page.$eval(':first-child', t => t.outerHTML.substr(0, 100));
+	};
+	self.getContentBox = async function () {
 		return page.$eval(':first-child', t => Object({height: t.scrollHeight, width: t.scrollWidth}));
 	};
 	self.screenshot = function () {

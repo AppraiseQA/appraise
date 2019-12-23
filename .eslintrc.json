@@ -5,7 +5,7 @@
     "es6": true
   },
   "parserOptions": {
-    "ecmaVersion": 6
+    "ecmaVersion": 2017
   },
   "rules": {
     "semi": ["error", "always"],
@@ -13,7 +13,6 @@
     "no-unused-vars": "error",
     "indent": ["error", "tab" ],
     "no-const-assign": "error",
-    "one-var": "error",
     "prefer-const": "error",
     "no-var": "error",
     "no-plusplus": ["off"],

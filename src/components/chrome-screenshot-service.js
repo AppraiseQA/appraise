@@ -14,31 +14,28 @@ module.exports = function ChromeScreenshotService(config, components) {
 				clip.height = naturalSize.height - clip.y;
 			}
 			return clip;
+		},
+		getNaturalSize = async function (options) {
+			const initialWidth = options.initialWidth || 10,
+				initialHeight = options.initialHeight || 10;
+			await chromeDriver.setWindowSize(initialWidth, initialHeight);
+			await chromeDriver.loadUrl(options.url);
+			return chromeDriver.getContentBox();
 		};
 	validateRequiredComponents(components, ['chromeDriver', 'pngToolkit']);
 
 	self.start = chromeDriver.start;
 	self.stop = chromeDriver.stop;
-	self.screenshot = function (options) {
-		let naturalSize;
+	self.screenshot = async function (options) {
 		if (!options || !options.url) {
 			return Promise.reject('invalid-args');
 		}
-		const initialWidth = options.initialWidth || 10,
-			initialHeight = options.initialHeight || 10;
-		return chromeDriver.setWindowSize(initialWidth, initialHeight)
-			.then(() => chromeDriver.loadUrl(options.url))
-			.then(() => chromeDriver.getContentBox())
-			.then(box => naturalSize = box)
-			.then(() => chromeDriver.setWindowSize(naturalSize.width, naturalSize.height))
-			.then(() => {
-				if (!options.beforeScreenshot) {
-					return Promise.resolve();
-				} else {
-					return chromeDriver.evaluate(options.beforeScreenshot, options.beforeScreenshotArgs);
-				}
-			})
-			.then(() => chromeDriver.screenshot())
-			.then(buffer => pngToolkit.clip(buffer, calculateClip(options.clip, naturalSize)));
+		const naturalSize = await getNaturalSize(options);
+		await chromeDriver.setWindowSize(naturalSize.width, naturalSize.height);
+		if (options.beforeScreenshot) {
+			await chromeDriver.evaluate(options.beforeScreenshot, options.beforeScreenshotArgs);
+		}
+		const buffer = await chromeDriver.screenshot();
+		return pngToolkit.clip(buffer, calculateClip(options.clip, naturalSize));
 	};
 };
