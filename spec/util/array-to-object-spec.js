@@ -1,4 +1,3 @@
-/*global describe, it, expect, require*/
 'use strict';
 const arrayToObject = require('../../src/util/array-to-object');
 describe('arrayToObject', () => {

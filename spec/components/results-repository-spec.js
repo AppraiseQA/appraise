@@ -1,4 +1,3 @@
-/*global describe, it, expect, require, jasmine, beforeEach, afterEach */
 'use strict';
 const mockFileRepository = require('../support/mock-file-repository'),
 	deepCopy = require('../../src/util/deep-copy'),

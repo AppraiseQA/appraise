@@ -1,4 +1,3 @@
-/*global describe, it, expect, beforeEach, jasmine */
 'use strict';
 const FixtureService = require('../../src/components/fixture-service'),
 	promiseSpyObject = require('../support/promise-spy-object'),
@@ -221,7 +220,7 @@ describe('FixtureService', () => {
 
 				});
 				it('saves image/jpeg to .jpg files',	done => {
-					const buffer = new Buffer('a-b-c', 'utf8');
+					const buffer = Buffer.from('a-b-c', 'utf8');
 					nodeFixtureEngine.execute.and.returnValue(Promise.resolve({
 						contentType: 'image/jpeg',
 						content: buffer
@@ -239,10 +238,10 @@ describe('FixtureService', () => {
 
 				});
 				it('saves image/png to .png files',	done => {
-					const buffer = new Buffer('a-b-c', 'utf8');
+					const buffer = Buffer.from('a-b-c', 'utf8');
 					nodeFixtureEngine.execute.and.returnValue(Promise.resolve({
 						contentType: 'image/png',
-						content: new Buffer('a-b-c', 'utf8')
+						content: Buffer.from('a-b-c', 'utf8')
 					}));
 
 					screenshotService.screenshot.and.callFake(props => {
@@ -257,10 +256,10 @@ describe('FixtureService', () => {
 
 				});
 				it('saves image/gif to .gif files',	done => {
-					const buffer = new Buffer('a-b-c', 'utf8');
+					const buffer = Buffer.from('a-b-c', 'utf8');
 					nodeFixtureEngine.execute.and.returnValue(Promise.resolve({
 						contentType: 'image/gif',
-						content: new Buffer('a-b-c', 'utf8')
+						content: Buffer.from('a-b-c', 'utf8')
 					}));
 
 					screenshotService.screenshot.and.callFake(props => {
@@ -310,7 +309,7 @@ describe('FixtureService', () => {
 						.then(done.fail, done.fail);
 				});
 				it('saves Buffer results using writeBuffer', done => {
-					const result =  new Buffer('a-b-c');
+					const result =  Buffer.from('a-b-c');
 					nodeFixtureEngine.execute.and.returnValue(Promise.resolve({
 						contentType: 'text/html',
 						content: result

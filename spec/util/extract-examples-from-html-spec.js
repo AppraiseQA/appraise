@@ -1,4 +1,3 @@
-/*global describe, it, expect */
 'use strict';
 const extractExamplesFromHtml = require('../../src/util/extract-examples-from-html');
 describe('extractExamplesFromHtml', function () {

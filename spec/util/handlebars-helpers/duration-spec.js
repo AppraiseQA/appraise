@@ -1,4 +1,3 @@
-/*global describe, it, expect */
 'use strict';
 const duration = require('../../../src/util/handlebars-helpers/duration');
 describe('duration', () => {

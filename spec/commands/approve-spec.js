@@ -1,4 +1,3 @@
-/*global describe, it, expect, beforeEach, jasmine */
 'use strict';
 const approve = require('../../src/commands/approve');
 describe('approve', () => {

@@ -1,4 +1,3 @@
-/*global require*/
 'use strict';
 const validateRequiredParams = require('../util/validate-required-params'),
 	sequentialPromiseMap = require('sequential-promise-map'),

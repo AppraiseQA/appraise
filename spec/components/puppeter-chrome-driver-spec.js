@@ -1,4 +1,3 @@
-/*global describe, it, expect, beforeEach, beforeAll, afterAll, __dirname */
 'use strict';
 const path = require('path'),
 	PuppeteerChromeDriver = require('../../src/components/puppeteer-chrome-driver'),

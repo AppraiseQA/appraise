@@ -1,4 +1,3 @@
-/*global module, require */
 'use strict';
 const path = require('path'),
 	parse = require('../util/parse');

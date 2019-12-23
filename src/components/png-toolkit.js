@@ -1,4 +1,3 @@
-/*global module, require */
 'use strict';
 const fs = require('fs'),
 	pixelmatch = require('pixelmatch'),

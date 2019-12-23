@@ -1,4 +1,3 @@
-/*global module */
 'use strict';
 module.exports = function mdAnnotateImage(md, options) {
 	const defaultImage = md.renderer.rules.image,

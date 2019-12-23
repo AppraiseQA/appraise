@@ -1,4 +1,3 @@
-/*global module */
 'use strict';
 module.exports = function pngAlphaFilter(png) {
 	for (let y = 0; y < png.height; y++) {

@@ -1,4 +1,3 @@
-/*global describe, it, expect */
 'use strict';
 const approvalInstructions = require('../../../src/util/handlebars-helpers/approval-instructions');
 describe('approvalInstructions', () => {

@@ -1,4 +1,3 @@
-/*global describe, it, expect, beforeEach, __dirname */
 'use strict';
 const PNGToolkit = require('../../src/components/png-toolkit'),
 	PNG = require('pngjs').PNG;

@@ -1,4 +1,3 @@
-/*global module */
 'use strict';
 const parseAttributes = require('./parse-attributes');
 module.exports = function mdAnnotateExample(md, options) {
@@ -13,7 +12,7 @@ module.exports = function mdAnnotateExample(md, options) {
 				if (initialTag && initialTag.indexOf('=') < 0) {
 					token.attrPush([propertyPrefix + '-format', initialTag]);
 					delete attributes[initialTag];
-				};
+				}
 				Object.keys(attributes).sort().forEach(key => {
 					token.attrPush([propertyPrefix + '-' + key, attributes[key]]);
 				});

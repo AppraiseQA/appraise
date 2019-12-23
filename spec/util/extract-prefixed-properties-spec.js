@@ -1,4 +1,3 @@
-/*global describe, it, expect, require*/
 'use strict';
 const extractPrefixedProperties = require('../../src/util/extract-prefixed-properties');
 describe('extractPrefixedProperties', () => {

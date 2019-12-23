@@ -1,4 +1,3 @@
-/*global module */
 'use strict';
 const fs = require('fs'),
 	path = require('path'),
@@ -93,7 +92,7 @@ module.exports = function LocalFileRepository(config/*, components*/) {
 	self.copyDirContents = function (sourceDir, targetDir, predicate) {
 		if (fsUtil.isFile(targetDir)) {
 			return Promise.reject(`${targetDir} is an existing file. Cannot copy a directory into it.`);
-		};
+		}
 		return self.readDirContents(sourceDir, predicate)
 			.then(sourceFiles => sequentialPromiseMap(sourceFiles, f => self.copyFile(path.join(sourceDir, f), path.join(targetDir, f))));
 	};
@@ -104,7 +103,7 @@ module.exports = function LocalFileRepository(config/*, components*/) {
 		return new Promise((resolve, reject) => {
 			if (!fsUtil.isDir(dirPath)) {
 				return reject(`${dirPath} is not a directory path`);
-			};
+			}
 
 			resolve(fsUtil.recursiveList(dirPath).filter(t => fsUtil.isFile(path.join(dirPath, t))));
 		})

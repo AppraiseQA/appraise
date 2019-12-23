@@ -1,4 +1,3 @@
-/*global describe, it, expect, beforeEach */
 'use strict';
 const MarkdownItPageFormatter = require('../../src/components/markdown-it-page-formatter');
 describe('MarkdownItPageFormatter', () => {

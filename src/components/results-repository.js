@@ -1,4 +1,3 @@
-/*global module, require*/
 'use strict';
 const path = require('path'),
 	deepCopy = require('../util/deep-copy'),
@@ -148,7 +147,7 @@ module.exports = function ResultsRepository(config, components) {
 		const pageObj = findPage(pageName);
 		if (!pageObj) {
 			return Promise.reject(`page ${pageName} not found in results`);
-		};
+		}
 		if (pageObj.summary) {
 			return Promise.reject(`page run ${pageName} already closed`);
 		}
@@ -163,7 +162,7 @@ module.exports = function ResultsRepository(config, components) {
 		const pageObj = findPage(pageName);
 		if (!pageObj) {
 			return Promise.reject(`page ${pageName} not found in results`);
-		};
+		}
 		if (!pageBody) {
 			pageBody = 'this file was empty';
 		}

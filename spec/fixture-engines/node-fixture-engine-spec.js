@@ -1,4 +1,3 @@
-/*global describe, it, expect, beforeEach, jasmine */
 'use strict';
 const path = require('path'),
 	os = require('os'),
@@ -137,7 +136,7 @@ describe('NodeFixtureEngine', () => {
 			underTest.execute(example)
 				.then(done.fail)
 				.catch(e => {
-					expect(e.message).toEqual('Unexpected token {');
+					expect(e.message).toMatch(/^Unexpected token/);
 					expect(e.name).toEqual('SyntaxError');
 				})
 				.then(done, done.fail);

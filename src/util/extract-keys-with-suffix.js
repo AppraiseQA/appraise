@@ -1,4 +1,3 @@
-/*global module */
 'use strict';
 const arrayToObject = require('./array-to-object');
 module.exports = function extractKeysWithSuffix(params, suffix) {

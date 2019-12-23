@@ -1,4 +1,3 @@
-/*global describe, it, expect, beforeEach */
 'use strict';
 const ExecutionService = require('../../src/components/execution-service'),
 	promiseSpyObject = require('../support/promise-spy-object');

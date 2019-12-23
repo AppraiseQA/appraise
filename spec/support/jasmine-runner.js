@@ -1,4 +1,3 @@
-/*global jasmine, require, process*/
 'use strict';
 const Jasmine = require('jasmine'),
 	SpecReporter = require('jasmine-spec-reporter').SpecReporter,

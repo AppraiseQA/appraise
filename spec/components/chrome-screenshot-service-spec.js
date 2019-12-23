@@ -1,4 +1,3 @@
-/*global describe, it, expect, beforeEach, __dirname */
 'use strict';
 const ChromeScreenshotService = require('../../src/components/chrome-screenshot-service'),
 	promiseSpyObject = require('../support/promise-spy-object');

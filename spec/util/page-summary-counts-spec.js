@@ -1,4 +1,3 @@
-/*global expect, it, describe */
 'use strict';
 const pageSummaryCounts = require('../../src/util/page-summary-counts');
 describe('pageSummaryCounts', () => {
@@ -35,8 +34,8 @@ describe('pageSummaryCounts', () => {
 			b: {outcome: {status: 'success'}},
 			c: {outcome: {status: 'failure'}}
 		});
-		expect(result.hasOwnProperty('error')).toBeFalsy();
-		expect(result.hasOwnProperty('skipped')).toBeFalsy();
+		expect(Object.prototype.hasOwnProperty.call(result, 'error')).toBeFalsy();
+		expect(Object.prototype.hasOwnProperty.call(result, 'skipped')).toBeFalsy();
 	});
 	it('calculates the final status from all examples', () => {
 		expect(pageSummaryCounts({

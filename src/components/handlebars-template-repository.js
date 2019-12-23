@@ -1,6 +1,4 @@
-/*global module, require*/
 'use strict';
-
 const Handlebars = require('handlebars'),
 	fs = require('fs'),
 	path = require('path'),

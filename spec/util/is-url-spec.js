@@ -1,4 +1,3 @@
-/*global describe, it, expect */
 'use strict';
 const isUrl = require('../../src/util/is-url');
 describe('isUrl', () => {

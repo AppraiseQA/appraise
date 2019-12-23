@@ -1,4 +1,3 @@
-/*global describe, it, expect*/
 'use strict';
 const parseAttributes = require('../../src/util/parse-attributes');
 describe('parseAttributes', () => {

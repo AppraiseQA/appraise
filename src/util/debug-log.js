@@ -1,5 +1,4 @@
 'use strict';
-/*global module, console */
 module.exports = function log(c) {
 	if (typeof c === 'string') {
 		console.log(c);

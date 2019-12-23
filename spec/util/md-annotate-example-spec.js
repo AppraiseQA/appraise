@@ -1,4 +1,3 @@
-/*global require, describe, expect, it, beforeEach */
 'use strict';
 const Markdown = require('markdown-it'),
 	mdAnnotateExample = require('../../src/util/md-annotate-example'),
@@ -48,7 +47,7 @@ describe('mdAnnotateExample', () => {
 		expect(result.attr('prefix-fixture')).toEqual('abc.js');
 		expect(result.attr('prefix-example')).toEqual('simple example');
 		expect(result.attr('prefix-width')).toEqual('100');
-		expect(result.attr.hasOwnProperty('prefix-json')).toBeFalsy();
+		expect(Object.prototype.hasOwnProperty.call(result.attr, 'prefix-json')).toBeFalsy();
 	});
 	it('can set blank attributes', () => {
 		const result = getCodeElement('~~~json example="" fixture="abc.js" width=100\nabcd\n~~~');

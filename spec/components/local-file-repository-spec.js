@@ -1,4 +1,3 @@
-/*global describe, it, expect, require, beforeEach, afterEach, jasmine */
 'use strict';
 const os = require('os'),
 	fs = require('fs'),
@@ -41,10 +40,10 @@ describe('LocalFileRepository', () => {
 	});
 	describe('newFilePath', function () {
 		it('creates a randomised version of a name in a dir with the extension', function () {
-			expect(underTest.newFilePath('dir1/dir2', 'clean-name', 'zip')).toMatch(/dir1\/dir2\/clean-name[^\.]+.zip/);
+			expect(underTest.newFilePath('dir1/dir2', 'clean-name', 'zip')).toMatch(/dir1\/dir2\/clean-name[^.]+.zip/);
 		});
 		it('sanitizes the root part of the name', function () {
-			expect(underTest.newFilePath('dir1', 'c/l*   e?a\nn-n\tame', 'zip')).toMatch(/dir1\/clean-name[^\.]+.zip/);
+			expect(underTest.newFilePath('dir1', 'c/l*   e?a\nn-n\tame', 'zip')).toMatch(/dir1\/clean-name[^.]+.zip/);
 		});
 	});
 	describe('readText', function () {
@@ -151,7 +150,7 @@ describe('LocalFileRepository', () => {
 		let actualContent, base64Content;
 		beforeEach(() => {
 			actualContent = 'this is something!';
-			base64Content = new Buffer('dGhpcyBpcyBzb21ldGhpbmch', 'base64');
+			base64Content = Buffer.from('dGhpcyBpcyBzb21ldGhpbmch', 'base64');
 		});
 		it('writes to a file using a promised interface', done => {
 			const sourcePath = path.join(workingDir, 'some.txt');

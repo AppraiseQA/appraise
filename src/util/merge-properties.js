@@ -1,4 +1,3 @@
-/*global module */
 'use strict';
 module.exports = function mergeProperties() {
 	const objects = Array.from(arguments),

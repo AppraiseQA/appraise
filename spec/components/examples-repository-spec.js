@@ -1,4 +1,3 @@
-/*global describe, it, expect, beforeEach */
 'use strict';
 const promiseSpyObject = require('../support/promise-spy-object'),
 	mockFileRepository = require('../support/mock-file-repository'),

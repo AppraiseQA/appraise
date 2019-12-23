@@ -1,4 +1,3 @@
-/*global require, it, expect, describe*/
 'use strict';
 const extractKeysWithSuffix = require('../../src/util/extract-keys-with-suffix');
 describe('extractKeysWithSuffix', () => {

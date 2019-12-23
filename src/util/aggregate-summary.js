@@ -1,4 +1,3 @@
-/*global module */
 'use strict';
 const calculateStatus = require('./calculate-status'),
 	statusList = require('./status-list'),
@@ -18,7 +17,7 @@ const calculateStatus = require('./calculate-status'),
 module.exports = function aggregateSummary(pagesArr) {
 	if (!pagesArr || !pagesArr.length) {
 		return {pages: 0, total: 0, status: 'skipped' };
-	};
+	}
 	const result = pagesArr.reduce(addPageSummary, {pages: pagesArr.length, total: 0});
 	result.status = calculateStatus(result);
 	return result;

@@ -1,4 +1,3 @@
-/*global module, spyOn */
 'use strict';
 const LocalFileRepository = require('../../src/components/local-file-repository'),
 	buildPromiseSpy = require('./build-promise-spy');

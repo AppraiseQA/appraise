@@ -1,4 +1,3 @@
-/*global describe, it, expect, beforeEach, jasmine  */
 'use strict';
 const run = require('../../src/commands/run'),
 	promiseSpyObject = require('../support/promise-spy-object');

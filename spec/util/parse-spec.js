@@ -1,4 +1,3 @@
-/*global require, describe, it, expect*/
 'use strict';
 const parse = require('../../src/util/parse');
 describe('parse', function () {

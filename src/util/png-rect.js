@@ -1,4 +1,3 @@
-/*global module */
 'use strict';
 const paint = function (png, x, y, r, g, b, a) {
 	const idx = (png.width * y + x) << 2;

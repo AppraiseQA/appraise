@@ -1,4 +1,3 @@
-/*global describe, it, expect, require, beforeEach */
 'use strict';
 const mockFileRepository = require('../support/mock-file-repository'),
 	HandlebarsTemplateRepository = require('../../src/components/handlebars-template-repository');

@@ -1,4 +1,3 @@
-/*global describe, it, expect */
 'use strict';
 const calculateStatus = require('../../src/util/calculate-status');
 describe('calculateStatus', () => {

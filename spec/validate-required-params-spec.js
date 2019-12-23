@@ -1,4 +1,3 @@
-/*global describe, it, expect, require */
 'use strict';
 const validateRequiredParams = require('../src/util/validate-required-params');
 describe('validateRequiredParams', () => {

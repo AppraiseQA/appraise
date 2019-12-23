@@ -1,4 +1,3 @@
-/*global module, require*/
 'use strict';
 const path = require('path');
 module.exports = function rootUrl(urlPath) {

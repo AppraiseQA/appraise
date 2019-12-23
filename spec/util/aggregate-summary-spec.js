@@ -1,4 +1,3 @@
-/*global describe, it, expect */
 'use strict';
 const aggregateSummary = require('../../src/util/aggregate-summary');
 describe('aggregateSummary', () => {
@@ -35,8 +34,8 @@ describe('aggregateSummary', () => {
 			{summary: {success: 10, failure: 1, total: 3}},
 			{summary: {success: 4, total: 4}}
 		]);
-		expect(result.hasOwnProperty('error')).toBeFalsy();
-		expect(result.hasOwnProperty('skipped')).toBeFalsy();
+		expect(Object.prototype.hasOwnProperty.call(result, 'error')).toBeFalsy();
+		expect(Object.prototype.hasOwnProperty.call(result, 'skipped')).toBeFalsy();
 	});
 	it('calculates the final status from all tests', () => {
 		expect(aggregateSummary(

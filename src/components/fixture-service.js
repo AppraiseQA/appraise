@@ -76,10 +76,10 @@ module.exports = function FixtureService(config, components) {
 			};
 			if (diffResult && diffResult.message) {
 				result.outcome.message = diffResult && diffResult.message;
-			};
+			}
 			if (diffResult && diffResult.image) {
 				result.outcome.image = diffResult && diffResult.image && path.basename(diffResult.image);
-			};
+			}
 			return result;
 		};
 

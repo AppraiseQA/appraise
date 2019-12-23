@@ -1,4 +1,3 @@
-/*global describe, it, expect */
 'use strict';
 const stripExtension = require('../../src/util/strip-extension');
 describe('stripExtension', () => {

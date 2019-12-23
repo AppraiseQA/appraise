@@ -1,4 +1,3 @@
-/*global require, module*/
 'use strict';
 const Handlebars = require('handlebars'),
 	fsPromise = require('../util/fs-promise');

@@ -1,4 +1,3 @@
-/*global describe, it, expect */
 'use strict';
 const getPixelmatchArgs = require('../../src/util/get-pixelmatch-args');
 describe('getPixelmatchArgs', () => {

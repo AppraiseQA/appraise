@@ -1,4 +1,3 @@
-/*global describe, it, expect */
 'use strict';
 const deepCopy = require('../../src/util/deep-copy');
 describe('deepCopy', () => {
