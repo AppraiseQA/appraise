@@ -9,8 +9,8 @@ describe('PuppeteerChromeDriver', () => {
 	};
 	let chrome, pngToolkit;
 	beforeEach(() => {
+		jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 		pngToolkit = new PNGToolkit({});
-
 	});
 	beforeAll(done => {
 		chrome = new PuppeteerChromeDriver({});

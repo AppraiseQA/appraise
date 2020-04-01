@@ -83,7 +83,7 @@ This type of fixture is useful when you want to process the example on an extern
 
 Here is an example executed using [fixtures/url.js](fixtures/url.js):
 
-~~~yaml example="url" fixture="fixtures/url.js" clip-width="370" clip-height="200"
+~~~yaml example="url" fixture="fixtures/url.js" clip-width="370" clip-height="200" initial-width="370" initial-height="200"
 name: AppraiseQA
 ~~~
 
