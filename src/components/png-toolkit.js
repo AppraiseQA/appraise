@@ -11,6 +11,7 @@ const fs = require('fs'),
 	},
 	loadPng = function (pngBufferData) {
 		const png = new PNG();
+		console.log('type', typeof pngBufferData);
 		return new Promise((resolve, reject) => png.parse(pngBufferData, function (err) {
 			if (err) {
 				reject(err);
@@ -24,6 +25,10 @@ const fs = require('fs'),
 			const stream = fs.createWriteStream(filePath).on('close', resolve).on('error', reject);
 			png.pack().pipe(stream);
 		});
+	},
+	toBuffer = function (png) {
+		const options = { colorType: 6 };
+		return PNG.sync.write(png, options);
 	};
 
 module.exports = function PngToolkit(config/*, components*/) {
@@ -79,7 +84,5 @@ module.exports = function PngToolkit(config/*, components*/) {
 				return PNG.sync.write(result);
 			});
 	};
-	self.readPng = readPng;
-	self.loadPng = loadPng;
-	self.writePng = writePng;
+	Object.assign(self, {readPng, loadPng, writePng, toBuffer});
 };

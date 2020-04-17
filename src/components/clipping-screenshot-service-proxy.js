@@ -17,6 +17,7 @@ module.exports = function ClippingScreenshotServiceProxy(config, components) {
 		};
 	self.start = screenshotService.start;
 	self.stop = screenshotService.stop;
+	self.canHandle = screenshotService.canHandle;
 	self.screenshot = async function (options) {
 		const buffer = await screenshotService.screenshot(options),
 			png = await pngToolkit.loadPng(buffer),

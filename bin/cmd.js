@@ -7,6 +7,7 @@ const minimist = require('minimist'),
 	docTxt = require('../src/util/doc-txt'),
 	defaultComponentPath = name => path.join(__dirname, '..', 'src', 'components', name),
 	NodeFixtureEngine = require('../src/fixture-engines/node-fixture-engine'),
+	DelegateScreenshotService = require('../src/components/delegate-screenshot-service'),
 	buildDefaultComponent = function (sourcePath, params, components) {
 		const Class = require(defaultComponentPath(sourcePath));
 		return new Class(params, components);
@@ -21,7 +22,9 @@ const minimist = require('minimist'),
 			examplesRepository = buildDefaultComponent('examples-repository', params, {fileRepository, pageFormatter}),
 			resultsRepository = buildDefaultComponent('results-repository', params, {fileRepository, templateRepository, logger}),
 			chromeScreenshotService = buildDefaultComponent('chrome-screenshot-service', params, {chromeDriver}),
-			screenshotService = buildDefaultComponent('clipping-screenshot-service-proxy', params, {pngToolkit, screenshotService: chromeScreenshotService}),
+			pngLoaderScreenshotService = buildDefaultComponent('png-loader-screenshot-service', params, {pngToolkit}),
+			delegateScreenshotService = new DelegateScreenshotService(params, [pngLoaderScreenshotService, chromeScreenshotService]),
+			screenshotService = buildDefaultComponent('clipping-screenshot-service-proxy', params, {pngToolkit, screenshotService: delegateScreenshotService}),
 			nodeFixtureEngine = new NodeFixtureEngine(params),
 			fixtureService = buildDefaultComponent('fixture-service', params, {pngToolkit, screenshotService, fileRepository, nodeFixtureEngine}),
 			executionService = buildDefaultComponent('execution-service', params, {fixtureService, resultsRepository, examplesRepository});

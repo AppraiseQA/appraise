@@ -24,4 +24,5 @@ module.exports = function ChromeScreenshotService(config, components) {
 		}
 		return chromeDriver.screenshot();
 	};
+	self.canHandle = () => true;
 };
