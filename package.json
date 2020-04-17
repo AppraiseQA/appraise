@@ -39,10 +39,10 @@
     "markdown-it": "^10.0.0",
     "markdown-it-github-preamble": "^1.0.0",
     "pixelmatch": "^5.2.0",
-    "pngjs": "^3.2.0",
-    "puppeteer": "^2.1.1",
+    "pngjs": "^5.0.0",
+    "puppeteer": "^3.0.0",
     "sanitize-filename": "^1.6.1",
-    "sequential-promise-map": "^1.0.4",
+    "sequential-promise-map": "^1.1.0",
     "shelljs": "^0.5.3",
     "uuid": "^3.1.0"
   },

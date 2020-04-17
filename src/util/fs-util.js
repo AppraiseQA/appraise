@@ -19,12 +19,6 @@ exports.isDir = function (filePath) {
 exports.isFile = function (filePath) {
 	return shell.test('-f', filePath);
 };
-exports.copy = function (from, to) {
-	return shell.cp('-r', from, to);
-};
-exports.copyFile = function (from, to) {
-	return shell.cp('-f', from, to);
-};
 exports.recursiveList = function (dirPath) {
 	return shell.ls('-R', dirPath);
 };
