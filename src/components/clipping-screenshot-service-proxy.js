@@ -1,13 +1,12 @@
 'use strict';
-const mergeProperties = require('../util/merge-properties'),
-	validateRequiredComponents = require('../util/validate-required-components');
+const validateRequiredComponents = require('../util/validate-required-components');
 module.exports = function ClippingScreenshotServiceProxy(config, components) {
 	validateRequiredComponents(components, ['pngToolkit', 'screenshotService']);
 	const self = this,
 		screenshotService = components.screenshotService,
 		pngToolkit = components.pngToolkit,
 		calculateClip = function (requestedClip, naturalSize) {
-			const clip = mergeProperties({x: 0, y: 0}, naturalSize, requestedClip || {});
+			const clip = Object.assign({x: 0, y: 0}, naturalSize, requestedClip || {});
 			if (clip.width + clip.x > naturalSize.width) {
 				clip.width = naturalSize.width - clip.x;
 			}

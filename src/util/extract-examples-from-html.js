@@ -1,6 +1,5 @@
 'use strict';
 const cheerio = require('cheerio'),
-	mergeProperties = require('../util/merge-properties'),
 	extractPrefixedProperties = require('../util/extract-prefixed-properties'),
 	extractCommonPageAttributesFromCheerio = require('../util/extract-common-page-attributes-from-cheerio');
 module.exports = function extractExamplesFromHtml(htmlDoc, propertyPrefix) {
@@ -15,7 +14,7 @@ module.exports = function extractExamplesFromHtml(htmlDoc, propertyPrefix) {
 			return element.attribs[matchingAttributeName];
 		},
 		initExample = function (index, element) {
-			const params = mergeProperties({}, commonAttribs, extractPrefixedProperties(element.attribs, propertyPrefix));
+			const params = Object.assign({}, commonAttribs, extractPrefixedProperties(element.attribs, propertyPrefix));
 			delete params.example;
 			examples.push({
 				input: doc(element).text(),

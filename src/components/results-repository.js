@@ -4,7 +4,6 @@ const path = require('path'),
 	aggregateSummary = require('../util/aggregate-summary'),
 	pageSummaryCounts = require('../util/page-summary-counts'),
 	mergeResults = require('../tasks/merge-results'),
-	mergeProperties = require('../util/merge-properties'),
 	validateRequiredComponents = require('../util/validate-required-components');
 module.exports = function ResultsRepository(config, components) {
 	validateRequiredComponents(components, ['fileRepository', 'templateRepository', 'logger']);
@@ -163,7 +162,7 @@ module.exports = function ResultsRepository(config, components) {
 			pageBody = 'this file was empty';
 		}
 		return templateRepository.get('page')
-			.then(template => template(mergeProperties({}, parameters, {body: pageBody}, pageObj)))
+			.then(template => template(Object.assign({}, parameters, {body: pageBody}, pageObj)))
 			.then(htmlDoc => mergeResults(htmlDoc, pageObj.results, pageName, propertyPrefix))
 			.then(htmlPageResult => fileRepository.writeText(
 				fileRepository.referencePath('results', pageName + '.html'),
@@ -194,7 +193,7 @@ module.exports = function ResultsRepository(config, components) {
 		if (pageObj.summary) {
 			return Promise.reject(`page run ${pageName} already closed`);
 		}
-		pageObj.results[exampleName] = mergeProperties(deepCopy(exampleDetails), {
+		pageObj.results[exampleName] = Object.assign(deepCopy(exampleDetails), {
 			unixTsStarted: timeStamp(),
 			resultPathPrefix: fileRepository.referencePath('results', pageName, String(Object.keys(pageObj.results).length))
 		});
@@ -225,12 +224,12 @@ module.exports = function ResultsRepository(config, components) {
 		if (!executionResults.outcome) {
 			return Promise.reject('execution results must contain an outcome');
 		}
-		mergeProperties(exampleObj, executionResults);
+		Object.assign(exampleObj, executionResults);
 		exampleObj.unixTsExecuted = timeStamp();
 
 		logger.logExampleResult(exampleName, executionResults.outcome);
 		return templateRepository.get('result')
-			.then(template => template(mergeProperties({ pageName: pageName }, exampleObj)))
+			.then(template => template(Object.assign({ pageName: pageName }, exampleObj)))
 			.then(html => fileRepository.writeText(summaryPath, html))
 			.then(() => exampleObj.outcome.overview = path.basename(summaryPath));
 	};
