@@ -1,5 +1,6 @@
 'use strict';
 const Handlebars = require('handlebars'),
+	validateRequiredComponents = require('../util/validate-required-components'),
 	fs = require('fs'),
 	path = require('path'),
 	loadHelpers = function () {
@@ -14,6 +15,7 @@ const Handlebars = require('handlebars'),
 	};
 
 module.exports = function HandlebarsTemplateRepository(config, components) {
+	validateRequiredComponents(components, ['fileRepository']);
 	const fileRepository = components.fileRepository,
 		self = this,
 		templates = {};

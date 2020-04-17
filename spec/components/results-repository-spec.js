@@ -14,6 +14,7 @@ describe('ResultsRepository', () => {
 		templateRepository = jasmine.createSpyObj('templateRepository', ['get']);
 		components.fileRepository = fileRepository;
 		components.templateRepository = templateRepository;
+		components.logger = jasmine.createSpyObj('logger', ['logSummary', 'logPageStarted', 'logPageComplete', 'logExampleResult']);
 		underTest = new ResultsRepository({
 			'html-attribute-prefix': 'data-prefix'
 		}, components);

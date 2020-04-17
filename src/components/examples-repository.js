@@ -2,8 +2,10 @@
 const stripExtension = require('../util/strip-extension'),
 	extractExamplesFromHtml = require('../util/extract-examples-from-html'),
 	extractCommonPageAttributesFromHtml = require('../util/extract-common-page-attributes-from-html'),
-	globalProperties = require('../config/configurable-properties').map(p => p.argument);
+	globalProperties = require('../config/configurable-properties').map(p => p.argument),
+	validateRequiredComponents = require('../util/validate-required-components');
 module.exports = function ExamplesRepository(config, components) {
+	validateRequiredComponents(components, ['fileRepository', 'pageFormatter']);
 	const self = this,
 		fileRepository = components.fileRepository,
 		pageFormatter = components.pageFormatter,

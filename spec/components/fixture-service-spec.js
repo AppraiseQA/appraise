@@ -16,11 +16,11 @@ describe('FixtureService', () => {
 		customFixtureEngine = {execute: jasmine.createSpy('custom execute') };
 		pendingPromise = new Promise(() => false);
 		underTest = new FixtureService(config, {
-			screenshotService: screenshotService,
-			fileRepository: fileRepository,
-			'fixture-engine-node': nodeFixtureEngine,
-			'fixture-engine-custom': customFixtureEngine,
-			pngToolkit: pngToolkit
+			screenshotService,
+			fileRepository,
+			nodeFixtureEngine,
+			customFixtureEngine,
+			pngToolkit
 		});
 	});
 	describe('start', () => {

@@ -4,23 +4,39 @@ const minimist = require('minimist'),
 	process = require('process'),
 	path = require('path'),
 	readCommands = require('../src/util/read-commands'),
-	ComponentBuilder = require('minidi'),
 	docTxt = require('../src/util/doc-txt'),
 	defaultComponentPath = name => path.join(__dirname, '..', 'src', 'components', name),
-	defaultFixtureEnginePath = name => path.join(__dirname, '..', 'src', 'fixture-engines', name),
-	defaultComponents = {
-		fileRepository: defaultComponentPath('local-file-repository'),
-		screenshotService: defaultComponentPath('chrome-screenshot-service'),
-		resultsRepository: defaultComponentPath('results-repository'),
-		templateRepository: defaultComponentPath('handlebars-template-repository'),
-		'fixture-engine-node': defaultFixtureEnginePath('node-fixture-engine'),
-		examplesRepository: defaultComponentPath('examples-repository'),
-		pageFormatter: defaultComponentPath('markdown-it-page-formatter'),
-		executionService: defaultComponentPath('execution-service'),
-		fixtureService: defaultComponentPath('fixture-service'),
-		pngToolkit: defaultComponentPath('png-toolkit'),
-		chromeDriver: defaultComponentPath('puppeteer-chrome-driver'),
-		logger: defaultComponentPath('console-color-logger')
+	NodeFixtureEngine = require('../src/fixture-engines/node-fixture-engine'),
+	buildDefaultComponent = function (sourcePath, params, components) {
+		const Class = require(defaultComponentPath(sourcePath));
+		return new Class(params, components);
+	},
+	buildComponents = (params) => {
+		const fileRepository = buildDefaultComponent('local-file-repository', params, {}),
+			logger = buildDefaultComponent('console-color-logger', params, {}),
+			pngToolkit = buildDefaultComponent('png-toolkit', params, {}),
+			chromeDriver = buildDefaultComponent('puppeteer-chrome-driver', params, {}),
+			pageFormatter = buildDefaultComponent('markdown-it-page-formatter', params, {}),
+			templateRepository = buildDefaultComponent('handlebars-template-repository', params, {fileRepository}),
+			examplesRepository = buildDefaultComponent('examples-repository', params, {fileRepository, pageFormatter}),
+			resultsRepository = buildDefaultComponent('results-repository', params, {fileRepository, templateRepository, logger}),
+			chromeScreenshotService = buildDefaultComponent('chrome-screenshot-service', params, {chromeDriver}),
+			screenshotService = buildDefaultComponent('clipping-screenshot-service-proxy', params, {pngToolkit, screenshotService: chromeScreenshotService}),
+			nodeFixtureEngine = new NodeFixtureEngine(params),
+			fixtureService = buildDefaultComponent('fixture-service', params, {pngToolkit, screenshotService, fileRepository, nodeFixtureEngine}),
+			executionService = buildDefaultComponent('execution-service', params, {fixtureService, resultsRepository, examplesRepository});
+		return {
+			fileRepository,
+			logger,
+			templateRepository,
+			pngToolkit,
+			chromeDriver,
+			pageFormatter,
+			examplesRepository,
+			resultsRepository,
+			screenshotService,
+			executionService
+		};
 	},
 	readArgs = function () {
 		return minimist(process.argv.slice(2), {
@@ -62,9 +78,9 @@ const minimist = require('minimist'),
 			process.exit(1);
 			return;
 		}
-
+		const components = Object.assign({}, args, buildComponents(args));
 		Promise.resolve()
-			.then(() => commands[command](args, new ComponentBuilder(args, defaultComponents)))
+			.then(() => commands[command](args, components))
 			.then(() => {
 				process.exit();
 			}, e => {

@@ -1013,11 +1013,6 @@
       "integrity": "sha512-OqbOk5oEQeAZ8WXWydlu9HJjz9WVdEIvamMCcXmuqUYjTknH/sqsWvhQ3vgwKFRR1HpjvNBKQ37nbJgYzGqGcg==",
       "dev": true
     },
-    "minidi": {
-      "version": "1.1.0",
-      "resolved": "https://registry.npmjs.org/minidi/-/minidi-1.1.0.tgz",
-      "integrity": "sha512-iGwe3fc34kOPjxj3vUPGH1w79LWdmhieYRLERdjuh3BknsVSsfOKmoM0wAdeWK/hbCevnxCvivAZOhfSXUhQjA=="
-    },
     "minimatch": {
       "version": "3.0.4",
       "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-3.0.4.tgz",

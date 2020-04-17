@@ -3,14 +3,12 @@ const ChromeScreenshotService = require('../../src/components/chrome-screenshot-
 	promiseSpyObject = require('../support/promise-spy-object');
 
 describe('ChromeScreenshotService', () => {
-	let chromeDriver, pngToolkit, underTest, config;
+	let chromeDriver, underTest, config;
 	beforeEach(() => {
 		config = {};
 		chromeDriver = promiseSpyObject('chromeDriver', ['start', 'loadUrl', 'stop', 'screenshot', 'setWindowSize', 'getContentBox']);
-		pngToolkit = promiseSpyObject('pngToolkit', ['clip']);
 		underTest = new ChromeScreenshotService(config, {
-			chromeDriver: chromeDriver,
-			pngToolkit: pngToolkit
+			chromeDriver: chromeDriver
 		});
 	});
 	['start', 'stop'].forEach(op => {
@@ -97,45 +95,14 @@ describe('ChromeScreenshotService', () => {
 			chromeDriver.promises.loadUrl.resolve();
 			chromeDriver.promises.getContentBox.resolve({width: 55, height: 66});
 		});
-		it('resolves with the clipped screenshot', done => {
+		it('resolves with the chrome driver screenshot', done => {
 			underTest.screenshot({url: 'xxx'})
-				.then(r => expect(r).toEqual('clipped-screenshot'))
-				.then(() => expect(pngToolkit.clip).toHaveBeenCalledWith('screenshot-img', {x: 0, y: 0, width: 55, height: 66}))
+				.then(r => expect(r).toEqual('screenshot-img'))
 				.then(done, done.fail);
 			chromeDriver.promises.setWindowSize.resolve();
 			chromeDriver.promises.loadUrl.resolve();
 			chromeDriver.promises.getContentBox.resolve({width: 55, height: 66});
 			chromeDriver.promises.screenshot.resolve('screenshot-img');
-			pngToolkit.promises.clip.resolve('clipped-screenshot');
-		});
-		describe('screenshot clipping', () => {
-			beforeEach(() => {
-				chromeDriver.promises.setWindowSize.resolve();
-				chromeDriver.promises.loadUrl.resolve();
-				chromeDriver.promises.getContentBox.resolve({width: 55, height: 66});
-				chromeDriver.promises.screenshot.resolve('screenshot-img');
-				pngToolkit.promises.clip.resolve('clipped-screenshot');
-			});
-			it('clips the screenshot result to natural size if no clip options', done => {
-				underTest.screenshot({url: 'xxx'})
-					.then(() => expect(pngToolkit.clip).toHaveBeenCalledWith('screenshot-img', {x: 0, y: 0, width: 55, height: 66}))
-					.then(done, done.fail);
-			});
-			it('clips the screenshot by offsetting x and y if specified', done => {
-				underTest.screenshot({url: 'xxx', clip: {x: 10, y: 15}})
-					.then(() => expect(pngToolkit.clip).toHaveBeenCalledWith('screenshot-img', {x: 10, y: 15, width: 45, height: 51}))
-					.then(done, done.fail);
-			});
-			it('clips the requested width and height if specified', done => {
-				underTest.screenshot({url: 'xxx', clip: {width: 10, height: 15}})
-					.then(() => expect(pngToolkit.clip).toHaveBeenCalledWith('screenshot-img', {x: 0, y: 0, width: 10, height: 15}))
-					.then(done, done.fail);
-			});
-			it('clips the requested region with offset', done => {
-				underTest.screenshot({url: 'xxx', clip: {x: 5, y: 3, width: 10, height: 15}})
-					.then(() => expect(pngToolkit.clip).toHaveBeenCalledWith('screenshot-img', {x: 5, y: 3, width: 10, height: 15}))
-					.then(done, done.fail);
-			});
 		});
 	});
 });

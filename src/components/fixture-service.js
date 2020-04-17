@@ -6,6 +6,7 @@ const path = require('path'),
 	validateRequiredComponents = require('../util/validate-required-components');
 
 module.exports = function FixtureService(config, components) {
+	validateRequiredComponents(components, ['screenshotService', 'fileRepository', 'pngToolkit', 'nodeFixtureEngine']);
 	const self = this,
 		screenshotService = components.screenshotService,
 		fileRepository = components.fileRepository,
@@ -83,7 +84,7 @@ module.exports = function FixtureService(config, components) {
 			return result;
 		};
 
-	validateRequiredComponents(components, ['screenshotService', 'fileRepository', 'pngToolkit']);
+
 
 	self.start = function () {
 		return screenshotService.start();
@@ -93,7 +94,7 @@ module.exports = function FixtureService(config, components) {
 	};
 	self.executeExample = function (example, resultPathPrefix) {
 		const requestedEngine = (example && example.params && example.params['fixture-engine']) || 'node',
-			fixtureEngine = components['fixture-engine-' + requestedEngine],
+			fixtureEngine = components[requestedEngine + 'FixtureEngine'],
 			outputPath = resultPathPrefix + '-output',
 			result = {},
 			recordFileOutput = function (filePath) {
