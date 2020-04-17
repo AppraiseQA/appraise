@@ -11,7 +11,6 @@ const fs = require('fs'),
 	},
 	loadPng = function (pngBufferData) {
 		const png = new PNG();
-		console.log('type', typeof pngBufferData);
 		return new Promise((resolve, reject) => png.parse(pngBufferData, function (err) {
 			if (err) {
 				reject(err);
