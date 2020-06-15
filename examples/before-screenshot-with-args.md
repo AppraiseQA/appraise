@@ -23,13 +23,4 @@ This fixture generates some HTML that initially has a hidden element
 text: Dynamic text
 ~~~
 
-
-
-
-## after screenshot
-
-![after screenshot](afterscreenshot-3748bcea-8b74-455c-85cb-81f1f70917bb.png)
-
-(generated: 2018-12-20 15:29:07)
-
-
+![after screenshot](images/afterscreenshot-3748bcea-8b74-455c-85cb-81f1f70917bb.png)
