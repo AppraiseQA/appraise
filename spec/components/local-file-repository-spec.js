@@ -214,14 +214,16 @@ describe('LocalFileRepository', () => {
 				.catch(e => expect(e.message).toMatch(/ENOENT: no such file or directory/))
 				.then(done);
 		});
-		it('fails if the dest file cannot be written', done => {
+		it('fails if the dest file cannot be written', async () => {
 			const sourcePath = path.join(workingDir, 'some.txt'),
 				destPath = '/no-permissions.txt';
 			fs.writeFileSync(sourcePath, 'content 123', 'utf8');
-			underTest.copyFile(sourcePath, destPath)
-				.then(done.fail)
-				.catch(e => expect(e.message).toMatch(/EACCES: permission denied/))
-				.then(done);
+			try {
+				await underTest.copyFile(sourcePath, destPath);
+				fail('should have thrown');
+			} catch (e) {
+				expect(e.message).toMatch(/EACCES|EROFS/);
+			}
 		});
 	});
 	describe('appendText', () => {

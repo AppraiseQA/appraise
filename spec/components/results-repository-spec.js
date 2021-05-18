@@ -739,18 +739,18 @@ describe('ResultsRepository', () => {
 				.then(() => expect(fileRepository.writeText.calls.count()).toEqual(2))
 				.then(() => expect(fileRepository.writeText.calls.argsFor(0)).toEqual([
 					'resultDir/pages/page1.html',
-					'<html><head></head><body>' +
+					'<html><head/><body>' +
 						'<table class="preamble" data-prefix-role="preamble">' +
 							'<thead><tr><th>fixture</th></tr></thead>' +
 							'<tbody><tr><td>somefix</td></tr></tbody>' +
 						'</table>' +
-						'<a name="simple"></a>' +
+						'<a name="simple"/>' +
 						'<pre data-outcome-status="failure" data-outcome-message="borked!">' +
 							'<code data-prefix-example="simple" data-prefix-format="json" class="language-json">abcd</code>' +
 						'</pre>' +
 						'<p>' +
 							'<a href="page1/1-result.html" title="failure">' +
-							'<img src="page1/1-diff.png" alt="borked!" data-prefix-example="simple" data-outcome-status="failure" data-outcome-message="borked!" title="borked!">' +
+							'<img src="page1/1-diff.png" alt="borked!" data-prefix-example="simple" data-outcome-status="failure" data-outcome-message="borked!" title="borked!"/>' +
 							'</a>' +
 						'</p>' +
 					'</body></html>'
@@ -758,7 +758,7 @@ describe('ResultsRepository', () => {
 				.then(done, done.fail);
 			fileRepository.promises.writeText.resolve();
 		});
-		it('adds the actual result when there were no expectations', done => {
+		it('adds the actual result when there were no expectations', async () => {
 			delete page1Obj.results.simple.expected;
 			const htmlPage = `
 					<pre>
@@ -769,21 +769,20 @@ describe('ResultsRepository', () => {
 			expectedMerge.body = 'body';
 			pageTemplate.and.returnValue(htmlPage);
 			pageDirTemplate.and.returnValue('');
-			underTest.writePageBody('pages/page1', 'body')
-				.then(() => expect(pageTemplate).toHaveBeenCalledWith(expectedMerge))
-				.then(() => expect(fileRepository.writeText.calls.count()).toEqual(2))
-				.then(() => expect(fileRepository.writeText.calls.argsFor(0)).toEqual([
-					'resultDir/pages/page1.html',
-					'<html><head></head><body>' +
-						'<a name="simple"></a>' +
-						'<pre data-outcome-status="failure" data-outcome-message="borked!">' +
-							'<code data-prefix-example="simple" data-prefix-format="json" class="language-json">abcd</code>' +
-						'</pre>' +
-						'<a href="page1/1-result.html" title="failure"><img src="page1/1-actual.png" title="borked!" data-outcome-status="failure" alt="borked!"></a>' +
-					'</body></html>'
-				]))
-				.then(done, done.fail);
 			fileRepository.promises.writeText.resolve();
+			await underTest.writePageBody('pages/page1', 'body');
+			expect(pageTemplate).toHaveBeenCalledWith(expectedMerge);
+			expect(fileRepository.writeText.calls.count()).toEqual(2);
+			expect(fileRepository.writeText.calls.argsFor(0)).toEqual([
+				'resultDir/pages/page1.html',
+				'<html><head/><body>' +
+					'<a name="simple"/>' +
+					'<pre data-outcome-status="failure" data-outcome-message="borked!">' +
+						'<code data-prefix-example="simple" data-prefix-format="json" class="language-json">abcd</code>' +
+					'</pre>' +
+					'<a href="page1/1-result.html" title="failure"><img src="page1/1-actual.png" title="borked!" data-outcome-status="failure" alt="borked!"/></a>' +
+				'</body></html>'
+			]);
 		});
 		it('writes out the error if there was no screenshot', done => {
 			delete page1Obj.results.simple.output;
@@ -807,8 +806,8 @@ describe('ResultsRepository', () => {
 				.then(() => expect(fileRepository.writeText.calls.count()).toEqual(2))
 				.then(() => expect(fileRepository.writeText.calls.argsFor(0)).toEqual([
 					'resultDir/pages/page1.html',
-					'<html><head></head><body>' +
-						'<a name="simple"></a>' +
+					'<html><head/><body>' +
+						'<a name="simple"/>' +
 						'<pre data-outcome-status="error" data-outcome-message="BOOOM!">' +
 							'<code data-prefix-example="simple" data-prefix-format="json" class="language-json">abcd</code>' +
 						'</pre>' +

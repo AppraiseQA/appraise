@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "pretest": "eslint src spec",
+    "ut": "node spec/support/jasmine-runner.js",
     "test": "node spec/support/jasmine-runner.js && node ./bin/cmd.js run",
     "debug": "node debug spec/support/jasmine-runner.js",
     "start": "node ./bin/cmd.js",
@@ -34,20 +35,20 @@
   "homepage": "https://github.com/AppraiseQA/appraise#readme",
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
-    "handlebars": "^4.7.6",
+    "handlebars": "^4.7.7",
     "js-yaml": "^3.13.1",
     "markdown-it": "^10.0.0",
     "markdown-it-github-preamble": "^1.0.0",
     "pixelmatch": "^5.2.0",
     "pngjs": "^5.0.0",
-    "puppeteer": "^3.0.0",
+    "puppeteer": "^9.1.1",
     "sanitize-filename": "^1.6.1",
     "sequential-promise-map": "^1.1.0",
     "shelljs": "^0.5.3",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
-    "eslint": "^6.8.0",
+    "eslint": "^7.26.0",
     "jasmine": "^3.5.0",
     "jasmine-spec-reporter": "^4.1.1"
   }
