@@ -44,7 +44,7 @@ const minimist = require('minimist'),
 	readArgs = function () {
 		return minimist(process.argv.slice(2), {
 			alias: { h: 'help', v: 'version' },
-			string: ['examples-dir', 'results-dir', 'templates-dir', 'fixtures-dir', 'page', 'example'],
+			string: ['examples-dir', 'results-dir', 'templates-dir', 'fixtures-dir', 'page', 'example', 'puppeteer-args'],
 			boolean: ['quiet'],
 			default: {
 				'examples-dir': path.join(process.cwd(), 'examples'),

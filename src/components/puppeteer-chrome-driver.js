@@ -1,12 +1,15 @@
 'use strict';
 const puppeteer = require('puppeteer');
-module.exports = function PuppeteerChromeDriver(/*config, components*/) {
-	const self = this;
+module.exports = function PuppeteerChromeDriver(config /*, components*/) {
+	const self = this, options = [];
 	let browser, page;
 
+	if (config['puppeteer-args']) {
+		options.args = config['puppeteer-args'].split(' ');
+	}
 
 	self.start = function () {
-		return puppeteer.launch()
+		return puppeteer.launch(options)
 			.then(t => browser = t)
 			.then(() => browser.newPage())
 			.then(p => {

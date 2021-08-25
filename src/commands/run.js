@@ -70,6 +70,12 @@ module.exports.doc = {
 			optional: true,
 			description: 'The name of the page to execute. If not specified, executes all pages.',
 			example: 'hello-world'
+		},
+		{
+			argument: 'puppeteer-args',
+			optional: true,
+			description: 'Additional puppeteer args to pass when running the browser (enclose multiple in quotes and separate with space)',
+			example: '--no-sandbox --hide-scrollbars'
 		}
 	].concat(configurableProperties)
 };
