@@ -1,11 +1,11 @@
 {
   "name": "appraise",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "lockfileVersion": 2,
   "requires": true,
   "packages": {
     "": {
-      "version": "0.5.1",
+      "version": "0.6.0",
       "license": "MIT",
       "dependencies": {
         "cheerio": "^1.0.0-rc.10",
