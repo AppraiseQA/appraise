@@ -24,6 +24,8 @@ appraise run {OPTIONS}
     * _Defaults to_: embedded templates included with the application
 *  `--page`:  (_optional_) The name of the page to execute. If not specified, executes all pages.
     * _For example_: hello-world
+*  `--puppeteer-args`:  (_optional_) Additional puppeteer args to pass when running the browser (enclose multiple in quotes and separate with space)
+    * _For example_: --no-sandbox --hide-scrollbars
 *  `--tolerance`:  (_optional_) Tolerance for comparing individual pixels, number between 1 and 10. Larger value makes comparisons means more forgiving. Default is exact match.
     * _For example_: 5
 *  `--allowed-difference`:  (_optional_) Number of pixels allowed to be different until comparisons fail
