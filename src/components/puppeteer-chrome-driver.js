@@ -42,5 +42,6 @@ module.exports = function PuppeteerChromeDriver(config /*, components*/) {
 	self.screenshot = function () {
 		return page.screenshot({fullPage: true});
 	};
+	self.waitForNetworkIdle = () => page.waitForNetworkIdle();
 };
 

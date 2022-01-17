@@ -41,7 +41,7 @@
     "markdown-it-github-preamble": "^1.0.0",
     "pixelmatch": "^5.2.0",
     "pngjs": "^5.0.0",
-    "puppeteer": "^10.2.0",
+    "puppeteer": "^13.0.1",
     "sanitize-filename": "^1.6.1",
     "sequential-promise-map": "^1.1.0",
     "shelljs": "^0.5.3",

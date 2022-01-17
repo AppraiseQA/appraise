@@ -21,6 +21,7 @@ module.exports = function ChromeScreenshotService(config, components) {
 		await chromeDriver.setWindowSize(naturalSize.width, naturalSize.height);
 		if (options.beforeScreenshot) {
 			await chromeDriver.evaluate(options.beforeScreenshot, options.beforeScreenshotArgs);
+			await chromeDriver.waitForNetworkIdle();
 		}
 		return chromeDriver.screenshot();
 	};
