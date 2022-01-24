@@ -149,7 +149,7 @@ describe('fsUtil', () => {
 			await fs.promises.writeFile(path.join(newDir, 'subdir1', 'subdir2', 'something2.txt'), 'my text 2', 'utf8');
 			await fs.promises.writeFile(path.join(newDir, 'subdir1', 'something1.txt'), 'my text 1', 'utf8');
 			await fs.promises.writeFile(path.join(newDir, 'something.txt'), 'my text', 'utf8');
-			const result = fsUtil.recursiveList(newDir).filter(t => t);
+			const result = fsUtil.recursiveList(newDir);
 			expect(result).toEqual(['something.txt', 'subdir1', 'subdir1/something1.txt', 'subdir1/subdir2', 'subdir1/subdir2/something2.txt']);
 		});
 	});
