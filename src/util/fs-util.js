@@ -9,6 +9,7 @@ exports.mkdirp = function (dirPath) {
 };
 exports.remove = function (path) {
 	shell.rm('-rf', path);
+
 };
 exports.fileExists = function (filePath) {
 	return shell.test('-e', filePath);
@@ -20,5 +21,5 @@ exports.isFile = function (filePath) {
 	return shell.test('-f', filePath);
 };
 exports.recursiveList = function (dirPath) {
-	return shell.ls('-R', dirPath);
+	return shell.ls('-R', dirPath).filter(t => t);
 };
