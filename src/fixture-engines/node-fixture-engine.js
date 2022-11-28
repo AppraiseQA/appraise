@@ -7,8 +7,8 @@ module.exports = function NodeFixtureEngine(options) {
 		loadFixture = function (example) {
 			const fixtureDir = options['fixtures-dir'] || options['examples-dir'];
 			return new Promise(resolve => {
-				const module = require(path.resolve(fixtureDir, example.params.fixture));
-				resolve(module);
+				const mod = require(path.resolve(fixtureDir, example.params.fixture));
+				resolve(mod);
 			});
 		};
 

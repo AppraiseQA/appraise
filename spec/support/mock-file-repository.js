@@ -7,7 +7,7 @@ module.exports = function mockFileRepository(config) {
 		promiseMethods = functionNames.filter(t =>/^clean|^read|^copy|^append|^write|^isFileReadable/.test(t));
 	template.promises = {};
 	functionNames.forEach(name => spyOn(template, name).and.callThrough());
-	promiseMethods.forEach(function (method) {
+	promiseMethods.forEach((method) => {
 		const promiseSpy = buildPromiseSpy(method);
 		template.promises[method] = promiseSpy;
 		template[method].and.returnValue(promiseSpy.promise);

@@ -8,13 +8,13 @@ const os = require('os'),
 
 describe('LocalFileRepository', () => {
 	let underTest, workingDir;
-	beforeEach(function () {
+	beforeEach(() => {
 		underTest = new LocalFileRepository({'nondir': 'abc', 'first-dir': 'ref/dir', 'second-dir': './ref/dir'});
 		workingDir = path.join(os.tmpdir(), uuid.v4());
 		fsUtil.ensureCleanDir(workingDir);
 		jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 	});
-	afterEach(function () {
+	afterEach(() => {
 		fsUtil.remove(workingDir);
 	});
 
@@ -38,15 +38,15 @@ describe('LocalFileRepository', () => {
 			expect(underTest.referencePath('second', 'abc/xyz', '..', 'def')).toEqual('ref/dir/abc/def');
 		});
 	});
-	describe('newFilePath', function () {
-		it('creates a randomised version of a name in a dir with the extension', function () {
+	describe('newFilePath', () => {
+		it('creates a randomised version of a name in a dir with the extension', () => {
 			expect(underTest.newFilePath('dir1/dir2', 'clean-name', 'zip')).toMatch(/dir1\/dir2\/clean-name[^.]+.zip/);
 		});
-		it('sanitizes the root part of the name', function () {
+		it('sanitizes the root part of the name', () => {
 			expect(underTest.newFilePath('dir1', 'c/l*   e?a\nn-n\tame', 'zip')).toMatch(/dir1\/clean-name[^.]+.zip/);
 		});
 	});
-	describe('readText', function () {
+	describe('readText', () => {
 		it('reads a file as a text using a promised interface', done => {
 			const testPath = path.join(workingDir, 'some.txt');
 			fs.writeFileSync(testPath, 'content 123', 'utf8');
@@ -61,7 +61,7 @@ describe('LocalFileRepository', () => {
 				.then(done);
 		});
 	});
-	describe('readJSON', function () {
+	describe('readJSON', () => {
 		it('reads a file as a JSON using a promised interface', done => {
 			const testPath = path.join(workingDir, 'some.txt'),
 				content = {a: '123'};
@@ -312,7 +312,7 @@ describe('LocalFileRepository', () => {
 			fs.writeFileSync(path.join(sourcePath, 'file1.txt'), 'some content', 'utf8');
 			fs.writeFileSync(path.join(sourcePath, 'subdir', 'file2.txt'), 'some other content', 'utf8');
 
-			underTest.copyDirContents(sourcePath, targetPath, path => /^file/.test(path))
+			underTest.copyDirContents(sourcePath, targetPath, p => /^file/.test(p))
 				.then(() => expect(fsUtil.isDir(targetPath)).toBeTruthy())
 				.then(() => expect(fsUtil.recursiveList(targetPath)).toEqual(['file1.txt']))
 				.then(() => expect(fs.readFileSync(path.join(sourcePath, 'file1.txt'), 'utf8')).toEqual('some content'))

@@ -238,7 +238,6 @@ describe('ResultsRepository', () => {
 		});
 	});
 	describe('resetResultsDir', () => {
-		let pendingPromise;
 		beforeEach(() => {
 			pendingPromise = new Promise(() => true);
 		});

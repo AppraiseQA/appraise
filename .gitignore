@@ -1,4 +1,5 @@
 node_modules
+.cache
 results
 npm-debug.log
 .DS_Store

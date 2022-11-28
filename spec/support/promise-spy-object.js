@@ -4,7 +4,7 @@ module.exports = function promiseSpyObject(name, methods) {
 	const spy = {
 		promises: {}
 	};
-	methods.forEach(function (method) {
+	methods.forEach((method) => {
 		const promiseSpy = buildPromiseSpy(name + '.' + method);
 		spy.promises[method] = promiseSpy;
 		spy[method] = promiseSpy.spy;

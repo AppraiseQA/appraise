@@ -1,7 +1,7 @@
 'use strict';
-module.exports = function mdAnnotateImage(md, options) {
+module.exports = function mdAnnotateImage(md, opts) {
 	const defaultImage = md.renderer.rules.image,
-		propertyPrefix = options.propertyPrefix,
+		propertyPrefix = opts.propertyPrefix,
 		imageWithAttribs = function (tokens, idx, options, env, self) {
 			const token = tokens[idx],
 				alt = self.renderInlineAsText(token.children, options, env);

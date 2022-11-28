@@ -26,9 +26,9 @@ module.exports = function LocalFileRepository(config/*, components*/) {
 				fsUtil.mkdirp(toDir);
 			}
 		},
-		writeFile = function (path, contents, encoding) {
-			return fsPromise.writeFileAsync(path, contents, encoding)
-				.then(() => path);
+		writeFile = async function (filePath, contents, encoding) {
+			await fsPromise.writeFileAsync(filePath, contents, encoding);
+			return filePath;
 		};
 	self.referencePath = function () {
 		const pathComponents = Array.from(arguments),

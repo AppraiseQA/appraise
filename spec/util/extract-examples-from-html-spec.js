@@ -1,7 +1,7 @@
 'use strict';
 const extractExamplesFromHtml = require('../../src/util/extract-examples-from-html');
-describe('extractExamplesFromHtml', function () {
-	it('pulls out examples from images and matching code blocks', function () {
+describe('extractExamplesFromHtml', () => {
+	it('pulls out examples from images and matching code blocks', () => {
 		expect(
 			extractExamplesFromHtml(
 				`<body>
@@ -18,7 +18,7 @@ describe('extractExamplesFromHtml', function () {
 			input: '1st input'
 		}]);
 	});
-	it('does not set the format if no attribute provided', function () {
+	it('does not set the format if no attribute provided', () => {
 		expect(
 			extractExamplesFromHtml(
 				`<body>
@@ -37,7 +37,7 @@ describe('extractExamplesFromHtml', function () {
 		]);
 
 	});
-	it('works with multiple examples in the same file', function () {
+	it('works with multiple examples in the same file', () => {
 		expect(
 			extractExamplesFromHtml(
 				`<body>
@@ -64,7 +64,7 @@ describe('extractExamplesFromHtml', function () {
 			}
 		]);
 	});
-	it('ignores any non-attributed code and image blocks', function () {
+	it('ignores any non-attributed code and image blocks', () => {
 		expect(
 			extractExamplesFromHtml(
 				`<body>
@@ -82,7 +82,7 @@ describe('extractExamplesFromHtml', function () {
 			input: '1st input'
 		}]);
 	});
-	it('stores any values from the preamble table into each example as common parameters', function () {
+	it('stores any values from the preamble table into each example as common parameters', () => {
 		expect(
 			extractExamplesFromHtml(
 				`<body>
@@ -113,7 +113,7 @@ describe('extractExamplesFromHtml', function () {
 			}
 		]);
 	});
-	it('overrides global parameters with those defined in the example', function () {
+	it('overrides global parameters with those defined in the example', () => {
 		expect(
 			extractExamplesFromHtml(
 				`<body>
@@ -137,7 +137,7 @@ describe('extractExamplesFromHtml', function () {
 		]);
 	});
 
-	it('does not specify expected results if image is missing', function () {
+	it('does not specify expected results if image is missing', () => {
 		expect(
 			extractExamplesFromHtml(
 				`<body>

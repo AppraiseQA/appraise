@@ -1,8 +1,8 @@
 'use strict';
 const parseAttributes = require('./parse-attributes');
-module.exports = function mdAnnotateExample(md, options) {
+module.exports = function mdAnnotateExample(md, opts) {
 	const defaultFence = md.renderer.rules.fence,
-		propertyPrefix = options.propertyPrefix,
+		propertyPrefix = opts.propertyPrefix,
 		fenceWithAttribs = function (tokens, idx, options, env, self) {
 			const token = tokens[idx],
 				info = token.info;

@@ -13,7 +13,7 @@ describe('PuppeteerChromeDriver', () => {
 		pngToolkit = new PNGToolkit({});
 	});
 	beforeAll(done => {
-		chrome = new PuppeteerChromeDriver({});
+		chrome = new PuppeteerChromeDriver({'puppeteer-args': process.env.PUPPETEER_ARGS});
 		chrome.start().then(done, done.fail);
 	});
 	afterAll(() => {
@@ -38,7 +38,7 @@ describe('PuppeteerChromeDriver', () => {
 	});
 	describe('screenshot', () => {
 		it('captures SVG screenshots', done => {
-			chrome.setWindowSize(10, 10)
+			chrome.setWindowSize(50, 30)
 				.then(() => chrome.loadUrl(assetUrl('line.svg')))
 				.then(() => chrome.screenshot())
 				.then(pngToolkit.loadPng)

@@ -10,10 +10,11 @@ module.exports = function DelegateScreenshotService(config, screenshotServices) 
 	};
 	self.screenshot = async function (options) {
 		if (!options || !options.url) {
-			return Promise.reject('invalid-args');
+			throw 'invalid-args';
 		}
-		const handler = screenshotServices.find(s => s.canHandle(options.url));
-		return handler.screenshot(options);
+		const handler = screenshotServices.find(s => s.canHandle(options.url)),
+			result = await handler.screenshot(options);
+		return result;
 	};
 	self.canHandle = (url) => {
 		return !! screenshotServices.find(s => s.canHandle(url));

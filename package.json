@@ -1,12 +1,12 @@
 {
   "name": "appraise",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "Painless visual test automation",
   "main": "index.js",
   "scripts": {
     "pretest": "eslint src spec",
     "ut": "node spec/support/jasmine-runner.js",
-    "test": "node spec/support/jasmine-runner.js && node ./bin/cmd.js run",
+    "test": "node spec/support/jasmine-runner.js && node ./bin/cmd.js run --puppeteer-args=\"$PUPPETEER_ARGS\"",
     "debug": "node debug spec/support/jasmine-runner.js",
     "start": "node ./bin/cmd.js",
     "prepublishOnly": "npm shrinkwrap && node src/util/doc-md.js"
@@ -34,21 +34,22 @@
   },
   "homepage": "https://github.com/AppraiseQA/appraise#readme",
   "dependencies": {
-    "cheerio": "^1.0.0-rc.10",
+    "cheerio": "^1.0.0-rc.12",
     "handlebars": "^4.7.7",
     "js-yaml": "^3.13.1",
-    "markdown-it": "^10.0.0",
+    "markdown-it": "^13.0.1",
     "markdown-it-github-preamble": "^1.0.0",
+    "minimist": "^1.2.7",
     "pixelmatch": "^5.2.0",
     "pngjs": "^5.0.0",
-    "puppeteer": "^13.0.1",
+    "puppeteer": "^19.3.0",
     "sanitize-filename": "^1.6.1",
     "sequential-promise-map": "^1.1.0",
     "shelljs": "^0.8.5",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
-    "eslint": "^7.26.0",
+    "eslint": "^8.28.0",
     "jasmine": "^3.5.0",
     "jasmine-spec-reporter": "^4.1.1"
   }

@@ -3,9 +3,9 @@ const packageName = require('../../package.json').name,
 	packageDesc =  require('../../package.json').description;
 module.exports.commandDoc = function (command) {
 	const lines = [],
-		indent = function (s, indent) {
+		indent = function (s, indentLevel) {
 			const result = [],
-				filler = new Array(indent + 1).join(' ');
+				filler = new Array(indentLevel + 1).join(' ');
 			if (Array.isArray(s)) {
 				s.forEach(line => result.push(filler + line.trim()));
 			} else {

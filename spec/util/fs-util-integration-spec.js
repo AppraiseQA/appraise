@@ -86,7 +86,7 @@ describe('fsUtil', () => {
 			await fs.promises.rm(dir, { recursive: true, force: true });
 		});
 
-		it('does nothing if the path does not exist', async () => {
+		it('does nothing if the path does not exist', () => {
 			newDir = path.join(dir, 'new-dir');
 			expect(() => fsUtil.remove(newDir)).not.toThrow();
 		});
@@ -118,16 +118,16 @@ describe('fsUtil', () => {
 		});
 	});
 	describe('mkdirp', () => {
-		let dir;
+		let dir, newDir;
 		beforeEach(async () => {
 			dir = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'work-'));
+			newDir = path.join(dir, 'new-dir', 'subdir1', 'subdir2');
 		});
 		afterEach(async () => {
 			await fs.promises.rm(dir, { recursive: true, force: true });
 		});
 
 		it('recursively creates parent directories and a dir', async () => {
-			const newDir = path.join(dir, 'new-dir', 'subdir1', 'subdir2');
 			fsUtil.mkdirp(newDir);
 			const stats = await fs.promises.stat(newDir);
 			expect(stats.isDirectory()).toBeTruthy();
@@ -135,16 +135,16 @@ describe('fsUtil', () => {
 
 	});
 	describe('recursiveList', () => {
-		let dir;
+		let dir, newDir;
 		beforeEach(async () => {
 			dir = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'work-'));
+			newDir = path.join(dir, 'new-dir');
 		});
 		afterEach(async () => {
 			await fs.promises.rm(dir, { recursive: true, force: true });
 		});
 
 		it('lists a directory and all subdirectories', async () => {
-			const newDir = path.join(dir, 'new-dir');
 			await fs.promises.mkdir(path.join(newDir, 'subdir1', 'subdir2'), {recursive: true});
 			await fs.promises.writeFile(path.join(newDir, 'subdir1', 'subdir2', 'something2.txt'), 'my text 2', 'utf8');
 			await fs.promises.writeFile(path.join(newDir, 'subdir1', 'something1.txt'), 'my text 1', 'utf8');
