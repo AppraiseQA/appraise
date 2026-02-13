@@ -37,7 +37,7 @@
     "cheerio": "^1.0.0-rc.12",
     "handlebars": "^4.7.7",
     "js-yaml": "^3.13.1",
-    "markdown-it": "^13.0.1",
+    "markdown-it": "^14.1.1",
     "markdown-it-github-preamble": "^1.0.0",
     "minimist": "^1.2.7",
     "pixelmatch": "^5.2.0",
